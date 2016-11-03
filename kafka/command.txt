@@ -1,0 +1,13 @@
+zookeeper-server-start.sh /media/Data/hadoop_ecosystem/kafka/config/zookeeper.properties &
+nohup kafka-server-start.sh $KAFKA_HOME/config/server.properties > ./kafka.log 2>&1
+echo "Hello, World" | kafka-console-producer.sh --broker-list localhost:9092 --topic TutorialTopic > /dev/null
+kafka-console-consumer.sh --zookeeper localhost:2181 --topic TutorialTopic --from-beginning
+
+# delete messages
+Tested in Kafka 0.8.2, for the quick-start example: First, Add one line to server.properties file under config folder:
+
+delete.topic.enable=true
+
+then, you can run this command:
+
+bin/kafka-topics.sh --zookeeper localhost:2181 --delete --topic test

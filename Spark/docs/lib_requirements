@@ -1,0 +1,21 @@
+#Installing BLAS and LAPACK
+sudo apt-get install libatlas3-base libopenblas-base
+
+#maven:
+
+<!-- https://mvnrepository.com/artifact/com.github.fommil.netlib/all -->
+<dependency>
+ <groupId>com.github.fommil.netlib</groupId>
+ <artifactId>all</artifactId>
+ <version>1.1.2</version>
+ <type>pom</type>
+</dependency>
+
+ 
+
+#SBT:
+
+// https://mvnrepository.com/artifact/com.github.fommil.netlib/all
+libraryDependencies += "com.github.fommil.netlib" % "all" % "1.1.2" pomOnly()
+#Link your java or scala code to the native library
+

@@ -1,0 +1,2 @@
+hadoop fs -rm -r /data/output2
+hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-2.6.0.jar -files src/ -mapper src/ToHRVMapper.R -reducer src/ToHRVHbaseReducer.R -input /data/output -output /data/output2 -numReduceTasks $1

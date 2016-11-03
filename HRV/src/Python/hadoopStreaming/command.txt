@@ -1,0 +1,14 @@
+$HADOOP_HOME/bin/hadoop jar $HADOOP_HOME/mapred/contrib/streaming/hadoop-streaming*.jar \
+-files mapper.py,reducer.py \
+-mapper mapper.py \
+-reducer reducer.py \
+-input /user/hduser/input.txt -output /user/hduser/output
+
+#The options used with the Hadoop streaming utility are listed in Table 2-1.
+#Table 2-1. Options for Hadoop streaming Option 	Description
+
+-files 	A command-separated list of files to be copied to the MapReduce cluster
+-mapper 	The command to be run as the mapper
+-reducer 	The command to be run as the reducer
+-input 	The DFS input path for the Map step
+-output 	The DFS output directory for the Reduce step

@@ -1,0 +1,2 @@
+flume-ng agent -c conf -f flume-kafka-sink.conf -n producer -Dflume.root.logger=INFO,console
+curl -X POST -d @test --header "Content-Type: application/json" http://master:44448

@@ -1,0 +1,103 @@
+machines:
+10.0.1.76（Client）
+10.0.1.68 （Failover和Load balancing）
+10.0.1.70
+10.0.1.77
+10.0.1.85
+10.0.1.86
+10.0.1.87
+
+level 1:
+    a1.channels.c1.type = memory  
+    a1.channels.c1.capacity = 1000  
+    a1.channels.c1.transactionCapacity = 100  
+            
+    a1.sources.r1.channels = c1  
+    a1.sources.r1.type = exec  
+    a1.sources.r1.command = tail -n 0 -F /home/nginx/logs/access.log   
+      
+    a1.sinks.k1.type = avro  
+    a1.sinks.k1.channel = c1  
+    a1.sinks.k1.hostname = 10.0.1.68  
+    a1.sinks.k1.port = 41415  
+      
+    a1.channels = c1  
+    a1.sources = r1  
+    a1.sinks = k1  
+
+level 2:
+    a1.channels = c1  
+    a1.sources = r1  
+    a1.sinks = k70 k77 k85 k86 k87  
+      
+    a1.sinkgroups = g1 g2 g3  
+    a1.sinkgroups.g1.sinks = k70 k85  
+    a1.sinkgroups.g1.processor.type = load_balance  
+    a1.sinkgroups.g1.processor.selector = round_robin  
+    a1.sinkgroups.g1.processor.backoff = true  
+      
+    a1.sinkgroups.g2.sinks = k70 k86  
+    a1.sinkgroups.g2.processor.type = failover   
+    a1.sinkgroups.g2.processor.priority.k70 = 20  
+    a1.sinkgroups.g2.processor.priority.k86 = 10  
+    a1.sinkgroups.g2.processor.maxpenalty = 10000   
+      
+    a1.sinkgroups.g3.sinks = k85 k87 k77  
+    a1.sinkgroups.g3.processor.type = failover  
+    a1.sinkgroups.g3.processor.priority.k85 = 20  
+    a1.sinkgroups.g3.processor.priority.k87 = 10  
+    a1.sinkgroups.g3.processor.priority.k77 = 5  
+    a1.sinkgroups.g3.processor.maxpenalty = 10000  
+      
+    a1.channels.c1.type = memory  
+    a1.channels.c1.capacity = 1000  
+    a1.channels.c1.transactionCapacity = 100  
+      
+    a1.sources.r1.channels = c1  
+    a1.sources.r1.type = avro  
+    a1.sources.r1.bind = 0.0.0.0  
+    a1.sources.r1.port = 41415  
+      
+    a1.sinks.k87.channel = c1  
+    a1.sinks.k87.type = avro  
+    a1.sinks.k87.hostname = 10.0.1.87  
+    a1.sinks.k87.port = 41414  
+      
+    a1.sinks.k86.channel = c1  
+    a1.sinks.k86.type = AVRO  
+    a1.sinks.k86.hostname = 10.0.1.86  
+    a1.sinks.k86.port = 41414  
+      
+    a1.sinks.k85.channel = c1  
+    a1.sinks.k85.type = AVRO  
+    a1.sinks.k85.hostname = 10.0.1.85  
+    a1.sinks.k85.port = 41414  
+      
+    a1.sinks.k77.channel = c1  
+    a1.sinks.k77.type = AVRO  
+    a1.sinks.k77.hostname = 10.0.1.77  
+    a1.sinks.k77.port = 41414  
+      
+    a1.sinks.k70.channel = c1  
+    a1.sinks.k70.type = AVRO  
+    a1.sinks.k70.hostname = 10.0.1.70  
+    a1.sinks.k70.port = 41414  
+
+level 3:
+    a1.channels = c1  
+    a1.sources = r1  
+    a1.sinks = k1  
+            
+    a1.channels.c1.type = memory  
+    a1.channels.c1.capacity = 1000  
+    a1.channels.c1.transactionCapacity = 100  
+      
+    a1.sources.r1.channels = c1  
+    a1.sources.r1.type = AVRO  
+    a1.sources.r1.bind = 0.0.0.0  
+    a1.sources.r1.port = 41414  
+      
+    a1.sinks.k1.channel = c1  
+    a1.sinks.k1.type = file_roll  
+    a1.sinks.k1.sink.directory = /data/load/  
+    a1.sinks.k1.sink.rollInterval = 0  

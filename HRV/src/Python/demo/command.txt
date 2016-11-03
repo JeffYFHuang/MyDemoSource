@@ -1,0 +1,1 @@
+hadoop jar /usr/local/hadoop/share/hadoop/tools/lib/hadoop-streaming-2.6.0.jar -files app -mapper app/mapper.py -reducer app/reducer.py -input /HRVData/test -output /user/hduser/output

@@ -1,0 +1,230 @@
+
+R version 3.3.1 (2016-06-21) -- "Bug in Your Hair"
+Copyright (C) 2016 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+[Previously saved workspace restored]
+
+>    source("HRVFUNS.R")
+Loading required package: tcltk
+Loading required package: tkrplot
+Loading required package: waveslim
+
+waveslim: Wavelet Method for 1/2/3D Signals (version = 1.7.5)
+
+Loading required package: nonlinearTseries
+Loading required package: Matrix
+Loading required package: rgl
+Loading required package: tseries
+Loading required package: TSA
+Loading required package: leaps
+Loading required package: locfit
+locfit 1.5-9.1 	 2013-03-22
+Loading required package: mgcv
+Loading required package: nlme
+This is mgcv 1.8-13. For overview type 'help("mgcv-package")'.
+
+Attaching package: ‘TSA’
+
+The following objects are masked from ‘package:stats’:
+
+    acf, arima
+
+The following object is masked from ‘package:utils’:
+
+    tar
+
+Loading required package: Rcpp
+
+Attaching package: ‘nonlinearTseries’
+
+The following object is masked from ‘package:grDevices’:
+
+    contourLines
+
+Loading required package: rJava
+
+HADOOP_CMD=/usr/local/hadoop/bin/hadoop
+
+Be sure to run hdfs.init()
+Warning messages:
+1: no DISPLAY variable so Tk is not available 
+2: loading Rplot failed 
+3: In rgl.init(initValue, onlyNULL) : RGL: unable to open X11 display
+4: 'rgl_init' failed, running with rgl.useNULL = TRUE 
+> 
+>    ##supply default values
+>    startTime = 0
+>    endTime = 0
+>    size=300 #seconds
+>    overlap = 0 #seconds: 0 -> non-overlap;
+>    folder = "/HRVData/"
+>    fileName = "example.beats"
+> 
+>    ##First read in the arguments listed at the command line
+>    args=(commandArgs(TRUE))
+> 
+>    ##args is now a list of character vectors
+>    ## First check to see if arguments are passed.
+>    ## Then cycle through each element of the list and evaluate the expressions.
+>   
+>    if(length(args)!=0){
++       for(i in 1:length(args)){
++         eval(parse(text=args[[i]]))
++       }
++    }
+> 
+>    #library(curl)
+>    startTime = 0
+>    endTime = 0
+>    size=300 #seconds
+>    overlap = 0 #seconds: 0 -> non-overlap;
+>    folder = "/HRVData/"
+>    fileName = "example.beats"
+>    #filecon = curl("http://hadoop:50070/webhdfs/v1/HRVData/example.beats?op=OPEN") #"example.beats"
+> 
+>    # connect to hdfs file system to get beats file
+>    hdfs.init()
+16/08/23 16:32:04 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+>    beatsPath = paste(folder, fileName, sep="")
+>    hdfsBeatsConn = textConnection(hdfs.read.text.file(beatsPath)) #connectHDFSBeatsFile(beatsPath)
+>    HRVData = CreateHRVData()
+>    HRVData = SetVerbose(HRVData, FALSE)
+>    HRVData = LoadBeatAscii(HRVData, hdfsBeatsConn, RecordPath = ".")
+>    features = getHRVFeatures(HRVData, startTime, endTime, size, overlap)
+There were 24 warnings (use warnings() to see them)
+> 
+>    jsonData<-toJSON(features)
+> 
+>    # write json data to hdfs
+>    writeJsonToHDFS(jsonData, folder, paste(fileName, ".json", sep=""))
+16/08/23 16:32:23 INFO fs.TrashPolicyDefault: Namenode trash configuration: Deletion interval = 0 minutes, Emptier interval = 0 minutes.
+Deleted hdfs://172.18.161.253:9000/HRVData/example.beats.json
+[1] TRUE
+> 
+>    # read json data from hdfs
+>    jsonData = readJsonFromHDFS(folder, paste(fileName, ".json", sep=""))
+>    df = JsonToDataFrame(jsonData)
+Warning message:
+In array(as.numeric(unlist(jsonData$CaculatedData)), c(row.size,  :
+  NAs introduced by coercion
+>    print(df)
+   startTime  endTime     SDNN SDANN SDNNIDX     pNN50     SDSD    rMSSD IRRR
+1      0.000  299.636 20.37271    NA       0  6.692913 28.91513 28.89649   40
+2    300.036  599.868 23.01984    NA       0  8.530184 30.46023 30.44025   40
+3    600.236  899.844 27.90889    NA       0  7.190413 33.89490 33.87232   40
+4    900.264 1199.664 21.71321    NA       0  6.587615 27.97424 27.95597   40
+5   1200.076 1499.620 29.16249    NA       0  7.010582 33.42584 33.40374   40
+6   1500.024 1799.664 23.35983    NA       0  6.559572 27.09647 27.07835   28
+7   1800.056 2099.828 18.53819    NA       0  6.373938 24.16732 24.15020   24
+8   2100.244 2399.912 18.09676    NA       0  6.705539 24.56777 24.55006   24
+9   2400.364 2699.704 17.81771    NA       0  6.024096 25.59488 25.57578   28
+10  2700.196 2999.748 17.80116    NA       0  5.319149 26.49942 26.47933   32
+11  3000.200 3299.980 18.60315    NA       0  6.317411 28.06735 28.04575   40
+12  3300.456 3599.924 21.18767    NA       0  8.062016 31.06631 31.04226   44
+13  3600.368 3899.932 24.23636    NA       0  9.687500 31.09138 31.06727   40
+14  3900.400 4199.788 29.65167    NA       0  9.760000 31.94973 31.92421   32
+15  4200.188 4499.792 28.15183    NA       0 10.060976 30.89336 30.86991   32
+16  4500.204 4799.632 29.85848    NA       0 15.204678 35.88169 35.85546   36
+17  4800.092 5099.716 30.08288    NA       0 14.347202 34.39090 34.36624   32
+18  5100.116 5399.960 34.90082    NA       0 17.655367 40.14364 40.11537   36
+19  5400.344 5699.988 26.51403    NA       0 10.758621 30.66902 30.64799   28
+20  5700.416 5999.788 24.53946    NA       0  8.853411 27.17514 27.15541   24
+21  6000.212 6299.844 19.78141    NA       0  6.427504 27.16680 27.14651   32
+22  6300.296 6599.748 27.89111    NA       0  6.676558 27.46417 27.44382   32
+23  6600.196 6899.868 31.05281    NA       0 11.611030 33.73974 33.71528   32
+24  6900.340 7199.996 28.18098    NA       0  8.407080 28.99111 28.96972   32
+   MADRR     TINN     HRVi NN50   meanRR   meanHR       ULF       VLF        LF
+1     20 50.51642 6.466102   51 378.7471 158.8634  33.05885  9.217493  19.81347
+2     20 55.70970 7.130841   65 378.8257 158.9516  70.34099 15.880550  36.45364
+3     20 50.21368 6.427350   54 381.9574 157.7665 100.62870 33.490722 166.58132
+4     20 46.02713 5.891473   50 377.3579 159.5190  93.23862 29.559993  43.61906
+5     20 57.41808 7.349515   53 387.0225 155.7667 168.45717 26.776552 142.15500
+6     16 51.26096 6.561404   49 393.1925 153.1333 167.06271  9.308807  44.32218
+7     12 38.89745 4.978873   45 424.5714 141.5755  38.34189  6.081496  40.09294
+8     12 38.33705 4.907143   46 436.7744 137.5973  23.50206  2.607878  23.03011
+9     16 37.64719 4.818841   40 450.7789 133.3016  20.01951  3.656954  20.57054
+10    16 36.77455 4.707143   35 455.2170 131.9997  12.33588  3.989109  22.22542
+11    20 42.31771 5.416667   41 461.8646 130.1121  16.96708  5.589172  25.11090
+12    20 49.47917 6.333333   52 464.3158 129.4811  44.57393 12.066002  34.35657
+13    20 56.26756 7.202247   62 466.4524 128.9611 153.95028 16.827038  60.31351
+14    16 63.51461 8.129870   61 470.1358 128.1309 352.24618 48.767918  80.89949
+15    16 56.40453 7.219780   66 456.6332 131.9074 309.61052 48.308792  61.19933
+16    20 53.51562 6.850000  104 437.7635 137.7170 325.33941 33.836693  37.07336
+17    16 55.64413 7.122449  100 428.3324 140.7914 329.14409 34.712693  57.30735
+18    20 59.55981 7.623656  125 413.7997 145.9583 457.39171 90.258012  81.36177
+19    16 55.60662 7.117647   78 411.1019 146.5690 196.90325 40.033122  55.23215
+20    12 39.34763 5.036496   61 431.1884 139.6159 236.45703 10.811719  24.53269
+21    16 42.90471 5.491803   43 447.8806 134.2126  27.28280 10.453078  32.54185
+22    16 52.73438 6.750000   45 441.8370 136.3592 356.96861 36.066284  50.25774
+23    16 57.34707 7.340426   80 432.8986 139.3477 427.35956 38.816567  38.64684
+24    16 53.58270 6.858586   57 439.8351 136.9971 341.68964 35.401974  52.47807
+          HF      LFHF        TP      LFnu      HFnu      SD1      SD2
+1   62.82805 0.8351283  91.85902 0.2397520 0.7602480 17.67755 17.94163
+2   87.62139 1.1692108 139.95558 0.2938032 0.7061968 18.99529 21.20432
+3  192.71968 1.3321066 392.79172 0.4636261 0.5363739 18.89388 22.58895
+4   55.27755 1.6477932 128.45661 0.4410572 0.5589428 17.73807 20.76280
+5  230.89488 1.2495584 399.82643 0.3810616 0.6189384 18.31079 24.69107
+6   61.14649 1.6334273 114.77747 0.4202402 0.5797598 15.79351 22.56459
+7   65.09511 1.3524814 111.26954 0.3811549 0.6188451 11.55689 13.67675
+8   65.53574 0.9888453  91.17373 0.2600337 0.7399663 11.29976 12.20458
+9   52.80491 0.7803208  77.03240 0.2803463 0.7196537 10.59875 11.02796
+10  55.98933 0.8057725  82.20385 0.2841589 0.7158411 10.02201 11.36376
+11  56.76080 0.9324130  87.46087 0.3067104 0.6932896 10.03461 11.71320
+12  60.97827 1.3000077 107.40085 0.3603779 0.6396221 11.72852 12.70850
+13  83.19054 1.7582369 160.33109 0.4202914 0.5797086 12.58986 14.77262
+14  82.77509 3.1111727 212.44250 0.4942703 0.5057297 13.13503 20.78384
+15  67.64993 1.9090409 177.15805 0.4749684 0.5250316 13.72484 21.28327
+16  66.84915 1.0926654 137.75921 0.3567404 0.6432596 17.66001 23.56812
+17  92.76134 1.4509651 184.78138 0.3818741 0.6181259 17.80728 25.46027
+18 158.47015 1.2789620 330.08993 0.3392450 0.6607550 20.57516 28.44121
+19  89.38658 1.3906642 184.65185 0.3819156 0.6180844 17.14611 23.82376
+20  69.78634 0.8343735 105.13075 0.2601033 0.7398967 13.51148 21.12169
+21  68.03580 1.2608822 111.03073 0.3235495 0.6764505 11.75632 12.50195
+22  58.71006 1.9686511 145.03409 0.4612164 0.5387836 12.95595 23.97039
+23  65.22174 1.5655248 142.68515 0.3720744 0.6279256 17.16535 26.87622
+24  69.68136 2.3184525 157.56140 0.4295867 0.5704133 13.98029 24.04147
+        SD12     ApEn
+1  0.9852810 2.535217
+2  0.8958218 2.487527
+3  0.8364213 2.497643
+4  0.8543199 2.471379
+5  0.7415958 2.470908
+6  0.6999244 2.399460
+7  0.8450022 2.205190
+8  0.9258628 2.150748
+9  0.9610799 2.136639
+10 0.8819272 2.135551
+11 0.8566931 2.081290
+12 0.9228879 2.415923
+13 0.8522428 2.427829
+14 0.6319832 2.326103
+15 0.6448651 2.351206
+16 0.7493179 2.348044
+17 0.6994142 2.334964
+18 0.7234279 2.315004
+19 0.7197062 2.376561
+20 0.6396972 2.228059
+21 0.9403592 2.074635
+22 0.5404982 2.325933
+23 0.6386818 2.265504
+24 0.5815070 2.332248
+> 
+> 
+> proc.time()
+   user  system elapsed 
+ 24.332   8.168  22.787 
