@@ -1,6 +1,6 @@
 library(RCurl)
 
-send_beats <- function (subject = "x01", path = "xbeats",  addr="172.18.161.250", port=44448, iter = i) {
+send_beats <- function (subject = "x01", path = "xbeats",  addr="172.18.161.100", port=44448, iter = i) {
     file = file.path(path, paste(subject, ".beats", sep=""))
     beats = readLines(file)
     payload = paste(beats, collapse=" ")
@@ -11,15 +11,14 @@ send_beats <- function (subject = "x01", path = "xbeats",  addr="172.18.161.250"
     postForm(paste("http://", addr, ":", port, sep=""), .opts=list(httpheader=httpheader, postfields=http_content))
 }
 
-flumeserver = "172.18.161.250"
+flumeserver = "172.18.161.1"
 port = 44448
-recordPath = "xbeats"
+recordPath = "beats"
 recordNames = list.files(path=recordPath, pattern=".beats")
 recordNames = unlist(strsplit(recordNames, '.beats'))
-
-for (i in 1:900) {
+#for (i in 1:900) {
 for (subject in recordNames) {
     print(paste(subject, "_", i, sep=""))
-    send_beats(subject, addr=flumeserver, port=port, iter = (i-1)*length(recordNames) + which(recordNames==subject))
+    send_beats(subject, addr=flumeserver, port=port, path=recordPath, iter = (i-1)*length(recordNames) + which(recordNames==subject))
 }
-}
+#}
