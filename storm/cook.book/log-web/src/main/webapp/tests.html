@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>log-web JS Tests</title>
+    <link rel="stylesheet" href="assets/css/qunit.css">
+</head>
+<body>
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
+<script src="assets/js/qunit.js"></script>
+<script src="assets/js/utils.js"></script>
+<script>
+    test( "getdate from key string", function() {
+        var key = "2013:00:03-23:14";
+        var date = getdate(key);
+        equal( new Date(2013, 0, 3, 23, 14, 0, 0).valueOf(), date.valueOf());
+    });
+</script>
+</body>
+</html>
