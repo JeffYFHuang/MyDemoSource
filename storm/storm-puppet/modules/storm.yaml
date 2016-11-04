@@ -1,0 +1,15 @@
+---
+#_ ZOOKEEPER _#
+storm_zookeeper_servers:
+  - 'storm.zookeeper1'
+
+#_ NIMBUS _#
+nimbus_host: 'storm.nimbus'
+
+#_ SUPERVISOR _#
+supervisor_workers: '50'
+
+#_ DISTRIBUTED RPC _#
+drpc_servers:
+  - 'storm1'
+  - 'storm2'
