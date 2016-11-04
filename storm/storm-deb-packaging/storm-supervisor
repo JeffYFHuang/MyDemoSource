@@ -1,8 +1,0 @@
-# /etc/default/storm-supervisor
-
-#_ START? _#
-ENABLE="no"
-
-#_ SUPERVISOR _#
-STORM_SUPERVISOR_JVM_MEMORY="1024m"
-STORM_SUPERVISORR_JVM_OPTS="-Dlog4j.configuration=storm.log.properties"

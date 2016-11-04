@@ -1,5 +1,0 @@
-{
-  "task": 9,
-  "tuple": ["snow white and the seven dwarfs", "field2", 23, 14]
-}
-end
