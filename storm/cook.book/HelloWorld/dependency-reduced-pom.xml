@@ -4,20 +4,13 @@
     <artifactId>storm</artifactId>
     <groupId>org.apache.storm</groupId>
     <version>1.0.2</version>
-    <relativePath>../../storm-examples/examples/pom.xml</relativePath>
+    <relativePath>../../storm-examples/examples/pom.xml/pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.apache.storm</groupId>
+  <groupId>storm.cookbook</groupId>
   <artifactId>hello-world</artifactId>
   <name>hello-world</name>
   <build>
-    <sourceDirectory>src/jvm</sourceDirectory>
-    <testSourceDirectory>test/jvm</testSourceDirectory>
-    <resources>
-      <resource>
-        <directory>${basedir}/multilang</directory>
-      </resource>
-    </resources>
     <plugins>
       <plugin>
         <artifactId>maven-shade-plugin</artifactId>

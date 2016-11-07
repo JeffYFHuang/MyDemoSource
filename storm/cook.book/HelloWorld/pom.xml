@@ -21,10 +21,10 @@
       <artifactId>storm</artifactId>
       <groupId>org.apache.storm</groupId>
       <version>1.0.2</version>
-      <relativePath>../../storm-examples/examples</relativePath>
+      <relativePath>../../storm-examples/examples/pom.xml</relativePath>
   </parent>
 
-  <groupId>org.apache.storm</groupId>
+  <groupId>storm.cookbook</groupId>
   <artifactId>hello-world</artifactId>
   <packaging>jar</packaging>
 
@@ -163,14 +163,6 @@
   </dependencies>
 
   <build>
-    <sourceDirectory>src/jvm</sourceDirectory>
-    <testSourceDirectory>test/jvm</testSourceDirectory>
-    <resources>
-      <resource>
-        <directory>${basedir}/multilang</directory>
-      </resource>
-    </resources>
-
     <plugins>
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
