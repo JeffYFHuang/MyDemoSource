@@ -1,0 +1,19 @@
+build/
+dot/
+out/
+misc/
+.gradle
+Rplots.pdf
+*.class
+*.log
+*~
+
+# IntelliJ Files #
+*.ipr
+*.iml
+*.iws
+
+# Package Files #
+*.jar
+*.war
+*.ear
