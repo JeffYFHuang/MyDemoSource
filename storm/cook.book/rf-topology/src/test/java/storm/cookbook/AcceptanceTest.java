@@ -6,19 +6,22 @@ import java.util.Properties;
 
 import junit.framework.TestCase;
 import kafka.api.FetchRequest;
+import kafka.api.FetchRequestBuilder;
+import kafka.javaapi.FetchResponse;
 import kafka.javaapi.consumer.SimpleConsumer;
 import kafka.javaapi.message.ByteBufferMessageSet;
 import kafka.javaapi.producer.Producer;
-import kafka.javaapi.producer.ProducerData;
 import kafka.message.MessageAndOffset;
+import kafka.producer.KeyedMessage;
 import kafka.producer.ProducerConfig;
 
+import org.apache.kafka.clients.producer.ProducerRecord;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.junit.Test;
 
-import backtype.storm.utils.Utils;
+import org.apache.storm.utils.Utils;
 
 public class AcceptanceTest extends TestCase {
 
@@ -443,7 +446,7 @@ public class AcceptanceTest extends TestCase {
 
 	@Test
 	public void testTopology() throws InterruptedException {
-		kafkaHost = System.getProperty("zk.host", "192.168.33.10");
+		kafkaHost = System.getProperty("zk.host", "172.18.161.250");
 		Properties props = new Properties();
 		props.put("zk.connect", kafkaHost + ":" + Integer.toString(2181));
 		props.put("serializer.class", "kafka.serializer.StringEncoder");
@@ -453,24 +456,26 @@ public class AcceptanceTest extends TestCase {
 		ProducerConfig config = new ProducerConfig(props);
 		producer = new Producer<String, String>(config);
 		
-		SimpleConsumer consumer = new SimpleConsumer(kafkaHost, 9092,
-				10000, 1024000);
+		SimpleConsumer consumer = new SimpleConsumer(kafkaHost, 9092, 10000, 1024000, "test");
 		
 		//warm up message
 		double[] inputs = (double[]) testData.values().iterator().next()[1];
 		String input = createInput(inputs, "testOrder");
-		ProducerData<String, String> data = new ProducerData<String, String>(
+		KeyedMessage data = new KeyedMessage<String, String>(
 				"orders", input);
 		producer.send(data);
 		
-		FetchRequest fetchRequest = new FetchRequest("order-output", 0,
-				offset, 1000000);
-		ByteBufferMessageSet messages = consumer.fetch(fetchRequest);
+		FetchRequest fetchRequest = new FetchRequestBuilder()
+        .clientId("test")
+        .addFetch("order-output", 0, offset, 1000000)
+        .build();
+
+		FetchResponse fetchResponse = consumer.fetch(fetchRequest);
 		int warmUpAttempts = 0;
 		boolean warm = false;
 		while(!warm){
 			Thread.sleep(2000);
-			for (MessageAndOffset msg : messages) {
+			for (MessageAndOffset msg : fetchResponse.messageSet("order-output", 0)) {
 				offset = msg.offset();
 				warm = true;
 			}
@@ -483,7 +488,7 @@ public class AcceptanceTest extends TestCase {
 		for (String orderId : testData.keySet()) {
 			inputs = (double[]) testData.get(orderId)[1];
 			input = createInput(inputs, orderId);
-			data = new ProducerData<String, String>(
+			data = new KeyedMessage<String, String>(
 					"orders", input);
 			producer.send(data);
 		}
@@ -494,10 +499,12 @@ public class AcceptanceTest extends TestCase {
 		int tested = 0;
 		int errorCount = 0;
 		while ((count < 10) && (tested < 100)) {
-			fetchRequest = new FetchRequest("order-output", 0,
-					offset, 1000000);
-			messages = consumer.fetch(fetchRequest);
-			for (MessageAndOffset msg : messages) {
+		    fetchRequest = new FetchRequestBuilder()
+			        .clientId("test")
+			        .addFetch("order-output", 0, offset, 1000000)
+			        .build();
+		    fetchResponse = consumer.fetch(fetchRequest);
+			for (MessageAndOffset msg : fetchResponse.messageSet("order-output", 0)) {
 				String test = new String(Utils.toByteArray(msg.message()
 						.payload()));
 				offset = msg.offset();

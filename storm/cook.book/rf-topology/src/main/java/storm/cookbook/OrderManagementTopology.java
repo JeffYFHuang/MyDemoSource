@@ -1,38 +1,31 @@
 package storm.cookbook;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.storm.Config;
+import org.apache.storm.LocalCluster;
+import org.apache.storm.StormSubmitter;
+import org.apache.storm.kafka.ZkHosts;
+import org.apache.storm.kafka.trident.TransactionalTridentKafkaSpout;
+import org.apache.storm.kafka.trident.TridentKafkaConfig;
+import org.apache.storm.trident.TridentTopology;
+import org.apache.storm.trident.operation.BaseFunction;
+import org.apache.storm.trident.operation.TridentCollector;
+import org.apache.storm.trident.operation.builtin.Debug;
+import org.apache.storm.trident.tuple.TridentTuple;
+import org.apache.storm.tuple.Fields;
+import org.apache.storm.tuple.Values;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
-import pattern.ClassifierFunction;
-
-import storm.kafka.KafkaConfig.StaticHosts;
-import storm.kafka.trident.TransactionalTridentKafkaSpout;
-import storm.kafka.trident.TridentKafkaConfig;
-import storm.trident.TridentState;
-import storm.trident.TridentTopology;
-import storm.trident.operation.BaseFunction;
-import storm.trident.operation.TridentCollector;
-import storm.trident.operation.builtin.Debug;
-import storm.trident.operation.builtin.FilterNull;
-import storm.trident.operation.builtin.MapGet;
-import storm.trident.state.StateFactory;
-import storm.trident.tuple.TridentTuple;
-import backtype.storm.Config;
-import backtype.storm.LocalCluster;
-import backtype.storm.StormSubmitter;
-import backtype.storm.tuple.Fields;
-import backtype.storm.tuple.Values;
-import backtype.storm.utils.Utils;
-
 import com.github.quintona.KafkaState;
 import com.github.quintona.KafkaStateUpdater;
+
+import pattern.ClassifierFunction;
 
 public class OrderManagementTopology {
 	
@@ -57,7 +50,9 @@ public class OrderManagementTopology {
 		}
 	}
 	
+	@SuppressWarnings("serial")
 	public static class CoerceOutFunction extends BaseFunction {
+		@SuppressWarnings("unchecked")
 		@Override
 		public void execute(TridentTuple tuple, TridentCollector collector) {
 	    	JSONObject obj = new JSONObject();
@@ -67,6 +62,7 @@ public class OrderManagementTopology {
 		}
 	}
 	
+	@SuppressWarnings("serial")
 	public static class EnrichFunction extends BaseFunction {
 		@Override
 		public void execute(TridentTuple tuple, TridentCollector collector) {
@@ -88,11 +84,10 @@ public class OrderManagementTopology {
 
 	public static TridentTopology makeTopology(int properyCount) throws IOException {
 		TridentTopology topology = new TridentTopology();
+		ZkHosts zkHosts = new ZkHosts("master");
 
-		TridentKafkaConfig spoutConfig = new TridentKafkaConfig(
-				StaticHosts.fromHostString(
-						Arrays.asList(new String[] { "localhost" }), 1), "orders");
-		
+	    TridentKafkaConfig spoutConfig = new TridentKafkaConfig(zkHosts, "orders");
+
 		List<String> valueNames = getFieldNames(properyCount);
 		List<String> allFields = new ArrayList<String>(1);
 		allFields.addAll(valueNames);
@@ -101,7 +96,7 @@ public class OrderManagementTopology {
 		topology.newStream("kafka",
 				new TransactionalTridentKafkaSpout(spoutConfig))
 					.each(new Fields("bytes"), new CoerceInFunction(),new Fields(allFields))
-					.each(new Fields(valueNames), new ClassifierFunction("/usr/local/random_forest.xml"),
+					.each(new Fields(valueNames), new ClassifierFunction("./random_forest.xml"),
 						new Fields("prediction"))
 					.each(new Fields("prediction"), 
 							new Debug("Prediction"))
