@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.storm.Config;
 import org.apache.storm.LocalCluster;
@@ -11,6 +12,9 @@ import org.apache.storm.StormSubmitter;
 import org.apache.storm.kafka.ZkHosts;
 import org.apache.storm.kafka.trident.TransactionalTridentKafkaSpout;
 import org.apache.storm.kafka.trident.TridentKafkaConfig;
+import org.apache.storm.kafka.trident.TridentKafkaStateFactory;
+import org.apache.storm.kafka.trident.TridentKafkaUpdater;
+import org.apache.storm.kafka.trident.selector.DefaultTopicSelector;
 import org.apache.storm.trident.TridentTopology;
 import org.apache.storm.trident.operation.BaseFunction;
 import org.apache.storm.trident.operation.TridentCollector;
@@ -21,9 +25,6 @@ import org.apache.storm.tuple.Values;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
-
-import com.github.quintona.KafkaState;
-import com.github.quintona.KafkaStateUpdater;
 
 import pattern.ClassifierFunction;
 
@@ -84,7 +85,7 @@ public class OrderManagementTopology {
 
 	public static TridentTopology makeTopology(int properyCount) throws IOException {
 		TridentTopology topology = new TridentTopology();
-		ZkHosts zkHosts = new ZkHosts("master");
+		ZkHosts zkHosts = new ZkHosts("master:2181");
 
 	    TridentKafkaConfig spoutConfig = new TridentKafkaConfig(zkHosts, "orders");
 
@@ -93,6 +94,16 @@ public class OrderManagementTopology {
 		allFields.addAll(valueNames);
 		allFields.add("order-id");
 		
+        Properties props = new Properties();
+        props.put("bootstrap.servers", "master");
+        props.put("acks", "1");
+        props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+        props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+
+        TridentKafkaStateFactory stateFactory = new TridentKafkaStateFactory()
+                .withProducerProperties(props)
+                .withKafkaTopicSelector(new DefaultTopicSelector("order-output"));
+
 		topology.newStream("kafka",
 				new TransactionalTridentKafkaSpout(spoutConfig))
 					.each(new Fields("bytes"), new CoerceInFunction(),new Fields(allFields))
@@ -104,9 +115,8 @@ public class OrderManagementTopology {
 							new EnrichFunction(), new Fields("dispatch-to"))
 					.each(new Fields("order-id", "dispatch-to"), 
 							new CoerceOutFunction(),new Fields("message"))
-					.partitionPersist(KafkaState.transactional("order-output", 
-							new KafkaState.Options()), new Fields("message"), 
-							new KafkaStateUpdater("message"), new Fields("message"));
+					.partitionPersist(stateFactory, new Fields("message"), 
+							new TridentKafkaUpdater(), new Fields("message"));
 
 		return topology;
 	}
