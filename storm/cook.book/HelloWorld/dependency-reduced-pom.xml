@@ -11,6 +11,11 @@
   <artifactId>hello-world</artifactId>
   <name>hello-world</name>
   <build>
+    <resources>
+      <resource>
+        <directory>${basedir}/multilang</directory>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <artifactId>maven-shade-plugin</artifactId>
