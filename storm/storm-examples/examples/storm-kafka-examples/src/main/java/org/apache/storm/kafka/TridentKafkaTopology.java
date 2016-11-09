@@ -24,30 +24,62 @@ import org.apache.storm.generated.StormTopology;
 import org.apache.storm.tuple.Fields;
 import org.apache.storm.tuple.Values;
 import com.google.common.collect.ImmutableMap;
+
+import org.apache.storm.kafka.trident.TransactionalTridentKafkaSpout;
+import org.apache.storm.kafka.trident.TridentKafkaConfig;
 import org.apache.storm.kafka.trident.TridentKafkaStateFactory;
 import org.apache.storm.kafka.trident.TridentKafkaUpdater;
 import org.apache.storm.kafka.trident.mapper.FieldNameBasedTupleToKafkaMapper;
 import org.apache.storm.kafka.trident.selector.DefaultTopicSelector;
+import org.apache.storm.spout.SchemeAsMultiScheme;
 import org.apache.storm.trident.Stream;
 import org.apache.storm.trident.TridentTopology;
+import org.apache.storm.trident.operation.BaseFunction;
+import org.apache.storm.trident.operation.TridentCollector;
 import org.apache.storm.trident.testing.FixedBatchSpout;
+import org.apache.storm.trident.tuple.TridentTuple;
 
 import java.util.Properties;
 
 public class TridentKafkaTopology {
 
+    public static class Split extends BaseFunction {
+        public void execute(TridentTuple tuple, TridentCollector collector) {
+            String sentence = tuple.getString(0);
+            String[] words = sentence.split("\t");
+/*          List<Object> values = new ArrayList<Object>(array.length);
+            for(String word: sentence.split("\t")) {
+                values.add(word)
+                collector.emit(new Values(word));
+            }
+*/
+            collector.emit(new Values(words));
+        }
+    }
+
     private static StormTopology buildTopology(String brokerConnectionString) {
         Fields fields = new Fields("word", "count");
-        FixedBatchSpout spout = new FixedBatchSpout(fields, 4,
+        /*        FixedBatchSpout spout = new FixedBatchSpout(fields, 4,
                 new Values("storm", "1"),
                 new Values("trident", "1"),
                 new Values("needs", "1"),
                 new Values("javadoc", "1")
         );
         spout.setCycle(true);
+*/
+        String zookeeperHost = "master:2181";
+        ZkHosts zkHosts = new ZkHosts(zookeeperHost);
+
+        TridentKafkaConfig kafkaConfig = new TridentKafkaConfig(zkHosts, "beats");
+  //      SpoutConfig kafkaConfig = new SpoutConfig(zkHosts, "beats", "/beats", "storm");
+        kafkaConfig.scheme = new SchemeAsMultiScheme(new StringScheme());
+
+  //      KafkaSpout kafkaSpout = new KafkaSpout(kafkaConfig);
+        TransactionalTridentKafkaSpout kafkaSpout = new TransactionalTridentKafkaSpout(kafkaConfig);
 
         TridentTopology topology = new TridentTopology();
-        Stream stream = topology.newStream("spout1", spout);
+        Stream stream = topology.newStream("spout1", kafkaSpout)
+                        .each(new Fields("str"), new Split(), new Fields("subject", "beats"));
 
         Properties props = new Properties();
         props.put("bootstrap.servers", brokerConnectionString);
@@ -58,8 +90,8 @@ public class TridentKafkaTopology {
         TridentKafkaStateFactory stateFactory = new TridentKafkaStateFactory()
             .withProducerProperties(props)
             .withKafkaTopicSelector(new DefaultTopicSelector("test"))
-            .withTridentTupleToKafkaMapper(new FieldNameBasedTupleToKafkaMapper("word", "count"));
-        stream.partitionPersist(stateFactory, fields, new TridentKafkaUpdater(), new Fields());
+            .withTridentTupleToKafkaMapper(new FieldNameBasedTupleToKafkaMapper("subject", "beats"));
+        stream.partitionPersist(stateFactory, new Fields("subject", "beats"), new TridentKafkaUpdater(), new Fields());
 
         return topology.build();
     }
