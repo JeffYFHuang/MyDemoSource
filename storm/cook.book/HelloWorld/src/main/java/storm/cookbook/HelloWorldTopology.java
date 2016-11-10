@@ -26,7 +26,7 @@ public class HelloWorldTopology {
         
         @Override
         public void declareOutputFields(OutputFieldsDeclarer declarer) {
-          declarer.declare(new Fields("word"));
+          declarer.declare(new Fields("sentence"));
         }
 
         @Override
@@ -38,14 +38,17 @@ public class HelloWorldTopology {
         public static void main(String args[]) throws AlreadyAliveException, InvalidTopologyException, AuthorizationException {
                 TopologyBuilder builder = new TopologyBuilder();
                 builder.setSpout("randomHelloWorld", new HelloWorldSpout(), 10);
-                builder.setBolt("HelloWorldBolt", new RBolt(), 2)
+                builder.setBolt("RBolt", new RBolt(), 2)
                 .shuffleGrouping("randomHelloWorld");
 
+                builder.setBolt("HelloWorldBolt", new HelloWorldBolt(), 2)
+                .shuffleGrouping("RBolt");
+
                 Config conf = new Config();
-                conf.setDebug(true);
+                conf.setDebug(false);
 
                 if(args!=null && args.length > 0) {
-                   conf.setNumWorkers(3);
+                   conf.setNumWorkers(4);
 
                    StormSubmitter.submitTopology(args[0], conf,
                                                 builder.createTopology());

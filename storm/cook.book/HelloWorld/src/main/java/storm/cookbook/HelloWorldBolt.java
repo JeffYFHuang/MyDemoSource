@@ -21,11 +21,11 @@ public class HelloWorldBolt extends BaseRichBolt {
     @Override
     public void execute(Tuple input) {
             String test = input.getStringByField("sentence");
-            if("Hello World".equals(test)){
+//            if("Hello World".equals(test)){
             myCount++;
-                System.out.println("Found a Hello World! My Count is now: "
-                + Integer.toString(myCount));
-            }
+                System.out.println("Found a Hello World! My Count is now@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@: "
+                + test + Integer.toString(myCount));
+//            }
     }
 
     @Override
