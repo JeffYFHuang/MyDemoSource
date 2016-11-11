@@ -41,7 +41,8 @@ public class WordCountTopology {
   public static class SplitSentence extends ShellBolt implements IRichBolt {
 
     public SplitSentence() {
-      super("python", "splitsentence.py");
+      super("Rscript", "script.R");
+      //super("python", "splitsentence.py");
     }
 
     @Override
@@ -66,6 +67,7 @@ public class WordCountTopology {
         count = 0;
       count++;
       counts.put(word, count);
+      System.out.println("%%%%%%%%%%%: " + word + "" + count);
       collector.emit(new Values(word, count));
     }
 
@@ -79,10 +81,10 @@ public class WordCountTopology {
 
     TopologyBuilder builder = new TopologyBuilder();
 
-    builder.setSpout("spout", new RandomSentenceSpout(), 5);
+    builder.setSpout("spout", new RandomSentenceSpout(), 1);
 
-    builder.setBolt("split", new SplitSentence(), 8).shuffleGrouping("spout");
-    builder.setBolt("count", new WordCount(), 12).fieldsGrouping("split", new Fields("word"));
+    builder.setBolt("split", new SplitSentence(), 1).shuffleGrouping("spout");
+    builder.setBolt("count", new WordCount(), 1).fieldsGrouping("split", new Fields("word"));
 
     Config conf = new Config();
     conf.setDebug(true);

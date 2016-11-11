@@ -1,3 +1,0 @@
-hadoop fs -rm -r /data/output
-#cp HRVFUNS.R ./apnea
-hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-2.6.0.jar -files src/ -mapper src/splitBeatMapper.R -reducer src/splitClassDataReducer.R -input $1 -output /data/output -numReduceTasks $2

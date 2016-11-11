@@ -42,7 +42,6 @@ import org.apache.storm.trident.tuple.TridentTuple;
 import java.util.Properties;
 
 public class TridentKafkaTopology {
-
     public static class Split extends BaseFunction {
         public void execute(TridentTuple tuple, TridentCollector collector) {
             String sentence = tuple.getString(0);
@@ -90,7 +89,7 @@ public class TridentKafkaTopology {
         TridentKafkaStateFactory stateFactory = new TridentKafkaStateFactory()
             .withProducerProperties(props)
             .withKafkaTopicSelector(new DefaultTopicSelector("test"))
-            .withTridentTupleToKafkaMapper(new FieldNameBasedTupleToKafkaMapper("subject", "beats"));
+            .withTridentTupleToKafkaMapper(new FieldNameBasedTupleToKafkaMapper("subject", "subject"));
         stream.partitionPersist(stateFactory, new Fields("subject", "beats"), new TridentKafkaUpdater(), new Fields());
 
         return topology.build();
