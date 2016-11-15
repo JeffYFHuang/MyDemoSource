@@ -43,7 +43,7 @@ while (count <= 4000) {
             hrvdata <- c(hrvdata, val[2])
          } else {
             if (!next_sub) {
-               hrvdata <- generateHRV(list(hrvdata), 144)
+               hrvdata <- generateHRV(hrvdata, 144)
                lapply (hrvdata, send_one_hrv, subject = paste(curSubject, "-YFnb1", count, sep=""), addr=flumeserver, port=port)
                print(paste(curSubject, "-", count, sep=""))
                count = count + 1

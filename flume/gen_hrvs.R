@@ -30,7 +30,7 @@ hrvdata <- NULL
 now <- as.numeric(Sys.time())
 times <- now+seq(0, 300*144, 300)
 count = 1
-while (count <= 4000) {
+while (count <= 20000) {
      next_sub = TRUE
      for (i in 1:length(lines)){
          val <- unlist(strsplit(lines[i], "\t"))
@@ -39,7 +39,7 @@ while (count <= 4000) {
             hrvdata <- c(hrvdata, val[2])
          } else {
             if (!next_sub) {
-               hrvdata <- generateHRV(list(hrvdata), 144)
+               hrvdata <- generateHRV(hrvdata, 144)
                hrvdata = lapply (hrvdata, bindSubjectHrv, subject = paste(curSubject, "-", count, sep=""))
                print(paste(curSubject, "-", count, sep=""))
                write(unlist(hrvdata), file.path(recordPath, paste(curSubject, "-", count, ".hrv", sep="")))
