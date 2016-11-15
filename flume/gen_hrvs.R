@@ -2,13 +2,9 @@ library(RCurl)
 library(rjson)
 library(parallel)
 
-send_one_hrv <- function (data, subject = "x01", addr="172.18.161.100", port=44448) {
-    payload = paste(data, collapse=" ")
-    headers = format(Sys.time(), paste('"headers":{"m_user":"', subject , '","m_year":"%Y","m_month":"%m","m_day":"%d", "m_hour":"%H"}', sep=""))
-
-    http_content = paste('[{', headers, ',"body":', "'", subject, '\t', payload, "'", '}]', sep="")
-    httpheader <- c(Accept="application/json; charset=UTF-8", "Content-Type"="application/json")
-    postForm(paste("http://", addr, ":", port, sep=""), .opts=list(httpheader=httpheader, postfields=http_content))
+bindSubjectHrv <- function (data, subject = "x01", conn) {
+    hrv = paste(subject, "\t", data, sep="")
+    hrv
 }
 
 generateHRV <- function(hrvdata, reptimes = 144, replace=T) {
@@ -44,8 +40,9 @@ while (count <= 4000) {
          } else {
             if (!next_sub) {
                hrvdata <- generateHRV(list(hrvdata), 144)
-               lapply (hrvdata, send_one_hrv, subject = paste(curSubject, "-YFnb1", count, sep=""), addr=flumeserver, port=port)
+               hrvdata = lapply (hrvdata, bindSubjectHrv, subject = paste(curSubject, "-", count, sep=""))
                print(paste(curSubject, "-", count, sep=""))
+               write(unlist(hrvdata), file.path(recordPath, paste(curSubject, "-", count, ".hrv", sep="")))
                count = count + 1
             }
 
@@ -56,5 +53,4 @@ while (count <= 4000) {
             hrvdata <- val[2]
         }
     }
-    #send_one_hrv(val[1], val[2], addr=flumeserver, port=port)
 }
