@@ -1,0 +1,3 @@
+hadoop fs -rm -r /user/hduser/output
+#cp HRVFUNS.R ./apnea
+hadoop jar /usr/local/hadoop/share/hadoop/tools/lib/hadoop-streaming-2.6.0.jar -files apnea_v2/ -mapper apnea_v2/HRVMapper.R -reducer apnea_v2/ClassedReducer.R -input /HRVData/$1 -output /user/hduser/output -numReduceTasks $2

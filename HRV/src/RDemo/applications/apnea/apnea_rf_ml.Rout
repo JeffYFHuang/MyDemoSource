@@ -1,0 +1,153 @@
+
+R version 3.3.1 (2016-06-21) -- "Bug in Your Hair"
+Copyright (C) 2016 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> #! /usr/bin/env Rscript
+> 
+> # mapper.R - Wordcount program in R
+> # script for Mapper (R-Hadoop integration)
+> 
+> source("HRVFUNS.R")
+Loading required package: RHRV
+Loading required package: tcltk
+Loading required package: tkrplot
+Loading required package: waveslim
+
+waveslim: Wavelet Method for 1/2/3D Signals (version = 1.7.5)
+
+Loading required package: nonlinearTseries
+Loading required package: Matrix
+Loading required package: rgl
+Loading required package: tseries
+Loading required package: TSA
+Loading required package: leaps
+Loading required package: locfit
+locfit 1.5-9.1 	 2013-03-22
+Loading required package: mgcv
+Loading required package: nlme
+This is mgcv 1.7-28. For overview type 'help("mgcv-package")'.
+
+Attaching package: ‘TSA’
+
+The following objects are masked from ‘package:stats’:
+
+    acf, arima
+
+The following object is masked from ‘package:utils’:
+
+    tar
+
+Loading required package: Rcpp
+
+Attaching package: ‘nonlinearTseries’
+
+The following object is masked from ‘package:grDevices’:
+
+    contourLines
+
+Loading required package: rjson
+> require(caret)
+Loading required package: caret
+Loading required package: lattice
+Loading required package: ggplot2
+> splitIntoWords <- function(line) unlist(strsplit(line, "\t"))
+> 
+> ## **** could wo with a single readLines or in blocks
+> con <- file("apneahrv.dat", open = "r")
+> df.InEpisodes = NULL
+> df.OutEpisodes = NULL
+> while (length(line <- readLines(con, n = 1, warn = FALSE)) > 0) {
++     words <- splitIntoWords(line)
++     df = JsonToDataFrame(words[2])
++     pos = charmatch(strsplit(words[1], "[.]")[[1]][2], c("beatsInEpisodes", "beatsOutEpisodes"))
++     if (pos == 1) {
++        df.InEpisodes <- rbind(df.InEpisodes, df)
++     } else {
++        df.OutEpisodes <- rbind(df.OutEpisodes, df)
++     }
++ }
+> close(con)
+> 
+>     drops <- c("startTime","endTime")
+>     df.InEpisodes <- df.InEpisodes[, !(names(df.InEpisodes) %in% drops)]
+>     df.OutEpisodes <- df.OutEpisodes[, !(names(df.OutEpisodes) %in% drops)]
+>     df.InEpisodes["type"] = "Y"
+>     df.OutEpisodes["type"] = "N"
+>     data = rbind(df.InEpisodes, df.OutEpisodes)
+>     data$type=factor(data$type)
+>     inTrain <- createDataPartition(y = data$type, p = .75, list = FALSE)
+>     features <- c("SDNN", "TINN", "LFHF", "LFnu", "SD2", "SD12", "TP", "ApEn", "type")
+> 
+>     training <- data[inTrain, features]
+>     testing <- data[-inTrain, features]
+>     #features <- names(data)
+>     #training <- data[inTrain, ]
+>     #testing <- data[-inTrain, ]
+> 
+>     trainX <- training[,names(training) != "type"]
+>     preProcValues <- preProcess(x = trainX, method = c("center", "scale"))
+>     set.seed(400)
+>     ctrl <- trainControl(method="repeatedcv",repeats = 3) #,classProbs=TRUE,summaryFunction = twoClassSummary)
+>     # Random forrest
+>     rfFit <- train(type ~ ., data = training, method = "rf", trControl = ctrl, preProcess = c("center","scale"), tuneLength = 20)
+Loading required package: randomForest
+randomForest 4.6-12
+Type rfNews() to see new features/changes/bug fixes.
+
+Attaching package: ‘randomForest’
+
+The following object is masked from ‘package:ggplot2’:
+
+    margin
+
+note: only 7 unique complexity parameters in default grid. Truncating the grid to 7 .
+
+>  
+>     rfPredict <- predict(rfFit,newdata = testing)
+>     #Get the confusion matrix to see accuracy value and other parameter values
+>     confusionMatrix(rfPredict, testing$type)
+Confusion Matrix and Statistics
+
+          Reference
+Prediction   N   Y
+         N 530  80
+         Y  59 280
+                                          
+               Accuracy : 0.8535          
+                 95% CI : (0.8294, 0.8754)
+    No Information Rate : 0.6207          
+    P-Value [Acc > NIR] : < 2e-16         
+                                          
+                  Kappa : 0.6854          
+ Mcnemar's Test P-Value : 0.08981         
+                                          
+            Sensitivity : 0.8998          
+            Specificity : 0.7778          
+         Pos Pred Value : 0.8689          
+         Neg Pred Value : 0.8260          
+             Prevalence : 0.6207          
+         Detection Rate : 0.5585          
+   Detection Prevalence : 0.6428          
+      Balanced Accuracy : 0.8388          
+                                          
+       'Positive' Class : N               
+                                          
+> 
+> proc.time()
+   user  system elapsed 
+321.916   2.528 327.993 

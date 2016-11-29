@@ -1,0 +1,3 @@
+hadoop fs -rm -r /hrm/output_predicted
+#cp HRVFUNS.R ./apnea
+hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-2.6.0.jar -D mapreduce.job.maps=$1 -files src/ -mapper src/ToModFitHRVHbaseMapper.R -input /hrm/hrv -output /hrm/output_predicted
