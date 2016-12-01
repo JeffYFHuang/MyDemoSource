@@ -33,8 +33,8 @@ curSubject <- ""
 hrvdata <- NULL
 now <- as.numeric(Sys.time())
 times <- now+seq(0, 300*144, 300)
-count = 1
-while (count <= 20000) {
+count = 20001
+while (count <= 30000) {
      next_sub = TRUE
      for (i in 1:length(lines)){
          val <- unlist(strsplit(lines[i], "\t"))
