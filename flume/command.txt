@@ -1,2 +1,4 @@
 flume-ng agent -c conf -f flume-kafka-sink.conf -n producer -Dflume.root.logger=INFO,console
 curl -X POST -d @test --header "Content-Type: application/json" http://master:44448
+Rscript hdfs_send_beats.R "ip='172.18.161.1'" port=44448 num=1000
+flume-ng agent --conf-file hdfs_test.conf --name a1 -Dflume.monitoring.type=http -Dflume.monitori.port=34545
