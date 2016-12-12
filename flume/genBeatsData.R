@@ -14,7 +14,7 @@ for (recordName in recordNames) {
     hrv.wfdb = LoadBeatWFDB(hrv.wfdb, recordName, recordPath, annotator = "qrs")
     Beat = hrv.wfdb$Beat$Time
     TailBeat = tail(Beat, 1)
-    data$Beat = c(Beat, TailBeat + Beat[Beat < 43200 - TailBeat])
+    data$Beat = c(Beat, TailBeat + Beat[Beat < 172800 - TailBeat])
     
     if (file.exists(paste(recordPath, recordName, ".apn", sep=""))) {
        hrv.wfdb = LoadApneaWFDB(hrv.wfdb, recordName, Tag="Apnea", recordPath)
