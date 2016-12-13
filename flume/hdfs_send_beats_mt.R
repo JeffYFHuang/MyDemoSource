@@ -12,9 +12,9 @@ send_one_data <- function (data, subject = "x01", addr="172.18.161.100", port=44
 }
 
 send_one_data_mt <- function (data, addr="172.18.161.100", port=44448) {
+    pid = Sys.getpid()
     val <- unlist(strsplit(data, "\t"))
-    s = unlist(strsplit(val[1], " "))
-    subject = paste(s[2], "-", nodename, "-", pid, "-", s[1], sep="")
+    subject = paste(nodename, "-", pid, "-", val[1], sep="")
     send_one_data(val[2], subject, addr, port)
     print(subject) 
 }
@@ -24,6 +24,7 @@ ip = NULL
 port = NULL
 num = NULL
 numcores = 100
+sourcefile = "beatsdata.txt"
 args=(commandArgs(TRUE))
 
 if (length(args) != 0){
@@ -43,17 +44,14 @@ if (is.null(port))
 print(numcores)
 flumeserver = ip
 nodename = Sys.info()["nodename"]
-pid = Sys.getpid()
 
 recordPath = "hrmdata"
 
-conn = file.path(recordPath, "beatsdata.txt")
+conn = file.path(recordPath, sourcefile)
 lines <-readLines(conn)
 curSubject <- ""
 hrvdata <- NULL
 
-word <- function(k, C) paste(k, C, collapse = "")
-
 data <- sample(lines, num, replace=TRUE)
-data <- mapply(word, 1:length(data), data)
-mclapply(data, send_one_data_mt, addr=flumeserver, port=port, mc.cores = 30)
+#data <- paste(1:length(data), data)
+mclapply(data, send_one_data_mt, addr=flumeserver, port=port, mc.cores = numcores)
