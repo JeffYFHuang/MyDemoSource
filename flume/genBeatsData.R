@@ -6,7 +6,7 @@ recordPath = "/media/Data/wfdbData/apnea-ecg/"
 recordNames = list.files(path=recordPath, pattern=".qrs")
 recordNames = unlist(strsplit(recordNames, '.qrs'))
 
-for (recordName in recordNames) {
+for (recordName in recordNames[1:10]) {
     data = list()
     hrv.wfdb = CreateHRVData()
     hrv.wfdb = SetVerbose(hrv.wfdb, FALSE)
@@ -19,12 +19,14 @@ for (recordName in recordNames) {
        data$Episodes = hrv.wfdb$Episodes
     }
 
-    while (length(data$Beat) < 216000) {
+    len = 216000*5
+    while (length(data$Beat) < len) {
        TailBeat = tail(data$Beat, 1)
+       print(TailBeat)
 
-       if (length(data$Beat[data$Beat < 216000 - TailBeat])==0) break
+       if (length(data$Beat[data$Beat < len - TailBeat])==0) break
 
-       data$Beat = c(data$Beat, TailBeat + data$Beat[data$Beat < 216000 - TailBeat])
+       data$Beat = c(data$Beat, TailBeat + data$Beat[data$Beat < len - TailBeat])
 
        b = hrv.wfdb$Episodes
        b[,1] = b[,1]+TailBeat
