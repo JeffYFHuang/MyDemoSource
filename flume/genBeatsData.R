@@ -12,16 +12,25 @@ for (recordName in recordNames) {
     hrv.wfdb = SetVerbose(hrv.wfdb, FALSE)
 
     hrv.wfdb = LoadBeatWFDB(hrv.wfdb, recordName, recordPath, annotator = "qrs")
-    Beat = hrv.wfdb$Beat$Time
-    TailBeat = tail(Beat, 1)
-    data$Beat = c(Beat, TailBeat + Beat[Beat < 172800 - TailBeat])
-    
+    data$Beat = hrv.wfdb$Beat$Time
+
     if (file.exists(paste(recordPath, recordName, ".apn", sep=""))) {
        hrv.wfdb = LoadApneaWFDB(hrv.wfdb, recordName, Tag="Apnea", recordPath)
-       a = hrv.wfdb$Episodes
-       b = a
-       b[,1] = b[,1]+TailBeat
-       data$Episodes = rbind(a, b)
+       data$Episodes = hrv.wfdb$Episodes
     }
+
+    while (length(data$Beat) < 216000) {
+       TailBeat = tail(data$Beat, 1)
+
+       if (length(data$Beat[data$Beat < 216000 - TailBeat])==0) break
+
+       data$Beat = c(data$Beat, TailBeat + data$Beat[data$Beat < 216000 - TailBeat])
+
+       b = hrv.wfdb$Episodes
+       b[,1] = b[,1]+TailBeat
+       data$Episodes = rbind(data$Episodes, b)
+     }
+
+#    cat(recordName, "\n")
     cat(recordName, "\t", toJSON(data), "\n", sep="")
 }
