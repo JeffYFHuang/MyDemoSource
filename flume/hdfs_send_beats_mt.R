@@ -15,7 +15,7 @@ send_one_data_mt <- function (data, addr="172.18.161.100", port=44448) {
     pid = Sys.getpid()
     val <- unlist(strsplit(data, "\t"))
     subject = paste(nodename, "-", pid, "-", val[1], sep="")
-    send_one_data(val[2], subject, addr, port)
+#    send_one_data(val[2], subject, addr, port)
     print(subject) 
 }
 

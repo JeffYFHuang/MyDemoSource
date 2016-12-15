@@ -22,7 +22,6 @@ for (recordName in recordNames[1:10]) {
     len = 216000*5
     while (length(data$Beat) < len) {
        TailBeat = tail(data$Beat, 1)
-       print(TailBeat)
 
        if (length(data$Beat[data$Beat < len - TailBeat])==0) break
 
