@@ -22,19 +22,42 @@ generateHRV <- function(hrvdata, reptimes = 144, replace=T) {
     hrvdata # <- lapply(hrvdata, toJSON)
 }
 
-flumeserver = "172.18.161.1"
-port = 44448
-recordPath = "hrvdata"
-conn = file.path(recordPath, "hrvdata.txt")
+args=(commandArgs(TRUE))
+ip = NULL
+port = NULL
+num = NULL
+sourcefile = "hrvlabel.dat"
+args=(commandArgs(TRUE))
 
+if (length(args) != 0){
+  for (i in 1:length(args)){
+     eval(parse(text=args[[i]]))
+  }
+}
+
+execution = "Exe. Rscript hdfs_send_hrv.R \"ip='10.0.0.1'\" port=44448 num=1000";
+if (is.null(ip))
+   stop(paste("please provide flume server address!", execution))
+if (is.null(port))
+   stop(paste("please provide port of flume service!", execution))
+if (is.null(port))
+   stop(paste("please provide the number of messages to send!", execution))
+
+flumeserver = ip
+nodename = Sys.info()["nodename"]
+
+recordPath = "hrmdata"
+
+conn = file.path(recordPath, sourcefile)
 lines <-readLines(conn)
 
+pid = Sys.getpid()
 curSubject <- ""
 hrvdata <- NULL
 now <- as.numeric(Sys.time())
 times <- now+seq(0, 300*144, 300)
-count = 20001
-while (count <= 30000) {
+count = 1
+while (count <= num) {
      next_sub = TRUE
      for (i in 1:length(lines)){
          val <- unlist(strsplit(lines[i], "\t"))
@@ -43,10 +66,11 @@ while (count <= 30000) {
             hrvdata <- c(hrvdata, val[2])
          } else {
             if (!next_sub) {
+               subject = paste(nodename, "-", curSubject, "-", pid,  "-", count, sep="")
                hrvdata <- generateHRV(hrvdata, 144)
-               send_one_hrv(hrvdata, subject = paste(curSubject, "-", count, sep=""), addr=flumeserver, port=port) 
+               send_one_hrv(hrvdata, subject, addr=flumeserver, port=port) 
                #lapply (hrvdata, send_one_hrv, subject = paste(curSubject, "-YFnb1", count, sep=""), addr=flumeserver, port=port)
-               print(paste(curSubject, "-", count, sep=""))
+               print(subject)
                count = count + 1
             }
 
