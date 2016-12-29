@@ -20,8 +20,8 @@ generateHRV <- function(hrvdata, reptimes = 144, replace=T) {
 
 flumeserver = "172.18.161.1"
 port = 44448
-recordPath = "hrvdata"
-conn = file.path(recordPath, "hrvdata.txt")
+recordPath = "hrmdata"
+conn = file.path(recordPath, "hrvlabel.dat")
 
 lines <-readLines(conn)
 
