@@ -6,8 +6,8 @@ require(rhdfs)
 require(rjson)
 require(rmr2)
 
-lapply <- cmpfun(lapply)
-mapply <- cmpfun(mapply)
+#lapply <- cmpfun(lapply)
+#mapply <- cmpfun(mapply)
 
 SplitBeatsbyEpisodes <- function(HRVData) {
     if (HRVData$Verbose) {
@@ -39,13 +39,13 @@ SplitBeatsbyEpisodes <- function(HRVData) {
      return(l)
 }
 
-SplitBeatsbyEpisodes <- cmpfun(SplitBeatsbyEpisodes)
+#SplitBeatsbyEpisodes <- cmpfun(SplitBeatsbyEpisodes)
 
 CaculateApEn <- function (HRVData, m = 2, r = 0.2, SDNN = 1) {
      return(phi(HRVData, m, r, SDNN) - phi(HRVData, m+1, r, SDNN))
 }
 
-CaculateApEn <- cmpfun(CaculateApEn)
+#CaculateApEn <- cmpfun(CaculateApEn)
 
 phi <- function (HRVData, m = 2, r = 0.2, SDNN = 1) {
      U = HRVData$Beat$RR
@@ -60,7 +60,7 @@ phi <- function (HRVData, m = 2, r = 0.2, SDNN = 1) {
      return(sum(log(rowSums(dm, na.rm=TRUE)/(N-m+1)))/N-m+1)
 }
 
-phi <- cmpfun(phi)
+#phi <- cmpfun(phi)
 
 filterHR <- function (HRVData, minbpm = 25, maxbpm = 200, windowsize = 300) {
    if (length(HRVData$Beat$Time) == 0)
@@ -85,7 +85,7 @@ filterHR <- function (HRVData, minbpm = 25, maxbpm = 200, windowsize = 300) {
    HRVData$Beat = data.frame(Time=BeatTime, niHR, RR)
 }
 
-filterHR <- cmpfun(filterHR)
+#filterHR <- cmpfun(filterHR)
 
 SplitBeatDataByDuration <- function(HRVData) {
     beatLists = mapply(beatDataInDuration, HRVData$BeatTimeInterval$begin, HRVData$BeatTimeInterval$end, MoreArgs=list(beats=HRVData$Beat$Time))
@@ -94,14 +94,14 @@ SplitBeatDataByDuration <- function(HRVData) {
     return(beatLists)
 }
 
-SplitBeatDataByDuration <- cmpfun(SplitBeatDataByDuration)
+#SplitBeatDataByDuration <- cmpfun(SplitBeatDataByDuration)
 
 beatDataInDuration <- function(beats, startTime, endTime) {
     beats = beats[beats >= startTime & beats < endTime]
     return(as.vector(beats))
 }
 
-beatDataInDuration <- cmpfun(beatDataInDuration)
+#beatDataInDuration <- cmpfun(beatDataInDuration)
 
 getWindowsBeatData <- function(beats, windowsize = 300, shift = 300) {
     if (length(beats) == 0)
@@ -122,15 +122,15 @@ getWindowsBeatData <- function(beats, windowsize = 300, shift = 300) {
     return(winsBeatData)
 }
 
-getWindowsBeatData <- cmpfun(getWindowsBeatData)
+#getWindowsBeatData <- cmpfun(getWindowsBeatData)
 
-BuildNIHR <- cmpfun(BuildNIHR)
-InterpolateNIHR <- cmpfun(InterpolateNIHR)
-CreateTimeAnalysis <- cmpfun(CreateTimeAnalysis)
-CreateFreqAnalysis <- cmpfun(CreateFreqAnalysis)
-CalculatePowerBand <- cmpfun(CalculatePowerBand)
-CreateNonLinearAnalysis <- cmpfun(CreateNonLinearAnalysis)
-PoincarePlot <- cmpfun(PoincarePlot)
+#BuildNIHR <- cmpfun(BuildNIHR)
+#InterpolateNIHR <- cmpfun(InterpolateNIHR)
+#CreateTimeAnalysis <- cmpfun(CreateTimeAnalysis)
+#CreateFreqAnalysis <- cmpfun(CreateFreqAnalysis)
+#CalculatePowerBand <- cmpfun(CalculatePowerBand)
+#CreateNonLinearAnalysis <- cmpfun(CreateNonLinearAnalysis)
+#PoincarePlot <- cmpfun(PoincarePlot)
 
 calculateHRV <- function(beats, windowsize = 300, class = NULL) {
     result = list()
@@ -201,7 +201,7 @@ calculateHRV <- function(beats, windowsize = 300, class = NULL) {
     return(result)
 }
 
-calculateHRV <- cmpfun(calculateHRV)
+#calculateHRV <- cmpfun(calculateHRV)
 
 splitWindowData <- function(HRVData, windowsize = 300, shift = 300) {
     winsBeatData = getWindowsBeatData(HRVData, windowsize = 300, shift = 300)
@@ -209,7 +209,7 @@ splitWindowData <- function(HRVData, windowsize = 300, shift = 300) {
     return(winsBeatData)
 }
 
-splitWindowData <- cmpfun(splitWindowData)
+#splitWindowData <- cmpfun(splitWindowData)
 
 getSplitWindowData <- function(HRVData, windowsize = 300, shift = 300) {
     beatLists = SplitBeatDataByDuration(HRVData)
@@ -219,8 +219,8 @@ getSplitWindowData <- function(HRVData, windowsize = 300, shift = 300) {
     return(data)
 }
 
-getSplitWindowData <- cmpfun(getSplitWindowData)
-filterHR <- cmpfun(filterHR)
+#getSplitWindowData <- cmpfun(getSplitWindowData)
+#filterHR <- cmpfun(filterHR)
 
 createFilterHRVData <- function(data) {
   HRVData = CreateHRVData()
@@ -264,13 +264,31 @@ outputBeatsHRV <- function(beats, subject) {
     cat(strsplit(subject, "[.]")[[1]][1], "\t", toJSON(HRV), "\n", sep="")
 }
 
-outputBeatsHRV <- cmpfun(outputBeatsHRV)
+beats2HRV <- function(beats, subject) {
+    mod.fit = NULL
+    HRV = calculateHRV(beats)
+    pos = charmatch(strsplit(subject, "[.]")[[1]][2], c("InEpisodes", "OutEpisodes"))
+
+    HRV$label = NA
+
+    if (!is.na(pos)) {
+       if (pos == 1) {
+          HRV$label = 1
+       } else if (pos == 2){
+          HRV$label = 0
+       }
+    }
+
+    HRV
+}
+
+#outputBeatsHRV <- cmpfun(outputBeatsHRV)
 
 outputWindowBeat <- function(data, subject) {
   cat(subject, "\t", paste(unlist(data), collapse=" "), "\n", sep="")
 } 
 
-outputWindowBeat <- cmpfun(outputWindowBeat)
+#outputWindowBeat <- cmpfun(outputWindowBeat)
 
 getSplitWindowBeats<-function(data, windowsize = 300, shift = 300, toHRV = F) {
   if (length(data$Beat) < 120)
@@ -284,14 +302,19 @@ getSplitWindowBeats<-function(data, windowsize = 300, shift = 300, toHRV = F) {
 
   HRVData = createFilterHRVData(data$Beat)
   beatLists = getSplitWindowData(HRVData, windowsize = 300, shift = 300)
+
+  HRV = list()
+  #if (toHRV==2) HRV = lapply(beatLists, beats2HRV, subject = data$Subject)
+
   if (toHRV)
-     lapply(beatLists, outputBeatsHRV, subject = data$Subject)
+     HRV = lapply(beatLists, outputBeatsHRV, subject = data$Subject)
   else
      lapply(beatLists, outputWindowBeat, subject = data$Subject)
-  beatLists
+
+  HRV
 }
 
-getSplitWindowBeats <- cmpfun(getSplitWindowBeats)
+#getSplitWindowBeats <- cmpfun(getSplitWindowBeats)
 
 getHRVData <- function(beats, windowsize = 300, shift = 300, class = NULL) {
     winsBeatData = getWindowsBeatData(beats, windowsize = 300, shift = 300)
