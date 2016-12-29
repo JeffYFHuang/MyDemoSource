@@ -11,13 +11,39 @@ require(rhdfs)
 require(rmr2)
 require(rjson)
 require(randomForest)
-enableJIT(3)
+require(caret)
+a<-enableJIT(3)
 
 master = "10.0.0.5"
 trimWhiteSpace <- function(line) gsub("(^ +)|( +$)", "", line)
 
-frac.per.model <- 0.02
-num.models <- 20
+#frac.per.model <- 0.02
+num.models <- 200
+input <- NULL #"/data/hrvdata"
+output <- NULL #"/data/train_output"
+models_output <- NULL #"/data/train_models"
+testDataPath <- NULL #"/data/testdata"
+
+args=(commandArgs(TRUE))
+
+if (length(args) != 0){
+  for (i in 1:length(args)){
+     eval(parse(text=args[[i]]))
+  }
+}
+
+execution = "Exe. Rscript runRc.R input=\"'/data/hrvdata'\" output=\"'/data/train_output'\" num.models=100";
+if (is.null(input))
+   stop(paste("please provide input path!", execution))
+if (is.null(output))
+   stop(paste("please provide output path!", execution))
+#if (is.null(models_output))
+#   stop(paste("please provide store path of models trained!", execution))
+
+hdfs.init()
+#print(hdfs.exists(output))
+if (hdfs.exists(output)) hdfs.rmr(output)
+#if (hdfs.exists(models_output)) hdfs.rmr(models_output)
 
 splitLine <- function(line) {
     val <- unlist(strsplit(line, "\t"))
@@ -69,29 +95,46 @@ fit.trees <- function(k, v) {
   # the reduce task from timing out
   drops <- c("startTime","endTime")
   v <- v[, !(names(v) %in% drops)]
+  #features <- c("label", "SDNN", "TINN", "LFHF", "LFnu", "SD2", "SD12", "TP", "ApEn", "type")
+  #v <- v[, features]
   v$label=factor(v$label)
-  features <- c("label", "SDNN", "TINN", "LFHF", "LFnu", "SD2", "SD12", "TP", "ApEn", "type")
-  v <- v[, features]
+  inTrain <- createDataPartition(y = v$label, p = .75, list = FALSE)
+  training <- v[inTrain,]
+  testing <- na.omit(v[-inTrain,])
 
-  rf <- randomForest(formula=label ~ ., data=v, na.action=na.omit, ntree=5, do.trace=FALSE)
+  set.seed(400)
+  ctrl <- trainControl(method="repeatedcv", number=10, repeats = 3)
+  mod.fit <- train(label ~ ., data = training, method = "rf", trControl = ctrl, ntree=2, preProcess = c("center","scale"), na.action=na.omit, trace=FALSE)
+#  rf <- randomForest(formula=label ~ ., data=v, na.action=na.omit, ntree=5, do.trace=FALSE)
   # rf is a list so wrap it in another list to ensure that only
   # one object gets emitted. this is because keyval is vectorized
-  keyval(k, list(forest=rf))
+  #keyval(k, list(forest=rf))
   #keyval(k, paste(names(v), collapse=" "))
+  p <- predict(mod.fit, newdata = testing)
+  #Get the confusion matrix to see accuracy value and other parameter values
+  #confusionMatrix(Predict, testing$label)
+#  to.dfs(testing, output = testDataPath)
+  keyval(k, list(list(model=mod.fit, p=p, t=testing$label)))
 }
 
-a <- mapreduce(input="/data/hrvdata",
+a <- mapreduce(input=input,
           input.format="text", #make.input.format("csv", sep = "\t"),
 #          output.format="text", #make.input.format("csv", sep = "\t"),
           map=poisson.subsample,
           reduce=fit.trees,
-          output="/data/output")
+          output=output)
 
-raw.forests <- values(from.dfs("/data/output")) #"make.input.format("csv", sep = "\t")))
-forest <- do.call(combine, raw.forests)
-#summary(forest)
-#    split <- splitLine(lines[1])
-#    hrv.data = fromJSON(split$HRV)
-#    df <- data.frame(t(matrix(unlist(hrv.data), length(hrv.data[[1]]))))
-#    names(df) <- names(hrv.data[[1]])
-#    poisson.subsample(df)
+#mod.fit<-from.dfs(output)
+#pred <- function(mod, newdata) {predict(mod$model, newdata)}
+#lapply(mod.fit$val, pred, newdata=testing)
+
+#predict_labels <- NULL
+#orignal_labels <- NULL
+
+#for (x in mod.fit$val) {
+    # get data
+#    predict_labels <- c(predict_labels, x$p)
+#    orignal_labels <- c(orignal_labels, x$t)
+#}
+
+#confusionMatrix(predict_labels, orignal_labels)
