@@ -67,8 +67,8 @@ then
 fi
 
 # for the package update script to run, the hadoop user needs to own the R library
-sudo chown -R hduser /usr/local/lib/R
-
+sudo chown hduser /usr/local/lib/R -R
+sudo chown hduser /usr/lib/R -R
 # Install rmr2's prerequisite packages from CRAN, plus plyr and some other favorites:
 sudo R --no-save << EOF
 install.packages(c("rJava", "Rcpp", "RJSONIO", "bitops", "digest",
