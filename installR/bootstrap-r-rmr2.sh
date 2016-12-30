@@ -60,7 +60,7 @@ then
 fi
 
 file="/usr/lib/libquadmath.so"
-if [ -f "$file0" ]
+if [ -f "$file" ]
 then
    sudo rm $file
    sudo ln -s /usr/lib/x86_64-linux-gnu/libquadmath.so.0 $file
