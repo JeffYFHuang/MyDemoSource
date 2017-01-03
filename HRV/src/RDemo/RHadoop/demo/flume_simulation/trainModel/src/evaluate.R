@@ -10,12 +10,13 @@ require(compiler)
 require(rmr2)
 require(rjson)
 require(caret)
+require(randomForest)
 a<-enableJIT(3)
 
   #confusionMatrix(Predict, testing$label)
 #data <- from.dfs("/data/output", format="text")
-mod.fit<-from.dfs("/data/outputtest")
-pred <- function(mod, newdata) {predict(mod$model, newdata)}
+mod.fit<-from.dfs("/data/traintest_output")
+#pred <- function(mod, newdata) {predict(mod$model, newdata)}
 #lapply(mod.fit$val, pred, newdata=testing)
 
 predict_labels <- NULL

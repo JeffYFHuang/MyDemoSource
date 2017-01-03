@@ -23,6 +23,7 @@ input <- NULL #"/data/hrvdata"
 output <- NULL #"/data/train_output"
 models_output <- NULL #"/data/train_models"
 testDataPath <- NULL #"/data/testdata"
+feature_prob <- 0
 
 args=(commandArgs(TRUE))
 
@@ -32,13 +33,16 @@ if (length(args) != 0){
   }
 }
 
-execution = "Exe. Rscript runRc.R input=\"'/data/hrvdata'\" output=\"'/data/train_output'\" num.models=100";
+execution = "Exe. Rscript runRc.R input=\"'/data/hrvdata'\" output=\"'/data/train_output'\" num.models=100 feature_prob=0.9";
 if (is.null(input))
    stop(paste("please provide input path!", execution))
 if (is.null(output))
    stop(paste("please provide output path!", execution))
 #if (is.null(models_output))
 #   stop(paste("please provide store path of models trained!", execution))
+
+features<-from.dfs("/data/feature_output")
+features<-features$key[which(features$val>=feature_prob)]
 
 hdfs.init()
 #print(hdfs.exists(output))
@@ -96,7 +100,8 @@ fit.trees <- function(k, v) {
   drops <- c("startTime","endTime")
   v <- v[, !(names(v) %in% drops)]
   #features <- c("label", "SDNN", "TINN", "LFHF", "LFnu", "SD2", "SD12", "TP", "ApEn", "type")
-  #v <- v[, features]
+  if (feature_prob > 0) 
+     v <- v[, c("label", features)]
   v$label=factor(v$label)
   inTrain <- createDataPartition(y = v$label, p = .75, list = FALSE)
   training <- v[inTrain,]
@@ -104,7 +109,7 @@ fit.trees <- function(k, v) {
 
   set.seed(400)
   ctrl <- trainControl(method="repeatedcv", number=10, repeats = 3)
-  mod.fit <- train(label ~ ., data = training, method = "rf", trControl = ctrl, ntree=2, preProcess = c("center","scale"), na.action=na.omit, trace=FALSE)
+  mod.fit <- train(label ~ ., data = training, method = "rf", trControl = ctrl, ntree=5, preProcess = c("center","scale"), na.action=na.omit, trace=FALSE)
 #  rf <- randomForest(formula=label ~ ., data=v, na.action=na.omit, ntree=5, do.trace=FALSE)
   # rf is a list so wrap it in another list to ensure that only
   # one object gets emitted. this is because keyval is vectorized
@@ -123,18 +128,3 @@ a <- mapreduce(input=input,
           map=poisson.subsample,
           reduce=fit.trees,
           output=output)
-
-#mod.fit<-from.dfs(output)
-#pred <- function(mod, newdata) {predict(mod$model, newdata)}
-#lapply(mod.fit$val, pred, newdata=testing)
-
-#predict_labels <- NULL
-#orignal_labels <- NULL
-
-#for (x in mod.fit$val) {
-    # get data
-#    predict_labels <- c(predict_labels, x$p)
-#    orignal_labels <- c(orignal_labels, x$t)
-#}
-
-#confusionMatrix(predict_labels, orignal_labels)
