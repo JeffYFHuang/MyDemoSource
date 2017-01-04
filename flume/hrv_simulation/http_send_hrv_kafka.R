@@ -50,7 +50,7 @@ if (is.null(port))
 flumeserver = ip
 nodename = Sys.info()["nodename"]
 
-recordPath = "hrmdata"
+recordPath = "../hrmdata"
 
 conn = file.path(recordPath, sourcefile)
 lines <-readLines(conn)
