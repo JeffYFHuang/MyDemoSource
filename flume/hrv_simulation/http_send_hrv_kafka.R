@@ -4,10 +4,12 @@ library(parallel)
 
 send_one_hrv <- function (data, subject = "x01", addr="172.18.161.100", port=44448, count) {
     payload = toJSON(data)
-    headers = format(Sys.time(), paste('"headers":{"m_user":"subject_', count , '","m_year":"%Y","m_month":"%m","m_day":"%d", "m_hour":"%H", "key":"', count, '", "topic": "hrvs"}', sep=""))
-
+    headers = format(Sys.time(), paste('"headers":{"key":"', count, '", "topic": "hrvs"}', sep=""))
+    #subject = "test"
     http_content = paste('[{', headers, ',"body":', "'", subject, '\t', payload, "'", '}]', sep="")
+#    print(http_content)
     httpheader <- c(Accept="application/json; charset=UTF-8", "Content-Type"="application/json")
+#    print(httpheader)
     postForm(paste("http://", addr, ":", port, sep=""), .opts=list(httpheader=httpheader, postfields=http_content))
 }
 
@@ -32,6 +34,7 @@ port = NULL
 num = NULL
 sourcefile = "hrvlabel.dat"
 args=(commandArgs(TRUE))
+sample_num = 144
 
 if (length(args) != 0){
   for (i in 1:length(args)){
@@ -39,12 +42,12 @@ if (length(args) != 0){
   }
 }
 
-execution = "Exe. Rscript http_send_hrv_kafka.R \"ip='10.0.0.1'\" port=44448 num=1000";
+execution = "Exe. Rscript http_send_hrv_kafka.R \"ip='10.0.0.1'\" port=44448 num=1000 sample_num=144";
 if (is.null(ip))
    stop(paste("please provide flume server address!", execution))
 if (is.null(port))
    stop(paste("please provide port of flume service!", execution))
-if (is.null(port))
+if (is.null(num))
    stop(paste("please provide the number of messages to send!", execution))
 
 flumeserver = ip
@@ -55,7 +58,6 @@ recordPath = "../hrmdata"
 conn = file.path(recordPath, sourcefile)
 lines <-readLines(conn)
 
-sample_num = 144
 pid = Sys.getpid()
 curSubject <- ""
 hrvdata <- NULL
