@@ -77,22 +77,31 @@ getHRV <- function (x) {
    kv
 }
 
+cs = rkafka.createConsumer("10.0.0.5:2181", "hrvs", consumerTimeoutMs = "3000", groupId = "flume-sink-group")
 while (T) {
-    tryCatch({
-      cs = rkafka.createConsumer("10.0.0.5:2181", "hrvs", consumerTimeoutMs = "3000", groupId = "flume-sink-group")
-      begin = Sys.time()
-      data = rkafka.readPoll(cs)
-      if (length(data)>0) {
-         dfs.path = "/data/predicted_label"
-         if (dfs.exists(dfs.path))
-            dfs.rmr(dfs.path)
-         to.dfs(c.keyval(lapply(data, getHRV)), output=dfs.path, format="text")
-      }
-      #mcmapply(getHRV, data, mc.cores = 4)
-      cat(length(data), " beats seq: ", Sys.time() - begin, "\n", sep="")
-      rkafka.closeConsumer(cs)
+    cs <- tryCatch({
+       while (T) {
+          begin = Sys.time()
+          data = rkafka.readPoll(cs)
+          tryCatch ({
+             if (length(data)>0) {
+                dfs.path = "/data/predicted_label"
+                if (dfs.exists(dfs.path))
+                   dfs.rmr(dfs.path)
+                to.dfs(c.keyval(lapply(data, getHRV)), output=dfs.path, format="text")
+             }
+             #mcmapply(getHRV, data, mc.cores = 4)
+             cat(length(data), " beats seq: ", Sys.time() - begin, "\n", sep="")
+          }, error = function(e) {
+             conditionMessage(e)
+          })
+       }
+       return(cs)
     }, error = function(e) {
        rkafka.closeConsumer(cs)
-       conditionMessage(e) # 這就會是"demo error"
+       cs = rkafka.createConsumer("10.0.0.5:2181", "hrvs", consumerTimeoutMs = "3000", groupId = "flume-sink-group")
+       return(cs)
+       #conditionMessage(e) # 這就會是"demo error"
     })
 }
+rkafka.closeConsumer(cs)
