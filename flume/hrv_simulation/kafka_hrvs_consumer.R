@@ -31,7 +31,7 @@ getHRV <- function (x) {
    #if (dfs.exists(dfs.path))
    #    dfs.rmr(dfs.path)
    df$predlabel = predict(mod.fit, df)
-   print(confusionMatrix(df$label, df$predlabel))
+#   print(confusionMatrix(df$label, df$predlabel))
    kv <- keyval(y$Subject, toJSON(list(startTime=df$startTime[1], origLabel=df$label, predLabel=as.numeric(df$predlabel)-1)))
    #to.dfs(kv, output=dfs.path, format="text")
    kv
@@ -39,6 +39,19 @@ getHRV <- function (x) {
 #   print(confusionMatrix(df$label, df$predlabel))
    #cat(y$Subject, ": ", Sys.time() - begin, "\n", sep="")
 }
+
+args=(commandArgs(TRUE))
+dfs.path = NULL #"/data/predicted_label"
+
+if (length(args) != 0){
+  for (i in 1:length(args)){
+     eval(parse(text=args[[i]]))
+  }
+}
+
+execution = "Exe. Rscript kafka_hrvs_consumer.R dfs.path=\"'/data/predicted_label'\"";
+if (is.null(dfs.path))
+   stop(paste("please provide dfs path to store results!", execution))
 
 cs = rkafka.createConsumer("10.0.0.5:2181", "hrvs", consumerTimeoutMs = "500", groupId = "flume-sink-group")
 while (T) {
@@ -48,7 +61,7 @@ while (T) {
           data = rkafka.readPoll(cs)
           tryCatch({
              if (length(data)>0) {
-                dfs.path = "/data/predicted_label"#paste("/data/predicted_", begin, sep="")
+                #dfs.path = "/data/predicted_label"#paste("/data/predicted_", begin, sep="")
                 if (dfs.exists(dfs.path))
                    dfs.rmr(dfs.path)
                 to.dfs(c.keyval(lapply(data, getHRV)), output=dfs.path, format="text")
