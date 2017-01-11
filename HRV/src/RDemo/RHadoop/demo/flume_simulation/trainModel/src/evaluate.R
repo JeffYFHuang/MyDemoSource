@@ -15,7 +15,7 @@ a<-enableJIT(3)
 
   #confusionMatrix(Predict, testing$label)
 #data <- from.dfs("/data/output", format="text")
-mod.fit<-from.dfs("/data/traintest_output")
+mod.fit<-from.dfs("/data/train_output")
 #pred <- function(mod, newdata) {predict(mod$model, newdata)}
 #lapply(mod.fit$val, pred, newdata=testing)
 

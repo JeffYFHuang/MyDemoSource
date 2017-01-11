@@ -74,16 +74,16 @@ beat2HRV <- function(k, input) {
           data <- list()
           data$Beat <- hr.data[[i]]
           data$Subject <- name
-          HRV <- getSplitWindowBeats_c(data, toHRV=2)
+          HRV <- c(HRV, getSplitWindowBeats_c(data, toHRV=T))
        }
     } else {
       data <- list()
       data$Beat <- hr.data$Beat
       data$Subject <- val[1]
-      HRV <- getSplitWindowBeats_c(data, toHRV=2)
+      HRV <- getSplitWindowBeats_c(data, toHRV=T)
     }
 
-    keyval(val[1], toJSON(HRV))
+    keyval(val[1], toJSON(HRV[which(lapply(HRV, length)!=1)]))
   }
 
   c.keyval(lapply(as.list(input), toHRV))
@@ -92,7 +92,13 @@ beat2HRV <- function(k, input) {
 #input = "/data/beatsdata"
 #output = "/data/beats2hrv"
 
-backend.parameters = list(hadoop=list(D='mapreduce.map.tasks=6', D='mapreduce.reduce.tasks=3'))
+backend.parameters = list(hadoop=list(D='mapreduce.map.tasks=12', D='mapreduce.reduce.tasks=4', 
+                                      D='mapreduce.map.java.opts=-Xmx2048m',
+                                      D='mapreduce.reduce.java.opts=-Xmx2048m',
+                                      D='mapreduce.map.memory.mb=2048', 
+                                      D='mapreduce.reduce.memory.mb=2048',
+                                      D='mapreduce.child.java.opts=-Xmx2048m'
+                                      ))
 
 a <- mapreduce(input=input,
           input.format="text", #make.input.format("csv", sep = "\t"),

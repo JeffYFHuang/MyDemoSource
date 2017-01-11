@@ -261,7 +261,8 @@ outputBeatsHRV <- function(beats, subject) {
     }
 
     ## **** can be done as cat(paste(words, "\t1\n", sep=""), sep="")
-    cat(strsplit(subject, "[.]")[[1]][1], "\t", toJSON(HRV), "\n", sep="")
+    if (length(HRV)!=1)
+       cat(strsplit(subject, "[.]")[[1]][1], "\t", toJSON(HRV), "\n", sep="")
 }
 
 beats2HRV <- function(beats, subject) {
@@ -306,8 +307,10 @@ getSplitWindowBeats<-function(data, windowsize = 300, shift = 300, toHRV = F) {
   HRV = list()
   #if (toHRV==2) HRV = lapply(beatLists, beats2HRV, subject = data$Subject)
 
-  if (toHRV)
-     HRV = lapply(beatLists, outputBeatsHRV, subject = data$Subject)
+  if (toHRV) {
+     HRV = lapply(beatLists, beats2HRV, subject = data$Subject)
+     cat(data$Subject, "\t", toJSON(HRV[which(lapply(HRV, length)!=1)]), "\n", sep="")
+  }
   else
      lapply(beatLists, outputWindowBeat, subject = data$Subject)
 

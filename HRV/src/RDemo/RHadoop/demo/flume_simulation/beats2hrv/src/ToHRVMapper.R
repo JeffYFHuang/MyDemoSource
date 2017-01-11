@@ -3,7 +3,9 @@
 # mapper.R - Wordcount program in R
 # script for Mapper (R-Hadoop integration)
 setwd("./src/")
-source("HRVFUNS.R")
+require(compiler)
+enableJIT(3)
+loadcmp("HRVFUNS.Rc")
 
 trimWhiteSpace <- function(line) gsub("(^ +)|( +$)", "", line)
 splitIntoWords <- function(line) unlist(strsplit(line, "[[:space:]]+"))
@@ -57,13 +59,13 @@ is.compile <- function(func)
 
 ## **** could wo with a single readLines or in blocks
 con <- file("stdin", open = "r")
-system.time(
+#system.time(
 while (length(line <- readLines(con, n = 1, warn = FALSE)) > 0) {
     val <- unlist(strsplit(line, "\t"))
     hr.data <- fromJSON(val[2])
 
     if (!is.null(hr.data$Episodes)) {
-       system.time(hr.data<-SplitBeatsbyEpisodes(hr.data))
+       hr.data<-SplitBeatsbyEpisodes(hr.data)
  #     system.time(hr.data<-SplitBeatsbyEpisodes_c(hr.data))
 
        for (i in 1:2) {
@@ -80,9 +82,9 @@ while (length(line <- readLines(con, n = 1, warn = FALSE)) > 0) {
       data <- list()
       data$Beat <- hr.data$Beat
       data$Subject <- val[1]
-      system.time(getSplitWindowBeats(data, toHRV=T))
+      getSplitWindowBeats(data, toHRV=T)
  #    system.time(getSplitWindowBeats_c(data, toHRV=T))
     }
 }
-)
+#)
 close(con)

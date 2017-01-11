@@ -18,7 +18,7 @@ master = "10.0.0.5"
 trimWhiteSpace <- function(line) gsub("(^ +)|( +$)", "", line)
 
 #frac.per.model <- 0.02
-num.models <- 200
+num.models <- 50
 input <- NULL #"/data/hrvdata"
 output <- NULL #"/data/train_output"
 models_output <- NULL #"/data/train_models"
@@ -103,7 +103,7 @@ fit.trees <- function(k, v) {
   if (feature_prob > 0) 
      v <- v[, c("label", features)]
   v$label=factor(v$label)
-  inTrain <- createDataPartition(y = v$label, p = .75, list = FALSE)
+  inTrain <- createDataPartition(y = v$label, p = .05, list = FALSE)
   training <- v[inTrain,]
   testing <- na.omit(v[-inTrain,])
 
