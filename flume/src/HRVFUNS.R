@@ -226,7 +226,7 @@ calculateHRV <- function(beats, windowsize = 300, class = NULL) {
           result$inEpisodes = class
     }, error = function(e) {
        #conditionMessage(e) # 這就會是"demo error"
-       return(NULL)
+       return
     })
  
     return(result)
