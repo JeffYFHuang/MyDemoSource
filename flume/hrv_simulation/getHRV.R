@@ -28,7 +28,7 @@ getHRV <- function (x) {
    }
 
    df$predlabel = predict_all(rfs, df) #lapply(rfs, predict_inner, df)
-   print(df$predlabel)
+   #print(df$predlabel)
    accuracy = NULL
    if (!is.null(df$label)) {
       print(confusionMatrix(df$label, df$predlabel))
