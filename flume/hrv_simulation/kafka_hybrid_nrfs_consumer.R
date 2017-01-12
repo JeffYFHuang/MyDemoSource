@@ -98,7 +98,7 @@ while (T) {
           data = rkafka.readPoll(cs)
           tryCatch ({
              if (length(data)>0) {
-                #source("getHRV.R")
+                source("getHRV.R")
                 dfs.path = "/data/predicted_label"
                 if (dfs.exists(dfs.path))
                    dfs.rmr(dfs.path)
