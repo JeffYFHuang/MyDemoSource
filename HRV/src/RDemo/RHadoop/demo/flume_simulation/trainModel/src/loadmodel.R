@@ -5,15 +5,13 @@ require(rmr2)
 require(caret)
 
 models.dfs.path = "/data/models"
-len = length(dfs.ls(models.dfs.path))
+
+path = dfs.ls(models.dfs.path)$path
 
 rfs = NULL
-for (i in 1:len) {
-    filename = paste("part-0000", (i-1), sep="")
-    print(filename)
-    path = paste(models.dfs.path, "/", filename, sep="")
-    rf = from.dfs(path)
+for (f in path[-1]) {
+    print(f)
+    rf = from.dfs(f)
     rfs = c(rfs, rf$val)
 }
 
-print(rfs)

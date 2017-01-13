@@ -103,28 +103,38 @@ fit.trees <- function(k, v) {
   if (feature_prob > 0) 
      v <- v[, c("label", features)]
   v$label=factor(v$label)
-  inTrain <- createDataPartition(y = v$label, p = .05, list = FALSE)
+  inTrain <- createDataPartition(y = v$label, p = .75, list = FALSE)
   training <- v[inTrain,]
   testing <- na.omit(v[-inTrain,])
 
   set.seed(400)
   ctrl <- trainControl(method="repeatedcv", number=10, repeats = 3)
-  mod.fit <- train(label ~ ., data = training, method = "rf", trControl = ctrl, ntree=5, preProcess = c("center","scale"), na.action=na.omit, trace=FALSE)
+#  mod.fit <- train(label ~ ., data = training, method = "rf", trControl = ctrl, ntree=10, na.action=na.omit, trace=FALSE)
+#  mod.fit <- train(label ~ ., data = training, method = "knn", trControl = ctrl, na.action=na.omit)
+  mod.fit <- train (label ~ ., data = training, method = "rpart", trControl = ctrl, tuneLength=20, na.action=na.omit)
 #  rf <- randomForest(formula=label ~ ., data=v, na.action=na.omit, ntree=5, do.trace=FALSE)
   # rf is a list so wrap it in another list to ensure that only
   # one object gets emitted. this is because keyval is vectorized
   #keyval(k, list(forest=rf))
   #keyval(k, paste(names(v), collapse=" "))
-  p <- predict(mod.fit, newdata = testing)
+  p <- predict(mod.fit$finalModel, newdata = testing[which(names(testing)!="label")], type="class")
   #Get the confusion matrix to see accuracy value and other parameter values
   #confusionMatrix(Predict, testing$label)
 #  to.dfs(testing, output = testDataPath)
-  keyval(k, list(list(model=mod.fit, p=p, t=testing$label)))
+  keyval(k, list(list(model=mod.fit$finalModel, p=p, t=testing$label)))
 }
+
+backend.parameters = list(hadoop=list(D=paste('mapreduce.job.maps=', num.models, sep=""), D='mapreduce.job.reduces=16',
+                                      D='mapreduce.map.java.opts=-Xmx2048m',
+                                      D='mapreduce.reduce.java.opts=-Xmx3072m',
+                                      D='mapreduce.map.memory.mb=2048',
+                                      D='mapreduce.reduce.memory.mb=3072',
+                                      D='mapreduce.child.java.opts=-Xmx3072m'
+                                      ))
 
 a <- mapreduce(input=input,
           input.format="text", #make.input.format("csv", sep = "\t"),
 #          output.format="text", #make.input.format("csv", sep = "\t"),
           map=poisson.subsample,
           reduce=fit.trees,
-          output=output)
+          output=output, backend.parameters=backend.parameters)
