@@ -67,7 +67,7 @@ getHRV <- function (x) {
    df = na.omit(df)
    #print(rfs)
    predict_inner <- function (rf, df) {
-      predlabel<-predict(rf ,df)
+      predlabel<-predict(rf ,df[which(names(df)!="label")], type="class")
       as.numeric(predlabel) - 1
    }
 
