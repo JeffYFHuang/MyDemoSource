@@ -38,12 +38,12 @@ close(con)
     training <- data[inTrain, features]
     testing <- data[-inTrain, features]
 
-    trainX <- training[,names(training) != "type"]
-    preProcValues <- preProcess(x = trainX, method = c("center", "scale"))
+    #trainX <- training[,names(training) != "type"]
+    #preProcValues <- preProcess(x = trainX, method = c("center", "scale"))
     set.seed(400)
-    ctrl <- trainControl(method="repeatedcv",number=10, repeats = 3) #,classProbs=TRUE,summaryFunction = twoClassSummary)
+    ctrl <- trainControl(method="repeatedcv",number=10, repeats = 3, classProbs=TRUE)#,summaryFunction = twoClassSummary)
     # Random forrest
-    mod.fit <- train(type ~ ., data = training, method = "rf", trControl = ctrl, preProcess = c("center","scale"))
+    mod.fit <- train(type ~ ., data = training, method = "rf", trControl = ctrl)#, preProcess = c("center","scale"))
     save(mod.fit, file = "randomforest.mod")
     rfPredict <- predict(mod.fit,newdata = testing)
     #Get the confusion matrix to see accuracy value and other parameter values

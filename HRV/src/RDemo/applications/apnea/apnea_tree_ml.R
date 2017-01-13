@@ -31,8 +31,8 @@ close(con)
     data = rbind(df.InEpisodes, df.OutEpisodes)
     data$type=factor(data$type)
     inTrain <- createDataPartition(y = data$type, p = .75, list = FALSE)
-    features <- c("VLF", "LFHF", "meanRR", "meanHR", "HF", "type")
-#    features <- names(data)
+#    features <- c("VLF", "LFHF", "meanRR", "meanHR", "HF", "type")
+    features <- names(data)
 
 #    features <- c("SDNN", "TINN", "LFHF", "LFnu", "SD2", "SD12", "TP", "ApEn", "type")
     training <- data[inTrain, features]
@@ -45,14 +45,15 @@ close(con)
 #                   summaryFunction = twoClassSummary)
     #CART1 machine learning
     set.seed(400)
-    control <- trainControl(method="repeatedcv", number=10, repeats=3, classProbs = TRUE)
+    control <- trainControl(method="repeatedcv", number=10, repeats=3)#, classProbs = TRUE)
     tree1 = train (type~.,
            training,
            method = "rpart",
            tuneLength=20,
-           metric="ROC",
+#           preProcess = c("center","scale"),
+#           metric="ROC",
            trControl = control)
-    model.predict = predict(object = tree1$finalModel, newdata = testing, type = "class")
+    model.predict = predict(object = tree1$finalModel, newdata = testing[which(names(testing)!="type")], type = "class")
     confusionMatrix(testing$type, model.predict)
 
 #   boxplot between two group

@@ -31,19 +31,19 @@ close(con)
     data = rbind(df.InEpisodes, df.OutEpisodes)
     data$type=factor(data$type)
     inTrain <- createDataPartition(y = data$type, p = .75, list = FALSE)
-    features <- c("VLF", "LFHF", "meanRR", "meanHR", "HF", "type")
-    #features <- names(data)
+#    features <- c("VLF", "LFHF", "meanRR", "meanHR", "HF", "type")
+    features <- names(data)
     #features <- c("SDNN", "TINN", "LFHF", "LFnu", "SD2", "SD12", "TP", "ApEn", "type")
 
     training <- data[inTrain, features]
-    testing <- data[-inTrain, features]
+    testing <- na.omit(data[-inTrain, features])
 
     #trainX <- training[,names(training) != "type"]
     #preProcValues <- preProcess(x = trainX,method = c("center", "scale"))
     set.seed(400)
-    ctrl <- trainControl(method="repeatedcv", number = 10, repeats = 3) #,classProbs=TRUE,summaryFunction = twoClassSummary)
-    mod.fit <- train(type ~ ., data = training, method = "knn", trControl = ctrl, preProcess = c("center","scale"))
-    save(mod.fit, file="knn.mod") 
-    knnPredict <- predict(mod.fit,newdata = testing )
+    ctrl <- trainControl(method="repeatedcv", number = 10, repeats = 3, classProbs=TRUE)#,summaryFunction = twoClassSummary)
+    mod.fit <- train(type ~ ., data = training, method = "knn", trControl = ctrl, tuneLength=20, na.action = na.omit)
+#    save(mod.fit, file="knn.mod") 
+    p <- predict(mod.fit$finalModel, newdata = testing[which(names(testing)!="type")], type = "class")
     #Get the confusion matrix to see accuracy value and other parameter values
-    confusionMatrix(knnPredict, testing$type )
+    confusionMatrix(p, testing$type )
