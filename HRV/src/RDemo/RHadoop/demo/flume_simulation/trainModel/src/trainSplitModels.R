@@ -109,9 +109,9 @@ fit.trees <- function(k, v) {
 
   set.seed(400)
   ctrl <- trainControl(method="repeatedcv", number=10, repeats = 3)
-#  mod.fit <- train(label ~ ., data = training, method = "rf", trControl = ctrl, ntree=10, na.action=na.omit, trace=FALSE)
-#  mod.fit <- train(label ~ ., data = training, method = "knn", trControl = ctrl, na.action=na.omit)
-  mod.fit <- train (label ~ ., data = training, method = "rpart", trControl = ctrl, tuneLength=20, na.action=na.omit)
+#  mod.fit <- train(label ~ ., data = training, method = "rf", trControl = ctrl, ntree=10, tuneLength=20, na.action=na.omit, trace=FALSE)
+  mod.fit <- train(label ~ ., data = training, method = "knn", trControl = ctrl, na.action=na.omit)
+#  mod.fit <- train (label ~ ., data = training, method = "rpart", trControl = ctrl, tuneLength=20, na.action=na.omit)
 #  rf <- randomForest(formula=label ~ ., data=v, na.action=na.omit, ntree=5, do.trace=FALSE)
   # rf is a list so wrap it in another list to ensure that only
   # one object gets emitted. this is because keyval is vectorized
@@ -121,7 +121,7 @@ fit.trees <- function(k, v) {
   #Get the confusion matrix to see accuracy value and other parameter values
   #confusionMatrix(Predict, testing$label)
 #  to.dfs(testing, output = testDataPath)
-  keyval(k, list(list(model=mod.fit$finalModel, p=p, t=testing$label)))
+  keyval(k, list(list(mod=mod.fit$finalModel, p=p, t=testing$label)))
 }
 
 backend.parameters = list(hadoop=list(D=paste('mapreduce.job.maps=', num.models, sep=""), D='mapreduce.job.reduces=16',
