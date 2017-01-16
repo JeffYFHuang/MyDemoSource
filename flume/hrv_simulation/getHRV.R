@@ -15,14 +15,14 @@ getHRV <- function (x) {
    df = na.omit(df)
    #print(rfs)
    predict_inner <- function (rf, df) {
-      predlabel<-predict(rf ,df[which(names(df)!="label")], type = "class")
+      predlabel <- predict(rf, df[, features], type = "class") #which(names(df)!="label")], type = "class")
       as.numeric(predlabel) - 1
    }
 
    predict_all <- function (rfs, df) {
       label_list <- lapply(rfs, predict_inner, df)
       n.row = length(label_list)
-      n.col = length(label_list[1]$m)
+      n.col = length(label_list[[1]])
       m <- t(matrix(unlist(label_list), n.col, n.row))
       round(colSums(m)/n.row)
    }
