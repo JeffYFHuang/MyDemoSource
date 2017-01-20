@@ -69,7 +69,7 @@ public class TridentKafkaTopology {
         String zookeeperHost = "master:2181";
         ZkHosts zkHosts = new ZkHosts(zookeeperHost);
 
-        TridentKafkaConfig kafkaConfig = new TridentKafkaConfig(zkHosts, "beats");
+        TridentKafkaConfig kafkaConfig = new TridentKafkaConfig(zkHosts, "hrvs");
   //      SpoutConfig kafkaConfig = new SpoutConfig(zkHosts, "beats", "/beats", "storm");
         kafkaConfig.scheme = new SchemeAsMultiScheme(new StringScheme());
 
@@ -78,7 +78,7 @@ public class TridentKafkaTopology {
 
         TridentTopology topology = new TridentTopology();
         Stream stream = topology.newStream("spout1", kafkaSpout)
-                        .each(new Fields("str"), new Split(), new Fields("subject", "beats"));
+                        .each(new Fields("str"), new Split(), new Fields("subject", "hrvs"));
 
         Properties props = new Properties();
         props.put("bootstrap.servers", brokerConnectionString);
@@ -88,9 +88,9 @@ public class TridentKafkaTopology {
 
         TridentKafkaStateFactory stateFactory = new TridentKafkaStateFactory()
             .withProducerProperties(props)
-            .withKafkaTopicSelector(new DefaultTopicSelector("test"))
+            .withKafkaTopicSelector(new DefaultTopicSelector("ktest"))
             .withTridentTupleToKafkaMapper(new FieldNameBasedTupleToKafkaMapper("subject", "subject"));
-        stream.partitionPersist(stateFactory, new Fields("subject", "beats"), new TridentKafkaUpdater(), new Fields());
+        stream.partitionPersist(stateFactory, new Fields("subject", "hrvs"), new TridentKafkaUpdater(), new Fields());
 
         return topology.build();
     }
@@ -121,7 +121,7 @@ public class TridentKafkaTopology {
            StormSubmitter.submitTopologyWithProgressBar("test", conf, buildTopology(args[0]));
         } else {
            LocalCluster cluster = new LocalCluster();
-           cluster.submitTopology("wordCounter", new Config(), buildTopology("localhost:9092"));
+           cluster.submitTopology("wordCounter", new Config(), buildTopology("data1:9092,data2:9092"));
            Thread.sleep(60 * 1000);
            cluster.killTopology("wordCounter");
 
