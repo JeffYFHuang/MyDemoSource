@@ -22,6 +22,17 @@ import org.apache.storm.Config;
 import org.apache.storm.LocalCluster;
 import org.apache.storm.StormSubmitter;
 import org.apache.storm.generated.StormTopology;
+import org.apache.storm.hdfs.common.rotation.MoveFileAction;
+import org.apache.storm.hdfs.trident.HdfsState;
+import org.apache.storm.hdfs.trident.HdfsStateFactory;
+import org.apache.storm.hdfs.trident.HdfsUpdater;
+import org.apache.storm.hdfs.trident.format.DefaultFileNameFormat;
+import org.apache.storm.hdfs.trident.format.DefaultSequenceFormat;
+import org.apache.storm.hdfs.trident.format.DelimitedRecordFormat;
+import org.apache.storm.hdfs.trident.format.FileNameFormat;
+import org.apache.storm.hdfs.trident.format.RecordFormat;
+import org.apache.storm.hdfs.trident.rotation.FileRotationPolicy;
+import org.apache.storm.hdfs.trident.rotation.FileSizeRotationPolicy;
 import org.apache.storm.tuple.Fields;
 import org.apache.storm.tuple.Values;
 
@@ -42,9 +53,11 @@ import org.apache.storm.shade.org.json.simple.parser.ParseException;
 import org.apache.storm.spout.SchemeAsMultiScheme;
 import org.apache.storm.task.OutputCollector;
 import org.apache.storm.trident.Stream;
+import org.apache.storm.trident.TridentState;
 import org.apache.storm.trident.TridentTopology;
 import org.apache.storm.trident.operation.BaseFunction;
 import org.apache.storm.trident.operation.TridentCollector;
+import org.apache.storm.trident.state.StateFactory;
 import org.apache.storm.trident.tuple.TridentTuple;
 import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.Evaluator;
@@ -64,15 +77,6 @@ public class Main {
         public void execute(TridentTuple tuple, TridentCollector collector) {
             String sentence = tuple.getString(0);
             String[] words = sentence.split("\t");
-            
-    		/*Map<FieldName, FieldValue> arguments = new LinkedHashMap<>();
-
-    		List<FieldName> activeFields = evaluator.getActiveFields();
-    		for(FieldName activeField : activeFields){
-    			FieldValue value = EvaluatorUtil.prepare(evaluator, activeField, tuple.getValueByField(activeField.getValue()));
-
-    			arguments.put(activeField, value);
-    		}*/
     		
             JSONParser parser = new JSONParser();
             try{
@@ -81,13 +85,14 @@ public class Main {
                 JSONArray result_array = new JSONArray();
                 JSONObject results = new JSONObject();
     			System.out.println(words[0]);
+                Values values = new Values();
+                values.add(words[0]);
                 for (int i=0; i < array.size(); i++) {
                     JSONObject jobj = (JSONObject)array.get(i);
                     Map<FieldName, FieldValue> arguments = new LinkedHashMap<>();
 
                     // get startTime
                     if (i == 0) {
-                    	results.put("subject", words[0]);
                     	results.put("startTime", (jobj.get("startTime")).toString());
                     }
                     
@@ -100,45 +105,25 @@ public class Main {
  
             		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 
-            		Values values = new Values();
             	    JSONObject jobjr = new JSONObject();
-            	      
-            		//subject
-            		//values.add(words[0]);
-            		/*List<FieldName> targetFields = evaluator.getTargetFields();
-            		for(FieldName targetField : targetFields){
-            			Object targetValue = result.get(targetField);
-
-            			values.add(EvaluatorUtil.decode(targetValue));
-            		}*/
 
             		List<FieldName> outputFields = evaluator.getOutputFields();
             		for(FieldName outputField : outputFields){
             			Object outputValue = result.get(outputField);
             			jobjr.put(outputField, outputValue);
-            			
-            			//values.add(outputValue);
             		}
 
             		result_array.add(jobjr);
-            		//System.out.println(jobjr.toJSONString());
-            		//collector.emit(new Values(jobjr.toJSONString()));
                 }
                 
                 results.put("apnea", result_array);
-                collector.emit(new Values(results.toJSONString()));
+                values.add(results.toJSONString());
+                collector.emit(values);
              }catch(ParseException pe){
        		
                 System.out.println("position: " + pe.getPosition());
                 System.out.println(pe);
              }
-/*          List<Object> values = new ArrayList<Object>(array.length);
-            for(String word: sentence.split("\t")) {
-                values.add(word)
-                collector.emit(new Values(word));
-            }
-*/
- //           collector.emit(new Values(words));
         }
         
     	public Split(Evaluator evaluator){
@@ -154,7 +139,7 @@ public class Main {
     	}
     }
 
-    private static StormTopology buildTopology(String brokerConnectionString, final Evaluator evaluator) {
+    private static StormTopology buildTopology(final String hdfsurl, final Evaluator evaluator) {
         Fields fields = new Fields("word", "count");
 
         String zookeeperHost = "master:2181";
@@ -171,7 +156,31 @@ public class Main {
         Stream stream = topology.newStream("spout", kafkaSpout)
                         .each(new Fields("str"), new Split(evaluator), new Fields("subject", "hrvs"));
 
-        Properties props = new Properties();
+        Fields hdfsFields = new Fields("subject", "hrvs");
+
+        FileNameFormat fileNameFormat = new DefaultFileNameFormat()
+                .withPath("/data/stormtest")
+                .withExtension(".txt");
+
+        RecordFormat recordFormat = new DelimitedRecordFormat()
+        .withFieldDelimiter("\t")
+        .withFields(hdfsFields);
+
+        FileRotationPolicy rotationPolicy = new FileSizeRotationPolicy(5.0f, FileSizeRotationPolicy.Units.MB);
+
+        HdfsState.Options options = new HdfsState.HdfsFileOptions()
+            .withFileNameFormat(fileNameFormat)
+            .withRecordFormat(recordFormat)
+            .withRotationPolicy(rotationPolicy)
+            .withFsUrl(hdfsurl)
+            .withConfigKey("hdfs.config");
+
+        StateFactory factory = new HdfsStateFactory().withOptions(options);
+
+        TridentState state = stream
+                .partitionPersist(factory, hdfsFields, new HdfsUpdater(), new Fields());
+        
+/*        Properties props = new Properties();
         props.put("bootstrap.servers", brokerConnectionString);
         props.put("acks", "1");
         props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
@@ -182,7 +191,7 @@ public class Main {
             .withKafkaTopicSelector(new DefaultTopicSelector("ktest"))
             .withTridentTupleToKafkaMapper(new FieldNameBasedTupleToKafkaMapper("subject", "subject"));
         stream.partitionPersist(stateFactory, new Fields("subject", "hrvs"), new TridentKafkaUpdater(), new Fields());
-
+*/
         return topology.build();
     }
 
@@ -209,13 +218,13 @@ public class Main {
         Config conf = new Config();
         conf.setDebug(true);
         conf.put("nimbus.thrift.max_buffer_size", 1121400710);
-        if (args != null && args.length > 0) {
+        if (args != null && args.length > 1) {
            conf.setNumWorkers(3);
 
            StormSubmitter.submitTopologyWithProgressBar("test", conf, buildTopology(args[0], evaluator));
         } else {
            LocalCluster cluster = new LocalCluster();
-           cluster.submitTopology("wordCounter", new Config(), buildTopology("data1:9092", evaluator));
+           cluster.submitTopology("wordCounter", new Config(), buildTopology(args[0], evaluator));
            Thread.sleep(60 * 1000);
            cluster.killTopology("wordCounter");
 
