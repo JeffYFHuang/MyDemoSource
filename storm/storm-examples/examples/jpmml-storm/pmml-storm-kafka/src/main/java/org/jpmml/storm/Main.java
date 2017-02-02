@@ -63,8 +63,11 @@ import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.EvaluatorUtil;
 import org.jpmml.evaluator.FieldValue;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -154,9 +157,9 @@ public class Main {
 
         TridentTopology topology = new TridentTopology();
         Stream stream = topology.newStream("spout", kafkaSpout)
-                        .each(new Fields("str"), new Split(evaluator), new Fields("subject", "hrvs"));
+                        .each(new Fields("str"), new Split(evaluator), new Fields("subject", "apnea"));
 
-        Fields hdfsFields = new Fields("subject", "hrvs");
+        Fields hdfsFields = new Fields("subject", "apnea");
 
         FileNameFormat fileNameFormat = new DefaultFileNameFormat()
                 .withPath("/data/stormtest")
@@ -166,14 +169,14 @@ public class Main {
         .withFieldDelimiter("\t")
         .withFields(hdfsFields);
 
-        FileRotationPolicy rotationPolicy = new FileSizeRotationPolicy(5.0f, FileSizeRotationPolicy.Units.MB);
+        FileRotationPolicy rotationPolicy = new FileSizeRotationPolicy(5.0f, FileSizeRotationPolicy.Units.KB);
 
         HdfsState.Options options = new HdfsState.HdfsFileOptions()
             .withFileNameFormat(fileNameFormat)
             .withRecordFormat(recordFormat)
             .withRotationPolicy(rotationPolicy)
-            .withFsUrl(hdfsurl)
-            .withConfigKey("hdfs.config");
+            .withFsUrl(hdfsurl);
+ //           .withConfigKey("hdfs.config");
 
         StateFactory factory = new HdfsStateFactory().withOptions(options);
 
@@ -216,12 +219,19 @@ public class Main {
         Evaluator evaluator = PMMLBoltUtil.createEvaluator(new File("rf.pmml"));
  
         Config conf = new Config();
-        conf.setDebug(true);
-        conf.put("nimbus.thrift.max_buffer_size", 1121400710);
+        conf.setMaxSpoutPending(5);
+        
+        Yaml yaml = new Yaml();
+        InputStream in = new FileInputStream(args[1]);
+        Map<String, Object> yamlConf = (Map<String, Object>) yaml.load(in);
+        in.close();
+        conf.put("hdfs.config", yamlConf);
+        
+        //conf.put("nimbus.thrift.max_buffer_size", 16384000);
         if (args != null && args.length > 1) {
            conf.setNumWorkers(3);
 
-           StormSubmitter.submitTopologyWithProgressBar("test", conf, buildTopology(args[0], evaluator));
+           StormSubmitter.submitTopologyWithProgressBar(args[2], conf, buildTopology(args[0], evaluator));
         } else {
            LocalCluster cluster = new LocalCluster();
            cluster.submitTopology("wordCounter", new Config(), buildTopology(args[0], evaluator));
