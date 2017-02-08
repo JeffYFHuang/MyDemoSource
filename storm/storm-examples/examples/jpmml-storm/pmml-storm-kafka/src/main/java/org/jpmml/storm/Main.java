@@ -72,6 +72,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.UUID;
 
 public class Main {
     public static class Split extends BaseFunction {
@@ -87,7 +88,7 @@ public class Main {
                 JSONArray array = (JSONArray)obj;
                 JSONArray result_array = new JSONArray();
                 JSONObject results = new JSONObject();
-    			System.out.println(words[0]);
+                //System.out.println(words[0]);
                 Values values = new Values();
                 values.add(words[0]);
                 for (int i=0; i < array.size(); i++) {
@@ -142,61 +143,58 @@ public class Main {
     	}
     }
 
-    private static StormTopology buildTopology(final String hdfsurl, final Evaluator evaluator) {
-        Fields fields = new Fields("word", "count");
+	    private static StormTopology buildTopology(Evaluator evaluator) {
+	        String zookeeperHost = "master:2181";
+	        ZkHosts zkHosts = new ZkHosts(zookeeperHost);
 
-        String zookeeperHost = "master:2181";
-        ZkHosts zkHosts = new ZkHosts(zookeeperHost);
+	        TridentKafkaConfig kafkaConfig = new TridentKafkaConfig(zkHosts, "hrvs");
+	  //      SpoutConfig kafkaConfig = new SpoutConfig(zkHosts, "beats", "/beats", "storm");
+	        kafkaConfig.scheme = new SchemeAsMultiScheme(new StringScheme());
 
-        TridentKafkaConfig kafkaConfig = new TridentKafkaConfig(zkHosts, "hrvs", "flume-sink-group");
-  //      SpoutConfig kafkaConfig = new SpoutConfig(zkHosts, "beats", "/beats", "storm");
-        kafkaConfig.scheme = new SchemeAsMultiScheme(new StringScheme());
+	  //      KafkaSpout kafkaSpout = new KafkaSpout(kafkaConfig);
+	        TransactionalTridentKafkaSpout kafkaSpout = new TransactionalTridentKafkaSpout(kafkaConfig);
 
-  //      KafkaSpout kafkaSpout = new KafkaSpout(kafkaConfig);
-        TransactionalTridentKafkaSpout kafkaSpout = new TransactionalTridentKafkaSpout(kafkaConfig);
+	        TridentTopology topology = new TridentTopology();
+	        Stream stream = topology.newStream("spout1", kafkaSpout)
+	                        .each(new Fields("str"), new Split(evaluator), new Fields("subject", "apnea"));
 
-        TridentTopology topology = new TridentTopology();
-        Stream stream = topology.newStream("spout", kafkaSpout)
-                        .each(new Fields("str"), new Split(evaluator), new Fields("subject", "apnea"));
+	        Fields hdfsFields = new Fields("subject", "apnea");
 
-        Fields hdfsFields = new Fields("subject", "apnea");
+	        FileNameFormat fileNameFormat = new DefaultFileNameFormat()
+	                .withPath("/data/stormtest")
+	                .withExtension(".txt");
 
-        FileNameFormat fileNameFormat = new DefaultFileNameFormat()
-                .withPath("/data/stormtest")
-                .withExtension(".txt");
+	        RecordFormat recordFormat = new DelimitedRecordFormat()
+	        .withFieldDelimiter("\t")
+	        .withFields(hdfsFields);
 
-        RecordFormat recordFormat = new DelimitedRecordFormat()
-        .withFieldDelimiter("\t")
-        .withFields(hdfsFields);
+	        FileRotationPolicy rotationPolicy = new FileSizeRotationPolicy(5.0f, FileSizeRotationPolicy.Units.MB);
 
-        FileRotationPolicy rotationPolicy = new FileSizeRotationPolicy(5.0f, FileSizeRotationPolicy.Units.KB);
+	        HdfsState.Options options = new HdfsState.HdfsFileOptions()
+	            .withFileNameFormat(fileNameFormat)
+	            .withRecordFormat(recordFormat)
+	            .withRotationPolicy(rotationPolicy)
+	            .withFsUrl("hdfs://master:9000");
 
-        HdfsState.Options options = new HdfsState.HdfsFileOptions()
-            .withFileNameFormat(fileNameFormat)
-            .withRecordFormat(recordFormat)
-            .withRotationPolicy(rotationPolicy)
-            .withFsUrl(hdfsurl);
- //           .withConfigKey("hdfs.config");
+	        StateFactory factory = new HdfsStateFactory().withOptions(options);
 
-        StateFactory factory = new HdfsStateFactory().withOptions(options);
+	        TridentState state = stream
+	                .partitionPersist(factory, hdfsFields, new HdfsUpdater(), new Fields());
 
-        TridentState state = stream
-                .partitionPersist(factory, hdfsFields, new HdfsUpdater(), new Fields());
-        
-/*        Properties props = new Properties();
-        props.put("bootstrap.servers", brokerConnectionString);
-        props.put("acks", "1");
-        props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-        props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+/*	        Properties props = new Properties();
+	        props.put("bootstrap.servers", brokerConnectionString);
+	        props.put("acks", "1");
+	        props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+	        props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
 
-        TridentKafkaStateFactory stateFactory = new TridentKafkaStateFactory()
-            .withProducerProperties(props)
-            .withKafkaTopicSelector(new DefaultTopicSelector("ktest"))
-            .withTridentTupleToKafkaMapper(new FieldNameBasedTupleToKafkaMapper("subject", "subject"));
-        stream.partitionPersist(stateFactory, new Fields("subject", "hrvs"), new TridentKafkaUpdater(), new Fields());
+	        TridentKafkaStateFactory stateFactory = new TridentKafkaStateFactory()
+	            .withProducerProperties(props)
+	            .withKafkaTopicSelector(new DefaultTopicSelector("ktest"))
+	            .withTridentTupleToKafkaMapper(new FieldNameBasedTupleToKafkaMapper("subject", "apnea"));
+	        stream.partitionPersist(stateFactory, new Fields("subject", "apnea"), new TridentKafkaUpdater(), new Fields());
 */
-        return topology.build();
-    }
+	        return topology.build();
+	    }
 
     /**
      * To run this topology ensure you have a kafka broker running and provide connection string to broker as argument.
@@ -212,29 +210,30 @@ public class Main {
      * @throws Exception
      */
     public static void main(String[] args) throws Exception {
-        if(args.length < 1) {
+       /* if(args.length < 1) {
             System.out.println("Please provide kafka broker url ,e.g. localhost:9092");
-        }
+        }*/
 
         Evaluator evaluator = PMMLBoltUtil.createEvaluator(new File("rf.pmml"));
  
         Config conf = new Config();
         conf.setMaxSpoutPending(5);
         
-        Yaml yaml = new Yaml();
+      /*  Yaml yaml = new Yaml();
         InputStream in = new FileInputStream(args[1]);
         Map<String, Object> yamlConf = (Map<String, Object>) yaml.load(in);
         in.close();
-        conf.put("hdfs.config", yamlConf);
+        conf.put("hdfs.config", yamlConf);*/
         
         //conf.put("nimbus.thrift.max_buffer_size", 16384000);
-        if (args != null && args.length > 1) {
+        conf.put(Config.TOPOLOGY_MESSAGE_TIMEOUT_SECS, 3600);
+        if (args != null && args.length > 0) {
            conf.setNumWorkers(3);
 
-           StormSubmitter.submitTopologyWithProgressBar(args[2], conf, buildTopology(args[0], evaluator));
+           StormSubmitter.submitTopologyWithProgressBar(args[0], conf, buildTopology(evaluator));
         } else {
            LocalCluster cluster = new LocalCluster();
-           cluster.submitTopology("wordCounter", new Config(), buildTopology(args[0], evaluator));
+           cluster.submitTopology("wordCounter", new Config(), buildTopology(evaluator));
            Thread.sleep(60 * 1000);
            cluster.killTopology("wordCounter");
 

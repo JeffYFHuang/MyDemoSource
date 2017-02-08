@@ -35,15 +35,20 @@
                         <groupId>org.apache.storm</groupId>
                         <artifactId>storm-kafka</artifactId>
                         <version>1.0.2</version>
+                        <!--scope>provided</scope-->
                 </dependency>
                 <dependency>
                         <groupId>org.apache.kafka</groupId>
-                        <artifactId>kafka_2.10</artifactId>
-                        <version>0.8.2.1</version>
+                        <artifactId>kafka_2.11</artifactId>
+                        <version>0.10.0.1</version>
                         <exclusions>
                              <exclusion>
                                   <groupId>org.apache.zookeeper</groupId>
                                   <artifactId>zookeeper</artifactId>
+                             </exclusion>
+                             <exclusion>
+                                  <groupId>org.slf4j</groupId>
+                                  <artifactId>slf4j-log4j12</artifactId>
                              </exclusion>
                              <exclusion>
                                   <groupId>log4j</groupId>
@@ -54,7 +59,7 @@
                 <dependency>
                         <groupId>org.apache.kafka</groupId>
                         <artifactId>kafka-clients</artifactId>
-                        <version>0.8.2.1</version>
+                        <version>0.10.0.1</version>
                 </dependency>
                 <dependency>
                        <groupId>org.apache.storm</groupId>
@@ -62,15 +67,28 @@
                        <version>1.0.2</version>
                        <scope>provided</scope>
                 </dependency>
+                <dependency> 
+                       <groupId>commons-lang</groupId> 
+                       <artifactId>commons-lang</artifactId> 
+                       <version>2.6</version>
+                </dependency>
 	</dependencies>
 
     <build>
+        <resources>
+          <resource>
+            <directory>${basedir}/multilang</directory>
+          </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <configuration>
                     <createDependencyReducedPom>true</createDependencyReducedPom>
+                    <excludes>
+                       <exclude>log4j:log4j:jar:</exclude>
+                    </excludes>
                 </configuration>
                 <executions>
                     <execution>
