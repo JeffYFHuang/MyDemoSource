@@ -1,5 +1,5 @@
 require(RHRV)
-require(rhdfs)
+#require(rhdfs)
 require(rjson)
 require(rmr2)
 
