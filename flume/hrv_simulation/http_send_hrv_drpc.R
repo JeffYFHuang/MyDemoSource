@@ -6,7 +6,7 @@ send_one_hrv <- function (data, subject = "x01", addr="172.18.161.100", port=444
     payload = toJSON(data)
     headers = format(Sys.time(), paste('"headers":{"key":"', count, '", "topic": "hrvs"}', sep=""))
     #subject = "test"
-    http_content = paste('[{', headers, ',"body":', "'", subject, '\t', payload, "'", '}]', sep="")
+    http_content = paste(subject, '\t', payload, sep="")
 #    print(http_content)
     httpheader <- c(Accept="application/json; charset=UTF-8", "Content-Type"="application/json")
 #    print(httpheader)
