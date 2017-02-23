@@ -21,26 +21,62 @@ package org.jpmml.storm;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.storm.Config;
 import org.apache.storm.LocalCluster;
+import org.apache.storm.LocalDRPC;
+import org.apache.storm.StormSubmitter;
+import org.apache.storm.drpc.DRPCSpout;
+import org.apache.storm.drpc.ReturnResults;
+import org.apache.storm.generated.DistributedRPCInvocations;
 import org.apache.storm.generated.StormTopology;
+import org.apache.storm.shade.org.json.simple.JSONValue;
+import org.apache.storm.shade.org.json.simple.parser.ParseException;
+import org.apache.storm.topology.BasicOutputCollector;
+import org.apache.storm.topology.OutputFieldsDeclarer;
 import org.apache.storm.topology.TopologyBuilder;
+import org.apache.storm.topology.base.BaseBasicBolt;
+import org.apache.storm.tuple.Fields;
+import org.apache.storm.tuple.Tuple;
+import org.apache.storm.tuple.Values;
 import org.apache.storm.utils.Utils;
 import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.Evaluator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.esotericsoftware.minlog.Log;
 
 public class Main {
 
+	public static final Logger LOG = LoggerFactory.getLogger(ReturnResults.class);
+	
+	public static class ExclaimBolt extends BaseBasicBolt {
+	    public void execute(Tuple tuple, BasicOutputCollector collector) {
+	    	//Log.debug(tuple.toString());
+	        String input = tuple.getString(0);
+	        //System.out.println(tuple.getString(0)+tuple.getString(1));
+	        //String sentence = tuple.getString(0);
+	        String[] words = input.split("\t");
+	        //System.out.println(words[1]);
+	        collector.emit(new Values(words[1], tuple.getString(1)));
+	    }
+
+	    public void declareOutputFields(OutputFieldsDeclarer declarer) {
+	        declarer.declare(new Fields("id", "result"));
+	    }
+	}
+	
 	static
 	public void main(String... args) throws Exception {
 
-		if(args.length != 3){
+/*		if(args.length != 3){
 			System.err.println("Usage: java " + Main.class.getName() + " <PMML file> <Input CSV file> <Output CSV file>");
 
 			System.exit(-1);
 		}
-
+*/
 		Evaluator evaluator = PMMLBoltUtil.createEvaluator(new File(args[0]));
 
 		PMMLBolt pmmlBolt = new PMMLBolt(evaluator);
@@ -48,19 +84,24 @@ public class Main {
 		List<FieldName> inputFields = new ArrayList<>();
 		inputFields.addAll(evaluator.getActiveFields());
 
-		CsvReaderSpout csvReader = new CsvReaderSpout(new File(args[1]), inputFields);
+//		CsvReaderSpout csvReader = new CsvReaderSpout(new File(args[1]), inputFields);
 
 		List<FieldName> outputFields = new ArrayList<>();
 		outputFields.addAll(evaluator.getTargetFields());
 		outputFields.addAll(evaluator.getOutputFields());
 
-		CsvWriterBolt csvWriter = new CsvWriterBolt(new File(args[2]), outputFields);
+		TopologyBuilder builder = new TopologyBuilder();
+
+//		LocalDRPC drpc = new LocalDRPC();
+		DRPCSpout spout = new DRPCSpout("drpcFunc");//, drpc);
+
+//		CsvWriterBolt csvWriter = new CsvWriterBolt(new File(args[2]), outputFields);
 
 		TopologyBuilder topologyBuilder = new TopologyBuilder();
-		topologyBuilder.setSpout("input", csvReader);
-		topologyBuilder.setBolt("pmml", pmmlBolt)
-			.shuffleGrouping("input");
-		topologyBuilder.setBolt("output", csvWriter)
+		topologyBuilder.setSpout("drpc", spout);
+		topologyBuilder.setBolt("pmml", pmmlBolt)//new ExclaimBolt())
+			.shuffleGrouping("drpc");
+		topologyBuilder.setBolt("return", new ReturnResults())
 			.shuffleGrouping("pmml");
 
 		Config config = new Config();
@@ -68,12 +109,18 @@ public class Main {
 
 		StormTopology topology = topologyBuilder.createTopology();
 
-		LocalCluster localCluster = new LocalCluster();
+/*		LocalCluster localCluster = new LocalCluster();
 		localCluster.submitTopology("example", config, topology);
 
-		Utils.sleep(30L * 1000L);
+		System.out.println(drpc.execute("drpcFunc", "hello\tworld!"));
+		//Utils.sleep(60L * 1000L);
 
 		localCluster.killTopology("example");
 		localCluster.shutdown();
+*/
+		config.setNumWorkers(2);
+
+		StormSubmitter.submitTopology("drpc-test", config, topology);
+
 	}
 }
