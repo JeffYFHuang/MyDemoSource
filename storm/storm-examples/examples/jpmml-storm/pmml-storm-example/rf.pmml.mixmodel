@@ -1,0 +1,1660 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<PMML xmlns="http://www.dmg.org/PMML-4_2" version="4.2">
+	<Header>
+		<Application name="JPMML-R" version="1.2.12"/>
+		<Timestamp>2017-02-20T02:05:02Z</Timestamp>
+	</Header>
+	<DataDictionary>
+		<DataField name="_target" optype="categorical" dataType="integer">
+			<Value value="0"/>
+			<Value value="1"/>
+		</DataField>
+		<DataField name="HF" optype="continuous" dataType="double"/>
+		<DataField name="SD1" optype="continuous" dataType="double"/>
+		<DataField name="SD2" optype="continuous" dataType="double"/>
+		<DataField name="ULF" optype="continuous" dataType="double"/>
+		<DataField name="VLF" optype="continuous" dataType="double"/>
+		<DataField name="HRVi" optype="continuous" dataType="double"/>
+		<DataField name="LFHF" optype="continuous" dataType="double"/>
+		<DataField name="SDSD" optype="continuous" dataType="double"/>
+		<DataField name="TINN" optype="continuous" dataType="double"/>
+		<DataField name="rMSSD" optype="continuous" dataType="double"/>
+		<DataField name="meanHR" optype="continuous" dataType="double"/>
+		<DataField name="meanRR" optype="continuous" dataType="double"/>
+	</DataDictionary>
+	<MiningModel functionName="classification">
+		<MiningSchema>
+			<MiningField name="_target" usageType="target"/>
+			<MiningField name="meanRR"/>
+			<MiningField name="meanHR"/>
+			<MiningField name="rMSSD"/>
+			<MiningField name="LFHF"/>
+			<MiningField name="HF"/>
+			<MiningField name="SD2"/>
+			<MiningField name="SDSD"/>
+			<MiningField name="ULF"/>
+			<MiningField name="SD1"/>
+			<MiningField name="HRVi"/>
+			<MiningField name="TINN"/>
+			<MiningField name="VLF"/>
+		</MiningSchema>
+		<Output>
+			<OutputField name="p0" optype="continuous" dataType="double" feature="probability" value="0"/>
+			<OutputField name="p1" optype="continuous" dataType="double" feature="probability" value="1"/>
+		</Output>
+		<Segmentation multipleModelMethod="majorityVote">
+			<Segment id="1">
+				<True/>
+				<TreeModel functionName="classification" splitCharacteristic="binarySplit">
+					<MiningSchema>
+						<MiningField name="HF"/>
+						<MiningField name="SD1"/>
+						<MiningField name="SD2"/>
+						<MiningField name="ULF"/>
+						<MiningField name="VLF"/>
+						<MiningField name="HRVi"/>
+						<MiningField name="LFHF"/>
+						<MiningField name="SDSD"/>
+						<MiningField name="TINN"/>
+						<MiningField name="rMSSD"/>
+						<MiningField name="meanHR"/>
+						<MiningField name="meanRR"/>
+					</MiningSchema>
+					<Node id="1">
+						<True/>
+						<Node id="2">
+							<SimplePredicate field="VLF" operator="lessOrEqual" value="713.337433831543"/>
+							<Node id="4">
+								<SimplePredicate field="LFHF" operator="lessOrEqual" value="10.8627124256935"/>
+								<Node id="8">
+									<SimplePredicate field="ULF" operator="lessOrEqual" value="290.2448301142155"/>
+									<Node id="16">
+										<SimplePredicate field="SD2" operator="lessOrEqual" value="3.5369310785924997"/>
+										<Node id="32" score="1">
+											<SimplePredicate field="SD1" operator="lessOrEqual" value="1.720425400926235"/>
+										</Node>
+										<Node id="33" score="0">
+											<SimplePredicate field="SD1" operator="greaterThan" value="1.720425400926235"/>
+										</Node>
+									</Node>
+									<Node id="17">
+										<SimplePredicate field="SD2" operator="greaterThan" value="3.5369310785924997"/>
+										<Node id="34">
+											<SimplePredicate field="SD1" operator="lessOrEqual" value="1.413408062032995"/>
+											<Node id="62" score="0">
+												<SimplePredicate field="meanRR" operator="lessOrEqual" value="871.4532858873399"/>
+											</Node>
+											<Node id="63" score="1">
+												<SimplePredicate field="meanRR" operator="greaterThan" value="871.4532858873399"/>
+											</Node>
+										</Node>
+										<Node id="35">
+											<SimplePredicate field="SD1" operator="greaterThan" value="1.413408062032995"/>
+											<Node id="64" score="0">
+												<SimplePredicate field="LFHF" operator="lessOrEqual" value="4.75566925787545"/>
+											</Node>
+											<Node id="65">
+												<SimplePredicate field="LFHF" operator="greaterThan" value="4.75566925787545"/>
+												<Node id="112" score="1">
+													<SimplePredicate field="LFHF" operator="lessOrEqual" value="4.857472814661159"/>
+												</Node>
+												<Node id="113">
+													<SimplePredicate field="LFHF" operator="greaterThan" value="4.857472814661159"/>
+													<Node id="176" score="0">
+														<SimplePredicate field="meanRR" operator="lessOrEqual" value="987.301600225812"/>
+													</Node>
+													<Node id="177" score="1">
+														<SimplePredicate field="meanRR" operator="greaterThan" value="987.301600225812"/>
+													</Node>
+												</Node>
+											</Node>
+										</Node>
+									</Node>
+								</Node>
+								<Node id="9">
+									<SimplePredicate field="ULF" operator="greaterThan" value="290.2448301142155"/>
+									<Node id="18">
+										<SimplePredicate field="LFHF" operator="lessOrEqual" value="7.5261218494909805"/>
+										<Node id="36">
+											<SimplePredicate field="VLF" operator="lessOrEqual" value="44.558476053187945"/>
+											<Node id="66" score="1">
+												<SimplePredicate field="ULF" operator="lessOrEqual" value="400.040561513789"/>
+											</Node>
+											<Node id="67" score="0">
+												<SimplePredicate field="ULF" operator="greaterThan" value="400.040561513789"/>
+											</Node>
+										</Node>
+										<Node id="37">
+											<SimplePredicate field="VLF" operator="greaterThan" value="44.558476053187945"/>
+											<Node id="68">
+												<SimplePredicate field="meanHR" operator="lessOrEqual" value="67.78607822064686"/>
+												<Node id="114">
+													<SimplePredicate field="meanRR" operator="lessOrEqual" value="966.0322580645204"/>
+													<Node id="178">
+														<SimplePredicate field="meanRR" operator="lessOrEqual" value="965.6774193548355"/>
+														<Node id="230">
+															<SimplePredicate field="VLF" operator="lessOrEqual" value="396.3445887663395"/>
+															<Node id="290">
+																<SimplePredicate field="SD2" operator="lessOrEqual" value="5.58800110660062"/>
+																<Node id="350" score="0">
+																	<SimplePredicate field="LFHF" operator="lessOrEqual" value="3.67798216973269"/>
+																</Node>
+																<Node id="351" score="1">
+																	<SimplePredicate field="LFHF" operator="greaterThan" value="3.67798216973269"/>
+																</Node>
+															</Node>
+															<Node id="291">
+																<SimplePredicate field="SD2" operator="greaterThan" value="5.58800110660062"/>
+																<Node id="352">
+																	<SimplePredicate field="VLF" operator="lessOrEqual" value="317.4181528410445"/>
+																	<Node id="424">
+																		<SimplePredicate field="SD1" operator="lessOrEqual" value="2.0595519651692"/>
+																		<Node id="466" score="1">
+																			<SimplePredicate field="LFHF" operator="lessOrEqual" value="5.432823634848255"/>
+																		</Node>
+																		<Node id="467" score="0">
+																			<SimplePredicate field="LFHF" operator="greaterThan" value="5.432823634848255"/>
+																		</Node>
+																	</Node>
+																	<Node id="425" score="0">
+																		<SimplePredicate field="SD1" operator="greaterThan" value="2.0595519651692"/>
+																	</Node>
+																</Node>
+																<Node id="353">
+																	<SimplePredicate field="VLF" operator="greaterThan" value="317.4181528410445"/>
+																	<Node id="426" score="1">
+																		<SimplePredicate field="SD2" operator="lessOrEqual" value="9.049755687661795"/>
+																	</Node>
+																	<Node id="427" score="0">
+																		<SimplePredicate field="SD2" operator="greaterThan" value="9.049755687661795"/>
+																	</Node>
+																</Node>
+															</Node>
+														</Node>
+														<Node id="231">
+															<SimplePredicate field="VLF" operator="greaterThan" value="396.3445887663395"/>
+															<Node id="292">
+																<SimplePredicate field="meanHR" operator="lessOrEqual" value="65.62371577214606"/>
+																<Node id="354" score="1">
+																	<SimplePredicate field="meanHR" operator="lessOrEqual" value="62.654432500757494"/>
+																</Node>
+																<Node id="355">
+																	<SimplePredicate field="meanHR" operator="greaterThan" value="62.654432500757494"/>
+																	<Node id="428" score="0">
+																		<SimplePredicate field="LFHF" operator="lessOrEqual" value="5.932744431652624"/>
+																	</Node>
+																	<Node id="429">
+																		<SimplePredicate field="LFHF" operator="greaterThan" value="5.932744431652624"/>
+																		<Node id="468" score="1">
+																			<SimplePredicate field="LFHF" operator="lessOrEqual" value="5.973773757185115"/>
+																		</Node>
+																		<Node id="469">
+																			<SimplePredicate field="LFHF" operator="greaterThan" value="5.973773757185115"/>
+																			<Node id="490">
+																				<SimplePredicate field="LFHF" operator="lessOrEqual" value="6.950529828908785"/>
+																				<Node id="504" score="0">
+																					<SimplePredicate field="rMSSD" operator="lessOrEqual" value="80.99513261206124"/>
+																				</Node>
+																				<Node id="505" score="1">
+																					<SimplePredicate field="rMSSD" operator="greaterThan" value="80.99513261206124"/>
+																				</Node>
+																			</Node>
+																			<Node id="491" score="0">
+																				<SimplePredicate field="LFHF" operator="greaterThan" value="6.950529828908785"/>
+																			</Node>
+																		</Node>
+																	</Node>
+																</Node>
+															</Node>
+															<Node id="293">
+																<SimplePredicate field="meanHR" operator="greaterThan" value="65.62371577214606"/>
+																<Node id="356" score="0">
+																	<SimplePredicate field="TINN" operator="lessOrEqual" value="80.16081779233869"/>
+																</Node>
+																<Node id="357" score="1">
+																	<SimplePredicate field="TINN" operator="greaterThan" value="80.16081779233869"/>
+																</Node>
+															</Node>
+														</Node>
+													</Node>
+													<Node id="179" score="1">
+														<SimplePredicate field="meanRR" operator="greaterThan" value="965.6774193548355"/>
+													</Node>
+												</Node>
+												<Node id="115">
+													<SimplePredicate field="meanRR" operator="greaterThan" value="966.0322580645204"/>
+													<Node id="180">
+														<SimplePredicate field="SD2" operator="lessOrEqual" value="7.258816855433524"/>
+														<Node id="232">
+															<SimplePredicate field="rMSSD" operator="lessOrEqual" value="52.2562395984166"/>
+															<Node id="294">
+																<SimplePredicate field="SD2" operator="lessOrEqual" value="4.78241934614808"/>
+																<Node id="358" score="0">
+																	<SimplePredicate field="SD2" operator="lessOrEqual" value="4.701324236168375"/>
+																</Node>
+																<Node id="359" score="1">
+																	<SimplePredicate field="SD2" operator="greaterThan" value="4.701324236168375"/>
+																</Node>
+															</Node>
+															<Node id="295" score="0">
+																<SimplePredicate field="SD2" operator="greaterThan" value="4.78241934614808"/>
+															</Node>
+														</Node>
+														<Node id="233">
+															<SimplePredicate field="rMSSD" operator="greaterThan" value="52.2562395984166"/>
+															<Node id="296" score="1">
+																<SimplePredicate field="SD1" operator="lessOrEqual" value="4.44611504762247"/>
+															</Node>
+															<Node id="297" score="0">
+																<SimplePredicate field="SD1" operator="greaterThan" value="4.44611504762247"/>
+															</Node>
+														</Node>
+													</Node>
+													<Node id="181">
+														<SimplePredicate field="SD2" operator="greaterThan" value="7.258816855433524"/>
+														<Node id="234" score="0">
+															<SimplePredicate field="SD1" operator="lessOrEqual" value="6.920552644877285"/>
+														</Node>
+														<Node id="235">
+															<SimplePredicate field="SD1" operator="greaterThan" value="6.920552644877285"/>
+															<Node id="298">
+																<SimplePredicate field="HF" operator="lessOrEqual" value="1243.1583399338851"/>
+																<Node id="360" score="0">
+																	<SimplePredicate field="VLF" operator="lessOrEqual" value="469.16891982939"/>
+																</Node>
+																<Node id="361" score="1">
+																	<SimplePredicate field="VLF" operator="greaterThan" value="469.16891982939"/>
+																</Node>
+															</Node>
+															<Node id="299">
+																<SimplePredicate field="HF" operator="greaterThan" value="1243.1583399338851"/>
+																<Node id="362">
+																	<SimplePredicate field="SDSD" operator="lessOrEqual" value="122.59022822709801"/>
+																	<Node id="430">
+																		<SimplePredicate field="SD1" operator="lessOrEqual" value="10.441092108969304"/>
+																		<Node id="470" score="0">
+																			<SimplePredicate field="SDSD" operator="lessOrEqual" value="119.4341833122445"/>
+																		</Node>
+																		<Node id="471" score="1">
+																			<SimplePredicate field="SDSD" operator="greaterThan" value="119.4341833122445"/>
+																		</Node>
+																	</Node>
+																	<Node id="431" score="1">
+																		<SimplePredicate field="SD1" operator="greaterThan" value="10.441092108969304"/>
+																	</Node>
+																</Node>
+																<Node id="363" score="0">
+																	<SimplePredicate field="SDSD" operator="greaterThan" value="122.59022822709801"/>
+																</Node>
+															</Node>
+														</Node>
+													</Node>
+												</Node>
+											</Node>
+											<Node id="69">
+												<SimplePredicate field="meanHR" operator="greaterThan" value="67.78607822064686"/>
+												<Node id="116">
+													<SimplePredicate field="TINN" operator="lessOrEqual" value="71.06971153846155"/>
+													<Node id="182" score="0">
+														<SimplePredicate field="meanRR" operator="lessOrEqual" value="835.0583419737095"/>
+													</Node>
+													<Node id="183">
+														<SimplePredicate field="meanRR" operator="greaterThan" value="835.0583419737095"/>
+														<Node id="236">
+															<SimplePredicate field="meanHR" operator="lessOrEqual" value="71.76722888781725"/>
+															<Node id="300" score="0">
+																<SimplePredicate field="SD1" operator="lessOrEqual" value="6.268323048360665"/>
+															</Node>
+															<Node id="301">
+																<SimplePredicate field="SD1" operator="greaterThan" value="6.268323048360665"/>
+																<Node id="364" score="0">
+																	<SimplePredicate field="TINN" operator="lessOrEqual" value="59.1194358178054"/>
+																</Node>
+																<Node id="365" score="1">
+																	<SimplePredicate field="TINN" operator="greaterThan" value="59.1194358178054"/>
+																</Node>
+															</Node>
+														</Node>
+														<Node id="237">
+															<SimplePredicate field="meanHR" operator="greaterThan" value="71.76722888781725"/>
+															<Node id="302" score="0">
+																<SimplePredicate field="TINN" operator="lessOrEqual" value="56.2090539832285"/>
+															</Node>
+															<Node id="303" score="1">
+																<SimplePredicate field="TINN" operator="greaterThan" value="56.2090539832285"/>
+															</Node>
+														</Node>
+													</Node>
+												</Node>
+												<Node id="117">
+													<SimplePredicate field="TINN" operator="greaterThan" value="71.06971153846155"/>
+													<Node id="184">
+														<SimplePredicate field="meanRR" operator="lessOrEqual" value="840.2522182057265"/>
+														<Node id="238">
+															<SimplePredicate field="SDSD" operator="lessOrEqual" value="94.67367243534164"/>
+															<Node id="304">
+																<SimplePredicate field="VLF" operator="lessOrEqual" value="81.81565595012006"/>
+																<Node id="366" score="0">
+																	<SimplePredicate field="rMSSD" operator="lessOrEqual" value="31.27054301827165"/>
+																</Node>
+																<Node id="367" score="1">
+																	<SimplePredicate field="rMSSD" operator="greaterThan" value="31.27054301827165"/>
+																</Node>
+															</Node>
+															<Node id="305">
+																<SimplePredicate field="VLF" operator="greaterThan" value="81.81565595012006"/>
+																<Node id="368" score="0">
+																	<SimplePredicate field="meanRR" operator="lessOrEqual" value="828.9910060387999"/>
+																</Node>
+																<Node id="369">
+																	<SimplePredicate field="meanRR" operator="greaterThan" value="828.9910060387999"/>
+																	<Node id="432" score="1">
+																		<SimplePredicate field="ULF" operator="lessOrEqual" value="938.206132961765"/>
+																	</Node>
+																	<Node id="433" score="0">
+																		<SimplePredicate field="ULF" operator="greaterThan" value="938.206132961765"/>
+																	</Node>
+																</Node>
+															</Node>
+														</Node>
+														<Node id="239" score="1">
+															<SimplePredicate field="SDSD" operator="greaterThan" value="94.67367243534164"/>
+														</Node>
+													</Node>
+													<Node id="185">
+														<SimplePredicate field="meanRR" operator="greaterThan" value="840.2522182057265"/>
+														<Node id="240">
+															<SimplePredicate field="SD2" operator="lessOrEqual" value="13.2904703478493"/>
+															<Node id="306" score="0">
+																<SimplePredicate field="ULF" operator="lessOrEqual" value="757.1371721560499"/>
+															</Node>
+															<Node id="307" score="1">
+																<SimplePredicate field="ULF" operator="greaterThan" value="757.1371721560499"/>
+															</Node>
+														</Node>
+														<Node id="241">
+															<SimplePredicate field="SD2" operator="greaterThan" value="13.2904703478493"/>
+															<Node id="308">
+																<SimplePredicate field="HRVi" operator="lessOrEqual" value="13.1777777777778"/>
+																<Node id="370" score="0">
+																	<SimplePredicate field="HF" operator="lessOrEqual" value="891.868904005944"/>
+																</Node>
+																<Node id="371">
+																	<SimplePredicate field="HF" operator="greaterThan" value="891.868904005944"/>
+																	<Node id="434" score="1">
+																		<SimplePredicate field="HF" operator="lessOrEqual" value="3797.3424763737103"/>
+																	</Node>
+																	<Node id="435" score="0">
+																		<SimplePredicate field="HF" operator="greaterThan" value="3797.3424763737103"/>
+																	</Node>
+																</Node>
+															</Node>
+															<Node id="309">
+																<SimplePredicate field="HRVi" operator="greaterThan" value="13.1777777777778"/>
+																<Node id="372" score="1">
+																	<SimplePredicate field="rMSSD" operator="lessOrEqual" value="192.09783683783002"/>
+																</Node>
+																<Node id="373" score="0">
+																	<SimplePredicate field="rMSSD" operator="greaterThan" value="192.09783683783002"/>
+																</Node>
+															</Node>
+														</Node>
+													</Node>
+												</Node>
+											</Node>
+										</Node>
+									</Node>
+									<Node id="19">
+										<SimplePredicate field="LFHF" operator="greaterThan" value="7.5261218494909805"/>
+										<Node id="38" score="1">
+											<SimplePredicate field="SD2" operator="lessOrEqual" value="5.1916284757972"/>
+										</Node>
+										<Node id="39">
+											<SimplePredicate field="SD2" operator="greaterThan" value="5.1916284757972"/>
+											<Node id="70">
+												<SimplePredicate field="LFHF" operator="lessOrEqual" value="7.625300472039245"/>
+												<Node id="118" score="1">
+													<SimplePredicate field="rMSSD" operator="lessOrEqual" value="36.7250939504554"/>
+												</Node>
+												<Node id="119">
+													<SimplePredicate field="rMSSD" operator="greaterThan" value="36.7250939504554"/>
+													<Node id="186" score="1">
+														<SimplePredicate field="LFHF" operator="lessOrEqual" value="7.531639699029935"/>
+													</Node>
+													<Node id="187" score="0">
+														<SimplePredicate field="LFHF" operator="greaterThan" value="7.531639699029935"/>
+													</Node>
+												</Node>
+											</Node>
+											<Node id="71">
+												<SimplePredicate field="LFHF" operator="greaterThan" value="7.625300472039245"/>
+												<Node id="120">
+													<SimplePredicate field="meanHR" operator="lessOrEqual" value="61.865588254923395"/>
+													<Node id="188">
+														<SimplePredicate field="HRVi" operator="lessOrEqual" value="8.03187803187803"/>
+														<Node id="242" score="0">
+															<SimplePredicate field="HRVi" operator="lessOrEqual" value="6.053021208483395"/>
+														</Node>
+														<Node id="243" score="1">
+															<SimplePredicate field="HRVi" operator="greaterThan" value="6.053021208483395"/>
+														</Node>
+													</Node>
+													<Node id="189">
+														<SimplePredicate field="HRVi" operator="greaterThan" value="8.03187803187803"/>
+														<Node id="244">
+															<SimplePredicate field="VLF" operator="lessOrEqual" value="668.967670553995"/>
+															<Node id="310" score="0">
+																<SimplePredicate field="SDSD" operator="lessOrEqual" value="75.04690068135764"/>
+															</Node>
+															<Node id="311">
+																<SimplePredicate field="SDSD" operator="greaterThan" value="75.04690068135764"/>
+																<Node id="374" score="1">
+																	<SimplePredicate field="SD2" operator="lessOrEqual" value="11.61184184104495"/>
+																</Node>
+																<Node id="375" score="0">
+																	<SimplePredicate field="SD2" operator="greaterThan" value="11.61184184104495"/>
+																</Node>
+															</Node>
+														</Node>
+														<Node id="245" score="1">
+															<SimplePredicate field="VLF" operator="greaterThan" value="668.967670553995"/>
+														</Node>
+													</Node>
+												</Node>
+												<Node id="121">
+													<SimplePredicate field="meanHR" operator="greaterThan" value="61.865588254923395"/>
+													<Node id="190">
+														<SimplePredicate field="LFHF" operator="lessOrEqual" value="9.22428914008888"/>
+														<Node id="246" score="0">
+															<SimplePredicate field="ULF" operator="lessOrEqual" value="5604.74786415143"/>
+														</Node>
+														<Node id="247">
+															<SimplePredicate field="ULF" operator="greaterThan" value="5604.74786415143"/>
+															<Node id="312" score="1">
+																<SimplePredicate field="meanHR" operator="lessOrEqual" value="74.75022888791786"/>
+															</Node>
+															<Node id="313" score="0">
+																<SimplePredicate field="meanHR" operator="greaterThan" value="74.75022888791786"/>
+															</Node>
+														</Node>
+													</Node>
+													<Node id="191">
+														<SimplePredicate field="LFHF" operator="greaterThan" value="9.22428914008888"/>
+														<Node id="248">
+															<SimplePredicate field="VLF" operator="lessOrEqual" value="575.3118076151915"/>
+															<Node id="314">
+																<SimplePredicate field="SD2" operator="lessOrEqual" value="8.441800628000935"/>
+																<Node id="376" score="0">
+																	<SimplePredicate field="ULF" operator="lessOrEqual" value="834.8317828555689"/>
+																</Node>
+																<Node id="377">
+																	<SimplePredicate field="ULF" operator="greaterThan" value="834.8317828555689"/>
+																	<Node id="436" score="1">
+																		<SimplePredicate field="HRVi" operator="lessOrEqual" value="9.368647717484935"/>
+																	</Node>
+																	<Node id="437" score="0">
+																		<SimplePredicate field="HRVi" operator="greaterThan" value="9.368647717484935"/>
+																	</Node>
+																</Node>
+															</Node>
+															<Node id="315">
+																<SimplePredicate field="SD2" operator="greaterThan" value="8.441800628000935"/>
+																<Node id="378">
+																	<SimplePredicate field="ULF" operator="lessOrEqual" value="1870.289866357165"/>
+																	<Node id="438" score="0">
+																		<SimplePredicate field="VLF" operator="lessOrEqual" value="255.1372522978155"/>
+																	</Node>
+																	<Node id="439">
+																		<SimplePredicate field="VLF" operator="greaterThan" value="255.1372522978155"/>
+																		<Node id="472" score="0">
+																			<SimplePredicate field="LFHF" operator="lessOrEqual" value="9.720509515628589"/>
+																		</Node>
+																		<Node id="473">
+																			<SimplePredicate field="LFHF" operator="greaterThan" value="9.720509515628589"/>
+																			<Node id="492" score="1">
+																				<SimplePredicate field="rMSSD" operator="lessOrEqual" value="77.37251985121985"/>
+																			</Node>
+																			<Node id="493" score="0">
+																				<SimplePredicate field="rMSSD" operator="greaterThan" value="77.37251985121985"/>
+																			</Node>
+																		</Node>
+																	</Node>
+																</Node>
+																<Node id="379" score="0">
+																	<SimplePredicate field="ULF" operator="greaterThan" value="1870.289866357165"/>
+																</Node>
+															</Node>
+														</Node>
+														<Node id="249">
+															<SimplePredicate field="VLF" operator="greaterThan" value="575.3118076151915"/>
+															<Node id="316">
+																<SimplePredicate field="SD1" operator="lessOrEqual" value="8.26050572402333"/>
+																<Node id="380" score="0">
+																	<SimplePredicate field="SD1" operator="lessOrEqual" value="2.4295152517717247"/>
+																</Node>
+																<Node id="381" score="1">
+																	<SimplePredicate field="SD1" operator="greaterThan" value="2.4295152517717247"/>
+																</Node>
+															</Node>
+															<Node id="317" score="0">
+																<SimplePredicate field="SD1" operator="greaterThan" value="8.26050572402333"/>
+															</Node>
+														</Node>
+													</Node>
+												</Node>
+											</Node>
+										</Node>
+									</Node>
+								</Node>
+							</Node>
+							<Node id="5">
+								<SimplePredicate field="LFHF" operator="greaterThan" value="10.8627124256935"/>
+								<Node id="10">
+									<SimplePredicate field="VLF" operator="lessOrEqual" value="276.7558062594575"/>
+									<Node id="20">
+										<SimplePredicate field="meanRR" operator="lessOrEqual" value="957.7200301174225"/>
+										<Node id="40">
+											<SimplePredicate field="meanRR" operator="lessOrEqual" value="929.9247158817805"/>
+											<Node id="72">
+												<SimplePredicate field="HRVi" operator="lessOrEqual" value="10.4049621530698"/>
+												<Node id="122">
+													<SimplePredicate field="SD1" operator="lessOrEqual" value="1.48438080456112"/>
+													<Node id="192" score="1">
+														<SimplePredicate field="meanRR" operator="lessOrEqual" value="847.777935625257"/>
+													</Node>
+													<Node id="193" score="0">
+														<SimplePredicate field="meanRR" operator="greaterThan" value="847.777935625257"/>
+													</Node>
+												</Node>
+												<Node id="123">
+													<SimplePredicate field="SD1" operator="greaterThan" value="1.48438080456112"/>
+													<Node id="194">
+														<SimplePredicate field="TINN" operator="lessOrEqual" value="70.96354166666666"/>
+														<Node id="250" score="0">
+															<SimplePredicate field="ULF" operator="lessOrEqual" value="1971.81694229792"/>
+														</Node>
+														<Node id="251">
+															<SimplePredicate field="ULF" operator="greaterThan" value="1971.81694229792"/>
+															<Node id="318" score="1">
+																<SimplePredicate field="HF" operator="lessOrEqual" value="33.1306212237609"/>
+															</Node>
+															<Node id="319" score="0">
+																<SimplePredicate field="HF" operator="greaterThan" value="33.1306212237609"/>
+															</Node>
+														</Node>
+													</Node>
+													<Node id="195">
+														<SimplePredicate field="TINN" operator="greaterThan" value="70.96354166666666"/>
+														<Node id="252" score="1">
+															<SimplePredicate field="SD2" operator="lessOrEqual" value="9.586583961115569"/>
+														</Node>
+														<Node id="253">
+															<SimplePredicate field="SD2" operator="greaterThan" value="9.586583961115569"/>
+															<Node id="320">
+																<SimplePredicate field="TINN" operator="lessOrEqual" value="72.4516369047619"/>
+																<Node id="382" score="0">
+																	<SimplePredicate field="HRVi" operator="lessOrEqual" value="9.210497835497835"/>
+																</Node>
+																<Node id="383" score="1">
+																	<SimplePredicate field="HRVi" operator="greaterThan" value="9.210497835497835"/>
+																</Node>
+															</Node>
+															<Node id="321" score="0">
+																<SimplePredicate field="TINN" operator="greaterThan" value="72.4516369047619"/>
+															</Node>
+														</Node>
+													</Node>
+												</Node>
+											</Node>
+											<Node id="73">
+												<SimplePredicate field="HRVi" operator="greaterThan" value="10.4049621530698"/>
+												<Node id="124" score="1">
+													<SimplePredicate field="ULF" operator="lessOrEqual" value="1691.257704376407"/>
+												</Node>
+												<Node id="125" score="0">
+													<SimplePredicate field="ULF" operator="greaterThan" value="1691.257704376407"/>
+												</Node>
+											</Node>
+										</Node>
+										<Node id="41">
+											<SimplePredicate field="meanRR" operator="greaterThan" value="929.9247158817805"/>
+											<Node id="74" score="1">
+												<SimplePredicate field="meanRR" operator="lessOrEqual" value="932.4999999999925"/>
+											</Node>
+											<Node id="75">
+												<SimplePredicate field="meanRR" operator="greaterThan" value="932.4999999999925"/>
+												<Node id="126">
+													<SimplePredicate field="ULF" operator="lessOrEqual" value="2695.969016514355"/>
+													<Node id="196">
+														<SimplePredicate field="VLF" operator="lessOrEqual" value="134.7855594737875"/>
+														<Node id="254" score="0">
+															<SimplePredicate field="TINN" operator="lessOrEqual" value="41.715054898648646"/>
+														</Node>
+														<Node id="255">
+															<SimplePredicate field="TINN" operator="greaterThan" value="41.715054898648646"/>
+															<Node id="322">
+																<SimplePredicate field="LFHF" operator="lessOrEqual" value="14.9387891462457"/>
+																<Node id="384" score="1">
+																	<SimplePredicate field="rMSSD" operator="lessOrEqual" value="29.3732518639343"/>
+																</Node>
+																<Node id="385" score="0">
+																	<SimplePredicate field="rMSSD" operator="greaterThan" value="29.3732518639343"/>
+																</Node>
+															</Node>
+															<Node id="323" score="1">
+																<SimplePredicate field="LFHF" operator="greaterThan" value="14.9387891462457"/>
+															</Node>
+														</Node>
+													</Node>
+													<Node id="197">
+														<SimplePredicate field="VLF" operator="greaterThan" value="134.7855594737875"/>
+														<Node id="256" score="0">
+															<SimplePredicate field="SD1" operator="lessOrEqual" value="11.315814850308751"/>
+														</Node>
+														<Node id="257" score="1">
+															<SimplePredicate field="SD1" operator="greaterThan" value="11.315814850308751"/>
+														</Node>
+													</Node>
+												</Node>
+												<Node id="127" score="1">
+													<SimplePredicate field="ULF" operator="greaterThan" value="2695.969016514355"/>
+												</Node>
+											</Node>
+										</Node>
+									</Node>
+									<Node id="21">
+										<SimplePredicate field="meanRR" operator="greaterThan" value="957.7200301174225"/>
+										<Node id="42">
+											<SimplePredicate field="ULF" operator="lessOrEqual" value="730.6795046604966"/>
+											<Node id="76" score="0">
+												<SimplePredicate field="rMSSD" operator="lessOrEqual" value="16.3344159877078"/>
+											</Node>
+											<Node id="77" score="1">
+												<SimplePredicate field="rMSSD" operator="greaterThan" value="16.3344159877078"/>
+											</Node>
+										</Node>
+										<Node id="43" score="0">
+											<SimplePredicate field="ULF" operator="greaterThan" value="730.6795046604966"/>
+										</Node>
+									</Node>
+								</Node>
+								<Node id="11">
+									<SimplePredicate field="VLF" operator="greaterThan" value="276.7558062594575"/>
+									<Node id="22">
+										<SimplePredicate field="SD2" operator="lessOrEqual" value="20.5103356334399"/>
+										<Node id="44">
+											<SimplePredicate field="SD1" operator="lessOrEqual" value="1.77535677974404"/>
+											<Node id="78" score="1">
+												<SimplePredicate field="meanRR" operator="lessOrEqual" value="850.871536202281"/>
+											</Node>
+											<Node id="79">
+												<SimplePredicate field="meanRR" operator="greaterThan" value="850.871536202281"/>
+												<Node id="128" score="0">
+													<SimplePredicate field="meanRR" operator="lessOrEqual" value="1004.6360461993045"/>
+												</Node>
+												<Node id="129" score="1">
+													<SimplePredicate field="meanRR" operator="greaterThan" value="1004.6360461993045"/>
+												</Node>
+											</Node>
+										</Node>
+										<Node id="45">
+											<SimplePredicate field="SD1" operator="greaterThan" value="1.77535677974404"/>
+											<Node id="80">
+												<SimplePredicate field="LFHF" operator="lessOrEqual" value="20.352716389266"/>
+												<Node id="130">
+													<SimplePredicate field="SD1" operator="lessOrEqual" value="8.185151097399292"/>
+													<Node id="198">
+														<SimplePredicate field="ULF" operator="lessOrEqual" value="1933.3358074212101"/>
+														<Node id="258">
+															<SimplePredicate field="meanHR" operator="lessOrEqual" value="67.36949560283244"/>
+															<Node id="324">
+																<SimplePredicate field="VLF" operator="lessOrEqual" value="322.69603624727404"/>
+																<Node id="386" score="1">
+																	<SimplePredicate field="SD1" operator="lessOrEqual" value="6.422169251155175"/>
+																</Node>
+																<Node id="387" score="0">
+																	<SimplePredicate field="SD1" operator="greaterThan" value="6.422169251155175"/>
+																</Node>
+															</Node>
+															<Node id="325">
+																<SimplePredicate field="VLF" operator="greaterThan" value="322.69603624727404"/>
+																<Node id="388" score="1">
+																	<SimplePredicate field="SD1" operator="lessOrEqual" value="1.837101607452945"/>
+																</Node>
+																<Node id="389">
+																	<SimplePredicate field="SD1" operator="greaterThan" value="1.837101607452945"/>
+																	<Node id="440" score="0">
+																		<SimplePredicate field="meanHR" operator="lessOrEqual" value="64.654812641461"/>
+																	</Node>
+																	<Node id="441">
+																		<SimplePredicate field="meanHR" operator="greaterThan" value="64.654812641461"/>
+																		<Node id="474" score="1">
+																			<SimplePredicate field="meanHR" operator="lessOrEqual" value="64.8838541987451"/>
+																		</Node>
+																		<Node id="475">
+																			<SimplePredicate field="meanHR" operator="greaterThan" value="64.8838541987451"/>
+																			<Node id="494">
+																				<SimplePredicate field="SD2" operator="lessOrEqual" value="11.38826491181985"/>
+																				<Node id="506" score="0">
+																					<SimplePredicate field="TINN" operator="lessOrEqual" value="87.16325431034485"/>
+																				</Node>
+																				<Node id="507" score="1">
+																					<SimplePredicate field="TINN" operator="greaterThan" value="87.16325431034485"/>
+																				</Node>
+																			</Node>
+																			<Node id="495" score="0">
+																				<SimplePredicate field="SD2" operator="greaterThan" value="11.38826491181985"/>
+																			</Node>
+																		</Node>
+																	</Node>
+																</Node>
+															</Node>
+														</Node>
+														<Node id="259">
+															<SimplePredicate field="meanHR" operator="greaterThan" value="67.36949560283244"/>
+															<Node id="326">
+																<SimplePredicate field="meanRR" operator="lessOrEqual" value="853.8920454545465"/>
+																<Node id="390">
+																	<SimplePredicate field="VLF" operator="lessOrEqual" value="499.9273045259695"/>
+																	<Node id="442" score="1">
+																		<SimplePredicate field="HF" operator="lessOrEqual" value="63.83784439611945"/>
+																	</Node>
+																	<Node id="443">
+																		<SimplePredicate field="HF" operator="greaterThan" value="63.83784439611945"/>
+																		<Node id="476" score="0">
+																			<SimplePredicate field="LFHF" operator="lessOrEqual" value="19.13259949477135"/>
+																		</Node>
+																		<Node id="477" score="1">
+																			<SimplePredicate field="LFHF" operator="greaterThan" value="19.13259949477135"/>
+																		</Node>
+																	</Node>
+																</Node>
+																<Node id="391" score="1">
+																	<SimplePredicate field="VLF" operator="greaterThan" value="499.9273045259695"/>
+																</Node>
+															</Node>
+															<Node id="327">
+																<SimplePredicate field="meanRR" operator="greaterThan" value="853.8920454545465"/>
+																<Node id="392" score="1">
+																	<SimplePredicate field="SDSD" operator="lessOrEqual" value="71.10713633771874"/>
+																</Node>
+																<Node id="393" score="0">
+																	<SimplePredicate field="SDSD" operator="greaterThan" value="71.10713633771874"/>
+																</Node>
+															</Node>
+														</Node>
+													</Node>
+													<Node id="199">
+														<SimplePredicate field="ULF" operator="greaterThan" value="1933.3358074212101"/>
+														<Node id="260" score="0">
+															<SimplePredicate field="meanRR" operator="lessOrEqual" value="906.0449811513595"/>
+														</Node>
+														<Node id="261">
+															<SimplePredicate field="meanRR" operator="greaterThan" value="906.0449811513595"/>
+															<Node id="328">
+																<SimplePredicate field="SDSD" operator="lessOrEqual" value="70.02059725757971"/>
+																<Node id="394">
+																	<SimplePredicate field="meanHR" operator="lessOrEqual" value="63.9925943043788"/>
+																	<Node id="444" score="0">
+																		<SimplePredicate field="meanRR" operator="lessOrEqual" value="973.839115355829"/>
+																	</Node>
+																	<Node id="445" score="1">
+																		<SimplePredicate field="meanRR" operator="greaterThan" value="973.839115355829"/>
+																	</Node>
+																</Node>
+																<Node id="395" score="1">
+																	<SimplePredicate field="meanHR" operator="greaterThan" value="63.9925943043788"/>
+																</Node>
+															</Node>
+															<Node id="329" score="0">
+																<SimplePredicate field="SDSD" operator="greaterThan" value="70.02059725757971"/>
+															</Node>
+														</Node>
+													</Node>
+												</Node>
+												<Node id="131">
+													<SimplePredicate field="SD1" operator="greaterThan" value="8.185151097399292"/>
+													<Node id="200" score="1">
+														<SimplePredicate field="SD2" operator="lessOrEqual" value="18.652120778920953"/>
+													</Node>
+													<Node id="201" score="0">
+														<SimplePredicate field="SD2" operator="greaterThan" value="18.652120778920953"/>
+													</Node>
+												</Node>
+											</Node>
+											<Node id="81">
+												<SimplePredicate field="LFHF" operator="greaterThan" value="20.352716389266"/>
+												<Node id="132" score="0">
+													<SimplePredicate field="SD2" operator="lessOrEqual" value="9.65532682520826"/>
+												</Node>
+												<Node id="133">
+													<SimplePredicate field="SD2" operator="greaterThan" value="9.65532682520826"/>
+													<Node id="202">
+														<SimplePredicate field="SD2" operator="lessOrEqual" value="13.49966453560615"/>
+														<Node id="262" score="1">
+															<SimplePredicate field="meanHR" operator="lessOrEqual" value="66.94635723521864"/>
+														</Node>
+														<Node id="263" score="0">
+															<SimplePredicate field="meanHR" operator="greaterThan" value="66.94635723521864"/>
+														</Node>
+													</Node>
+													<Node id="203" score="1">
+														<SimplePredicate field="SD2" operator="greaterThan" value="13.49966453560615"/>
+													</Node>
+												</Node>
+											</Node>
+										</Node>
+									</Node>
+									<Node id="23">
+										<SimplePredicate field="SD2" operator="greaterThan" value="20.5103356334399"/>
+										<Node id="46">
+											<SimplePredicate field="LFHF" operator="lessOrEqual" value="16.82926286583185"/>
+											<Node id="82">
+												<SimplePredicate field="SD2" operator="lessOrEqual" value="20.98205023000585"/>
+												<Node id="134" score="1">
+													<SimplePredicate field="SDSD" operator="lessOrEqual" value="65.1368665248969"/>
+												</Node>
+												<Node id="135" score="0">
+													<SimplePredicate field="SDSD" operator="greaterThan" value="65.1368665248969"/>
+												</Node>
+											</Node>
+											<Node id="83" score="0">
+												<SimplePredicate field="SD2" operator="greaterThan" value="20.98205023000585"/>
+											</Node>
+										</Node>
+										<Node id="47">
+											<SimplePredicate field="LFHF" operator="greaterThan" value="16.82926286583185"/>
+											<Node id="84">
+												<SimplePredicate field="meanHR" operator="lessOrEqual" value="80.5500271879781"/>
+												<Node id="136">
+													<SimplePredicate field="ULF" operator="lessOrEqual" value="7340.594708887786"/>
+													<Node id="204" score="1">
+														<SimplePredicate field="SDSD" operator="lessOrEqual" value="16.6924470187788"/>
+													</Node>
+													<Node id="205" score="0">
+														<SimplePredicate field="SDSD" operator="greaterThan" value="16.6924470187788"/>
+													</Node>
+												</Node>
+												<Node id="137" score="1">
+													<SimplePredicate field="ULF" operator="greaterThan" value="7340.594708887786"/>
+												</Node>
+											</Node>
+											<Node id="85">
+												<SimplePredicate field="meanHR" operator="greaterThan" value="80.5500271879781"/>
+												<Node id="138" score="1">
+													<SimplePredicate field="LFHF" operator="lessOrEqual" value="25.7065274940311"/>
+												</Node>
+												<Node id="139" score="0">
+													<SimplePredicate field="LFHF" operator="greaterThan" value="25.7065274940311"/>
+												</Node>
+											</Node>
+										</Node>
+									</Node>
+								</Node>
+							</Node>
+						</Node>
+						<Node id="3">
+							<SimplePredicate field="VLF" operator="greaterThan" value="713.337433831543"/>
+							<Node id="6">
+								<SimplePredicate field="SDSD" operator="lessOrEqual" value="104.7775847012725"/>
+								<Node id="12">
+									<SimplePredicate field="LFHF" operator="lessOrEqual" value="8.621659708540829"/>
+									<Node id="24">
+										<SimplePredicate field="meanHR" operator="lessOrEqual" value="61.3510143375289"/>
+										<Node id="48">
+											<SimplePredicate field="VLF" operator="lessOrEqual" value="1498.969325038365"/>
+											<Node id="86">
+												<SimplePredicate field="meanHR" operator="lessOrEqual" value="54.04906862942545"/>
+												<Node id="140" score="0">
+													<SimplePredicate field="HF" operator="lessOrEqual" value="1837.284128999205"/>
+												</Node>
+												<Node id="141" score="1">
+													<SimplePredicate field="HF" operator="greaterThan" value="1837.284128999205"/>
+												</Node>
+											</Node>
+											<Node id="87" score="0">
+												<SimplePredicate field="meanHR" operator="greaterThan" value="54.04906862942545"/>
+											</Node>
+										</Node>
+										<Node id="49">
+											<SimplePredicate field="VLF" operator="greaterThan" value="1498.969325038365"/>
+											<Node id="88">
+												<SimplePredicate field="meanHR" operator="lessOrEqual" value="58.61351680679995"/>
+												<Node id="142" score="1">
+													<SimplePredicate field="SD2" operator="lessOrEqual" value="30.26807119998795"/>
+												</Node>
+												<Node id="143" score="0">
+													<SimplePredicate field="SD2" operator="greaterThan" value="30.26807119998795"/>
+												</Node>
+											</Node>
+											<Node id="89">
+												<SimplePredicate field="meanHR" operator="greaterThan" value="58.61351680679995"/>
+												<Node id="144" score="1">
+													<SimplePredicate field="ULF" operator="lessOrEqual" value="5422.1559527455"/>
+												</Node>
+												<Node id="145" score="0">
+													<SimplePredicate field="ULF" operator="greaterThan" value="5422.1559527455"/>
+												</Node>
+											</Node>
+										</Node>
+									</Node>
+									<Node id="25">
+										<SimplePredicate field="meanHR" operator="greaterThan" value="61.3510143375289"/>
+										<Node id="50">
+											<SimplePredicate field="ULF" operator="lessOrEqual" value="4603.096489069615"/>
+											<Node id="90" score="1">
+												<SimplePredicate field="meanHR" operator="lessOrEqual" value="66.196109479245"/>
+											</Node>
+											<Node id="91">
+												<SimplePredicate field="meanHR" operator="greaterThan" value="66.196109479245"/>
+												<Node id="146" score="0">
+													<SimplePredicate field="VLF" operator="lessOrEqual" value="900.123562697042"/>
+												</Node>
+												<Node id="147">
+													<SimplePredicate field="VLF" operator="greaterThan" value="900.123562697042"/>
+													<Node id="206">
+														<SimplePredicate field="SD1" operator="lessOrEqual" value="6.52609799264693"/>
+														<Node id="264" score="1">
+															<SimplePredicate field="meanHR" operator="lessOrEqual" value="68.7882881365912"/>
+														</Node>
+														<Node id="265" score="0">
+															<SimplePredicate field="meanHR" operator="greaterThan" value="68.7882881365912"/>
+														</Node>
+													</Node>
+													<Node id="207">
+														<SimplePredicate field="SD1" operator="greaterThan" value="6.52609799264693"/>
+														<Node id="266" score="0">
+															<SimplePredicate field="meanHR" operator="lessOrEqual" value="66.79878432978884"/>
+														</Node>
+														<Node id="267" score="1">
+															<SimplePredicate field="meanHR" operator="greaterThan" value="66.79878432978884"/>
+														</Node>
+													</Node>
+												</Node>
+											</Node>
+										</Node>
+										<Node id="51">
+											<SimplePredicate field="ULF" operator="greaterThan" value="4603.096489069615"/>
+											<Node id="92">
+												<SimplePredicate field="SD1" operator="lessOrEqual" value="11.974697875746351"/>
+												<Node id="148" score="1">
+													<SimplePredicate field="VLF" operator="lessOrEqual" value="867.4350887328781"/>
+												</Node>
+												<Node id="149" score="0">
+													<SimplePredicate field="VLF" operator="greaterThan" value="867.4350887328781"/>
+												</Node>
+											</Node>
+											<Node id="93" score="1">
+												<SimplePredicate field="SD1" operator="greaterThan" value="11.974697875746351"/>
+											</Node>
+										</Node>
+									</Node>
+								</Node>
+								<Node id="13">
+									<SimplePredicate field="LFHF" operator="greaterThan" value="8.621659708540829"/>
+									<Node id="26">
+										<SimplePredicate field="ULF" operator="lessOrEqual" value="1558.073000621105"/>
+										<Node id="52">
+											<SimplePredicate field="meanRR" operator="lessOrEqual" value="958.5788530465945"/>
+											<Node id="94" score="1">
+												<SimplePredicate field="meanHR" operator="lessOrEqual" value="69.27203241942814"/>
+											</Node>
+											<Node id="95">
+												<SimplePredicate field="meanHR" operator="greaterThan" value="69.27203241942814"/>
+												<Node id="150">
+													<SimplePredicate field="HRVi" operator="lessOrEqual" value="12.17694805194805"/>
+													<Node id="208" score="1">
+														<SimplePredicate field="SDSD" operator="lessOrEqual" value="16.03154327944985"/>
+													</Node>
+													<Node id="209" score="0">
+														<SimplePredicate field="SDSD" operator="greaterThan" value="16.03154327944985"/>
+													</Node>
+												</Node>
+												<Node id="151" score="1">
+													<SimplePredicate field="HRVi" operator="greaterThan" value="12.17694805194805"/>
+												</Node>
+											</Node>
+										</Node>
+										<Node id="53" score="0">
+											<SimplePredicate field="meanRR" operator="greaterThan" value="958.5788530465945"/>
+										</Node>
+									</Node>
+									<Node id="27">
+										<SimplePredicate field="ULF" operator="greaterThan" value="1558.073000621105"/>
+										<Node id="54">
+											<SimplePredicate field="LFHF" operator="lessOrEqual" value="16.845683720813952"/>
+											<Node id="96">
+												<SimplePredicate field="VLF" operator="lessOrEqual" value="2110.534214676275"/>
+												<Node id="152">
+													<SimplePredicate field="meanRR" operator="lessOrEqual" value="1027.869239881305"/>
+													<Node id="210">
+														<SimplePredicate field="TINN" operator="lessOrEqual" value="133.8301809210525"/>
+														<Node id="268">
+															<SimplePredicate field="VLF" operator="lessOrEqual" value="1174.0859013601398"/>
+															<Node id="330">
+																<SimplePredicate field="HRVi" operator="lessOrEqual" value="12.2076149425287"/>
+																<Node id="396" score="1">
+																	<SimplePredicate field="HF" operator="lessOrEqual" value="176.1603813451825"/>
+																</Node>
+																<Node id="397">
+																	<SimplePredicate field="HF" operator="greaterThan" value="176.1603813451825"/>
+																	<Node id="446" score="1">
+																		<SimplePredicate field="SD2" operator="lessOrEqual" value="14.6765717240377"/>
+																	</Node>
+																	<Node id="447">
+																		<SimplePredicate field="SD2" operator="greaterThan" value="14.6765717240377"/>
+																		<Node id="478">
+																			<SimplePredicate field="HF" operator="lessOrEqual" value="965.2511796876545"/>
+																			<Node id="496" score="1">
+																				<SimplePredicate field="meanRR" operator="lessOrEqual" value="799.312317360342"/>
+																			</Node>
+																			<Node id="497" score="0">
+																				<SimplePredicate field="meanRR" operator="greaterThan" value="799.312317360342"/>
+																			</Node>
+																		</Node>
+																		<Node id="479">
+																			<SimplePredicate field="HF" operator="greaterThan" value="965.2511796876545"/>
+																			<Node id="498" score="0">
+																				<SimplePredicate field="ULF" operator="lessOrEqual" value="2692.711923248895"/>
+																			</Node>
+																			<Node id="499" score="1">
+																				<SimplePredicate field="ULF" operator="greaterThan" value="2692.711923248895"/>
+																			</Node>
+																		</Node>
+																	</Node>
+																</Node>
+															</Node>
+															<Node id="331">
+																<SimplePredicate field="HRVi" operator="greaterThan" value="12.2076149425287"/>
+																<Node id="398">
+																	<SimplePredicate field="HF" operator="lessOrEqual" value="1078.490155086205"/>
+																	<Node id="448">
+																		<SimplePredicate field="VLF" operator="lessOrEqual" value="1110.74495067114"/>
+																		<Node id="480">
+																			<SimplePredicate field="meanHR" operator="lessOrEqual" value="73.47402478612341"/>
+																			<Node id="500" score="0">
+																				<SimplePredicate field="rMSSD" operator="lessOrEqual" value="24.67887031548255"/>
+																			</Node>
+																			<Node id="501" score="1">
+																				<SimplePredicate field="rMSSD" operator="greaterThan" value="24.67887031548255"/>
+																			</Node>
+																		</Node>
+																		<Node id="481" score="0">
+																			<SimplePredicate field="meanHR" operator="greaterThan" value="73.47402478612341"/>
+																		</Node>
+																	</Node>
+																	<Node id="449">
+																		<SimplePredicate field="VLF" operator="greaterThan" value="1110.74495067114"/>
+																		<Node id="482" score="0">
+																			<SimplePredicate field="LFHF" operator="lessOrEqual" value="12.32243503622805"/>
+																		</Node>
+																		<Node id="483" score="1">
+																			<SimplePredicate field="LFHF" operator="greaterThan" value="12.32243503622805"/>
+																		</Node>
+																	</Node>
+																</Node>
+																<Node id="399" score="0">
+																	<SimplePredicate field="HF" operator="greaterThan" value="1078.490155086205"/>
+																</Node>
+															</Node>
+														</Node>
+														<Node id="269">
+															<SimplePredicate field="VLF" operator="greaterThan" value="1174.0859013601398"/>
+															<Node id="332">
+																<SimplePredicate field="SD1" operator="lessOrEqual" value="2.87991943046615"/>
+																<Node id="400" score="0">
+																	<SimplePredicate field="VLF" operator="lessOrEqual" value="1706.01287393924"/>
+																</Node>
+																<Node id="401" score="1">
+																	<SimplePredicate field="VLF" operator="greaterThan" value="1706.01287393924"/>
+																</Node>
+															</Node>
+															<Node id="333" score="1">
+																<SimplePredicate field="SD1" operator="greaterThan" value="2.87991943046615"/>
+															</Node>
+														</Node>
+													</Node>
+													<Node id="211">
+														<SimplePredicate field="TINN" operator="greaterThan" value="133.8301809210525"/>
+														<Node id="270">
+															<SimplePredicate field="SD1" operator="lessOrEqual" value="7.717034704144545"/>
+															<Node id="334">
+																<SimplePredicate field="HF" operator="lessOrEqual" value="683.543590388483"/>
+																<Node id="402" score="0">
+																	<SimplePredicate field="SD1" operator="lessOrEqual" value="3.8415620366359002"/>
+																</Node>
+																<Node id="403" score="1">
+																	<SimplePredicate field="SD1" operator="greaterThan" value="3.8415620366359002"/>
+																</Node>
+															</Node>
+															<Node id="335" score="0">
+																<SimplePredicate field="HF" operator="greaterThan" value="683.543590388483"/>
+															</Node>
+														</Node>
+														<Node id="271" score="1">
+															<SimplePredicate field="SD1" operator="greaterThan" value="7.717034704144545"/>
+														</Node>
+													</Node>
+												</Node>
+												<Node id="153">
+													<SimplePredicate field="meanRR" operator="greaterThan" value="1027.869239881305"/>
+													<Node id="212" score="1">
+														<SimplePredicate field="HRVi" operator="lessOrEqual" value="10.480769230769251"/>
+													</Node>
+													<Node id="213" score="0">
+														<SimplePredicate field="HRVi" operator="greaterThan" value="10.480769230769251"/>
+													</Node>
+												</Node>
+											</Node>
+											<Node id="97">
+												<SimplePredicate field="VLF" operator="greaterThan" value="2110.534214676275"/>
+												<Node id="154" score="1">
+													<SimplePredicate field="HF" operator="lessOrEqual" value="1566.14211349676"/>
+												</Node>
+												<Node id="155">
+													<SimplePredicate field="HF" operator="greaterThan" value="1566.14211349676"/>
+													<Node id="214" score="0">
+														<SimplePredicate field="SD2" operator="lessOrEqual" value="25.276672118515698"/>
+													</Node>
+													<Node id="215">
+														<SimplePredicate field="SD2" operator="greaterThan" value="25.276672118515698"/>
+														<Node id="272">
+															<SimplePredicate field="rMSSD" operator="lessOrEqual" value="83.32233210490895"/>
+															<Node id="336" score="0">
+																<SimplePredicate field="meanHR" operator="lessOrEqual" value="75.5854674894009"/>
+															</Node>
+															<Node id="337" score="1">
+																<SimplePredicate field="meanHR" operator="greaterThan" value="75.5854674894009"/>
+															</Node>
+														</Node>
+														<Node id="273" score="1">
+															<SimplePredicate field="rMSSD" operator="greaterThan" value="83.32233210490895"/>
+														</Node>
+													</Node>
+												</Node>
+											</Node>
+										</Node>
+										<Node id="55">
+											<SimplePredicate field="LFHF" operator="greaterThan" value="16.845683720813952"/>
+											<Node id="98">
+												<SimplePredicate field="meanHR" operator="lessOrEqual" value="56.129821160312844"/>
+												<Node id="156" score="0">
+													<SimplePredicate field="ULF" operator="lessOrEqual" value="3159.5475320866453"/>
+												</Node>
+												<Node id="157" score="1">
+													<SimplePredicate field="ULF" operator="greaterThan" value="3159.5475320866453"/>
+												</Node>
+											</Node>
+											<Node id="99">
+												<SimplePredicate field="meanHR" operator="greaterThan" value="56.129821160312844"/>
+												<Node id="158">
+													<SimplePredicate field="SD1" operator="lessOrEqual" value="5.56097137455139"/>
+													<Node id="216">
+														<SimplePredicate field="SD2" operator="lessOrEqual" value="32.555846506894554"/>
+														<Node id="274" score="0">
+															<SimplePredicate field="LFHF" operator="lessOrEqual" value="17.016238876577802"/>
+														</Node>
+														<Node id="275">
+															<SimplePredicate field="LFHF" operator="greaterThan" value="17.016238876577802"/>
+															<Node id="338">
+																<SimplePredicate field="meanRR" operator="lessOrEqual" value="1048.688811188805"/>
+																<Node id="404">
+																	<SimplePredicate field="SD1" operator="lessOrEqual" value="5.51537401072087"/>
+																	<Node id="450" score="1">
+																		<SimplePredicate field="LFHF" operator="lessOrEqual" value="38.1609774750452"/>
+																	</Node>
+																	<Node id="451">
+																		<SimplePredicate field="LFHF" operator="greaterThan" value="38.1609774750452"/>
+																		<Node id="484" score="0">
+																			<SimplePredicate field="TINN" operator="lessOrEqual" value="104.2708333333335"/>
+																		</Node>
+																		<Node id="485" score="1">
+																			<SimplePredicate field="TINN" operator="greaterThan" value="104.2708333333335"/>
+																		</Node>
+																	</Node>
+																</Node>
+																<Node id="405" score="0">
+																	<SimplePredicate field="SD1" operator="greaterThan" value="5.51537401072087"/>
+																</Node>
+															</Node>
+															<Node id="339">
+																<SimplePredicate field="meanRR" operator="greaterThan" value="1048.688811188805"/>
+																<Node id="406" score="1">
+																	<SimplePredicate field="HRVi" operator="lessOrEqual" value="13.2586956521739"/>
+																</Node>
+																<Node id="407" score="0">
+																	<SimplePredicate field="HRVi" operator="greaterThan" value="13.2586956521739"/>
+																</Node>
+															</Node>
+														</Node>
+													</Node>
+													<Node id="217" score="0">
+														<SimplePredicate field="SD2" operator="greaterThan" value="32.555846506894554"/>
+													</Node>
+												</Node>
+												<Node id="159" score="1">
+													<SimplePredicate field="SD1" operator="greaterThan" value="5.56097137455139"/>
+												</Node>
+											</Node>
+										</Node>
+									</Node>
+								</Node>
+							</Node>
+							<Node id="7">
+								<SimplePredicate field="SDSD" operator="greaterThan" value="104.7775847012725"/>
+								<Node id="14">
+									<SimplePredicate field="VLF" operator="lessOrEqual" value="4760.42682114515"/>
+									<Node id="28">
+										<SimplePredicate field="meanHR" operator="lessOrEqual" value="74.81683547793375"/>
+										<Node id="56">
+											<SimplePredicate field="HF" operator="lessOrEqual" value="2412.9413094420697"/>
+											<Node id="100" score="0">
+												<SimplePredicate field="VLF" operator="lessOrEqual" value="1146.34063013126"/>
+											</Node>
+											<Node id="101">
+												<SimplePredicate field="VLF" operator="greaterThan" value="1146.34063013126"/>
+												<Node id="160" score="1">
+													<SimplePredicate field="SD2" operator="lessOrEqual" value="23.8669847489978"/>
+												</Node>
+												<Node id="161">
+													<SimplePredicate field="SD2" operator="greaterThan" value="23.8669847489978"/>
+													<Node id="218" score="0">
+														<SimplePredicate field="LFHF" operator="lessOrEqual" value="11.77164792971385"/>
+													</Node>
+													<Node id="219">
+														<SimplePredicate field="LFHF" operator="greaterThan" value="11.77164792971385"/>
+														<Node id="276" score="0">
+															<SimplePredicate field="HF" operator="lessOrEqual" value="1656.348646770015"/>
+														</Node>
+														<Node id="277" score="1">
+															<SimplePredicate field="HF" operator="greaterThan" value="1656.348646770015"/>
+														</Node>
+													</Node>
+												</Node>
+											</Node>
+										</Node>
+										<Node id="57">
+											<SimplePredicate field="HF" operator="greaterThan" value="2412.9413094420697"/>
+											<Node id="102">
+												<SimplePredicate field="LFHF" operator="lessOrEqual" value="17.42976452426365"/>
+												<Node id="162">
+													<SimplePredicate field="meanRR" operator="lessOrEqual" value="918.8338038108704"/>
+													<Node id="220">
+														<SimplePredicate field="HF" operator="lessOrEqual" value="9330.543092536034"/>
+														<Node id="278" score="0">
+															<SimplePredicate field="ULF" operator="lessOrEqual" value="2049.060318952335"/>
+														</Node>
+														<Node id="279">
+															<SimplePredicate field="ULF" operator="greaterThan" value="2049.060318952335"/>
+															<Node id="340">
+																<SimplePredicate field="HRVi" operator="lessOrEqual" value="11.55555555555555"/>
+																<Node id="408" score="0">
+																	<SimplePredicate field="meanRR" operator="lessOrEqual" value="911.7148004434589"/>
+																</Node>
+																<Node id="409" score="1">
+																	<SimplePredicate field="meanRR" operator="greaterThan" value="911.7148004434589"/>
+																</Node>
+															</Node>
+															<Node id="341">
+																<SimplePredicate field="HRVi" operator="greaterThan" value="11.55555555555555"/>
+																<Node id="410">
+																	<SimplePredicate field="rMSSD" operator="lessOrEqual" value="240.100137119934"/>
+																	<Node id="452" score="1">
+																		<SimplePredicate field="SD1" operator="lessOrEqual" value="27.3588298092189"/>
+																	</Node>
+																	<Node id="453" score="0">
+																		<SimplePredicate field="SD1" operator="greaterThan" value="27.3588298092189"/>
+																	</Node>
+																</Node>
+																<Node id="411" score="1">
+																	<SimplePredicate field="rMSSD" operator="greaterThan" value="240.100137119934"/>
+																</Node>
+															</Node>
+														</Node>
+													</Node>
+													<Node id="221" score="0">
+														<SimplePredicate field="HF" operator="greaterThan" value="9330.543092536034"/>
+													</Node>
+												</Node>
+												<Node id="163">
+													<SimplePredicate field="meanRR" operator="greaterThan" value="918.8338038108704"/>
+													<Node id="222">
+														<SimplePredicate field="SDSD" operator="lessOrEqual" value="111.6016461247705"/>
+														<Node id="280" score="1">
+															<SimplePredicate field="HF" operator="lessOrEqual" value="3113.3102092696754"/>
+														</Node>
+														<Node id="281" score="0">
+															<SimplePredicate field="HF" operator="greaterThan" value="3113.3102092696754"/>
+														</Node>
+													</Node>
+													<Node id="223">
+														<SimplePredicate field="SDSD" operator="greaterThan" value="111.6016461247705"/>
+														<Node id="282">
+															<SimplePredicate field="LFHF" operator="lessOrEqual" value="13.1711755929621"/>
+															<Node id="342">
+																<SimplePredicate field="HF" operator="lessOrEqual" value="2758.68242656486"/>
+																<Node id="412" score="0">
+																	<SimplePredicate field="HF" operator="lessOrEqual" value="2708.17731606321"/>
+																</Node>
+																<Node id="413" score="1">
+																	<SimplePredicate field="HF" operator="greaterThan" value="2708.17731606321"/>
+																</Node>
+															</Node>
+															<Node id="343">
+																<SimplePredicate field="HF" operator="greaterThan" value="2758.68242656486"/>
+																<Node id="414">
+																	<SimplePredicate field="meanRR" operator="lessOrEqual" value="960.9488078541435"/>
+																	<Node id="454" score="1">
+																		<SimplePredicate field="meanHR" operator="lessOrEqual" value="64.62877532180241"/>
+																	</Node>
+																	<Node id="455" score="0">
+																		<SimplePredicate field="meanHR" operator="greaterThan" value="64.62877532180241"/>
+																	</Node>
+																</Node>
+																<Node id="415" score="0">
+																	<SimplePredicate field="meanRR" operator="greaterThan" value="960.9488078541435"/>
+																</Node>
+															</Node>
+														</Node>
+														<Node id="283">
+															<SimplePredicate field="LFHF" operator="greaterThan" value="13.1711755929621"/>
+															<Node id="344" score="1">
+																<SimplePredicate field="TINN" operator="lessOrEqual" value="111.34153318077784"/>
+															</Node>
+															<Node id="345" score="0">
+																<SimplePredicate field="TINN" operator="greaterThan" value="111.34153318077784"/>
+															</Node>
+														</Node>
+													</Node>
+												</Node>
+											</Node>
+											<Node id="103">
+												<SimplePredicate field="LFHF" operator="greaterThan" value="17.42976452426365"/>
+												<Node id="164" score="0">
+													<SimplePredicate field="HRVi" operator="lessOrEqual" value="10.497807017543874"/>
+												</Node>
+												<Node id="165" score="1">
+													<SimplePredicate field="HRVi" operator="greaterThan" value="10.497807017543874"/>
+												</Node>
+											</Node>
+										</Node>
+									</Node>
+									<Node id="29">
+										<SimplePredicate field="meanHR" operator="greaterThan" value="74.81683547793375"/>
+										<Node id="58">
+											<SimplePredicate field="LFHF" operator="lessOrEqual" value="13.2306123795255"/>
+											<Node id="104">
+												<SimplePredicate field="SD2" operator="lessOrEqual" value="24.28681055021875"/>
+												<Node id="166" score="1">
+													<SimplePredicate field="ULF" operator="lessOrEqual" value="2235.564755099055"/>
+												</Node>
+												<Node id="167" score="0">
+													<SimplePredicate field="ULF" operator="greaterThan" value="2235.564755099055"/>
+												</Node>
+											</Node>
+											<Node id="105">
+												<SimplePredicate field="SD2" operator="greaterThan" value="24.28681055021875"/>
+												<Node id="168" score="1">
+													<SimplePredicate field="SD2" operator="lessOrEqual" value="28.529714087902647"/>
+												</Node>
+												<Node id="169" score="0">
+													<SimplePredicate field="SD2" operator="greaterThan" value="28.529714087902647"/>
+												</Node>
+											</Node>
+										</Node>
+										<Node id="59">
+											<SimplePredicate field="LFHF" operator="greaterThan" value="13.2306123795255"/>
+											<Node id="106" score="1">
+												<SimplePredicate field="rMSSD" operator="lessOrEqual" value="340.840154817255"/>
+											</Node>
+											<Node id="107" score="0">
+												<SimplePredicate field="rMSSD" operator="greaterThan" value="340.840154817255"/>
+											</Node>
+										</Node>
+									</Node>
+								</Node>
+								<Node id="15">
+									<SimplePredicate field="VLF" operator="greaterThan" value="4760.42682114515"/>
+									<Node id="30" score="0">
+										<SimplePredicate field="SD2" operator="lessOrEqual" value="25.3506119081321"/>
+									</Node>
+									<Node id="31">
+										<SimplePredicate field="SD2" operator="greaterThan" value="25.3506119081321"/>
+										<Node id="60">
+											<SimplePredicate field="SD2" operator="lessOrEqual" value="46.84571517837735"/>
+											<Node id="108">
+												<SimplePredicate field="meanHR" operator="lessOrEqual" value="50.63294822933925"/>
+												<Node id="170">
+													<SimplePredicate field="VLF" operator="lessOrEqual" value="582666.056321539"/>
+													<Node id="224" score="0">
+														<SimplePredicate field="VLF" operator="lessOrEqual" value="197983.5328870185"/>
+													</Node>
+													<Node id="225">
+														<SimplePredicate field="VLF" operator="greaterThan" value="197983.5328870185"/>
+														<Node id="284" score="1">
+															<SimplePredicate field="ULF" operator="lessOrEqual" value="854719.3720697565"/>
+														</Node>
+														<Node id="285" score="0">
+															<SimplePredicate field="ULF" operator="greaterThan" value="854719.3720697565"/>
+														</Node>
+													</Node>
+												</Node>
+												<Node id="171" score="1">
+													<SimplePredicate field="VLF" operator="greaterThan" value="582666.056321539"/>
+												</Node>
+											</Node>
+											<Node id="109">
+												<SimplePredicate field="meanHR" operator="greaterThan" value="50.63294822933925"/>
+												<Node id="172">
+													<SimplePredicate field="meanHR" operator="lessOrEqual" value="81.5413597399322"/>
+													<Node id="226">
+														<SimplePredicate field="ULF" operator="lessOrEqual" value="4733283.306580691"/>
+														<Node id="286">
+															<SimplePredicate field="LFHF" operator="lessOrEqual" value="7.259104181631615"/>
+															<Node id="346">
+																<SimplePredicate field="SDSD" operator="lessOrEqual" value="667.0339662153185"/>
+																<Node id="416" score="1">
+																	<SimplePredicate field="meanRR" operator="lessOrEqual" value="860.1057244931825"/>
+																</Node>
+																<Node id="417">
+																	<SimplePredicate field="meanRR" operator="greaterThan" value="860.1057244931825"/>
+																	<Node id="456" score="1">
+																		<SimplePredicate field="HF" operator="lessOrEqual" value="5190.507747770275"/>
+																	</Node>
+																	<Node id="457" score="0">
+																		<SimplePredicate field="HF" operator="greaterThan" value="5190.507747770275"/>
+																	</Node>
+																</Node>
+															</Node>
+															<Node id="347">
+																<SimplePredicate field="SDSD" operator="greaterThan" value="667.0339662153185"/>
+																<Node id="418">
+																	<SimplePredicate field="SDSD" operator="lessOrEqual" value="984.5322966448225"/>
+																	<Node id="458" score="0">
+																		<SimplePredicate field="SD1" operator="lessOrEqual" value="23.87977030349975"/>
+																	</Node>
+																	<Node id="459">
+																		<SimplePredicate field="SD1" operator="greaterThan" value="23.87977030349975"/>
+																		<Node id="486">
+																			<SimplePredicate field="HF" operator="lessOrEqual" value="47309.48765619815"/>
+																			<Node id="502" score="1">
+																				<SimplePredicate field="SD1" operator="lessOrEqual" value="28.626334612113148"/>
+																			</Node>
+																			<Node id="503" score="0">
+																				<SimplePredicate field="SD1" operator="greaterThan" value="28.626334612113148"/>
+																			</Node>
+																		</Node>
+																		<Node id="487" score="1">
+																			<SimplePredicate field="HF" operator="greaterThan" value="47309.48765619815"/>
+																		</Node>
+																	</Node>
+																</Node>
+																<Node id="419">
+																	<SimplePredicate field="SDSD" operator="greaterThan" value="984.5322966448225"/>
+																	<Node id="460" score="1">
+																		<SimplePredicate field="SD1" operator="lessOrEqual" value="30.7187082182782"/>
+																	</Node>
+																	<Node id="461" score="0">
+																		<SimplePredicate field="SD1" operator="greaterThan" value="30.7187082182782"/>
+																	</Node>
+																</Node>
+															</Node>
+														</Node>
+														<Node id="287">
+															<SimplePredicate field="LFHF" operator="greaterThan" value="7.259104181631615"/>
+															<Node id="348">
+																<SimplePredicate field="TINN" operator="lessOrEqual" value="122.3307291666665"/>
+																<Node id="420">
+																	<SimplePredicate field="SD2" operator="lessOrEqual" value="30.7707913393679"/>
+																	<Node id="462">
+																		<SimplePredicate field="SD1" operator="lessOrEqual" value="20.73367997788765"/>
+																		<Node id="488" score="1">
+																			<SimplePredicate field="SD2" operator="lessOrEqual" value="29.41734548705085"/>
+																		</Node>
+																		<Node id="489" score="0">
+																			<SimplePredicate field="SD2" operator="greaterThan" value="29.41734548705085"/>
+																		</Node>
+																	</Node>
+																	<Node id="463" score="0">
+																		<SimplePredicate field="SD1" operator="greaterThan" value="20.73367997788765"/>
+																	</Node>
+																</Node>
+																<Node id="421" score="1">
+																	<SimplePredicate field="SD2" operator="greaterThan" value="30.7707913393679"/>
+																</Node>
+															</Node>
+															<Node id="349">
+																<SimplePredicate field="TINN" operator="greaterThan" value="122.3307291666665"/>
+																<Node id="422">
+																	<SimplePredicate field="meanRR" operator="lessOrEqual" value="1095.60099644317"/>
+																	<Node id="464" score="0">
+																		<SimplePredicate field="TINN" operator="lessOrEqual" value="160.831227022059"/>
+																	</Node>
+																	<Node id="465" score="1">
+																		<SimplePredicate field="TINN" operator="greaterThan" value="160.831227022059"/>
+																	</Node>
+																</Node>
+																<Node id="423" score="1">
+																	<SimplePredicate field="meanRR" operator="greaterThan" value="1095.60099644317"/>
+																</Node>
+															</Node>
+														</Node>
+													</Node>
+													<Node id="227" score="0">
+														<SimplePredicate field="ULF" operator="greaterThan" value="4733283.306580691"/>
+													</Node>
+												</Node>
+												<Node id="173" score="0">
+													<SimplePredicate field="meanHR" operator="greaterThan" value="81.5413597399322"/>
+												</Node>
+											</Node>
+										</Node>
+										<Node id="61">
+											<SimplePredicate field="SD2" operator="greaterThan" value="46.84571517837735"/>
+											<Node id="110" score="1">
+												<SimplePredicate field="meanHR" operator="lessOrEqual" value="68.8799869596204"/>
+											</Node>
+											<Node id="111">
+												<SimplePredicate field="meanHR" operator="greaterThan" value="68.8799869596204"/>
+												<Node id="174" score="1">
+													<SimplePredicate field="HRVi" operator="lessOrEqual" value="9.561165845648604"/>
+												</Node>
+												<Node id="175">
+													<SimplePredicate field="HRVi" operator="greaterThan" value="9.561165845648604"/>
+													<Node id="228" score="1">
+														<SimplePredicate field="HF" operator="lessOrEqual" value="12880.181942361984"/>
+													</Node>
+													<Node id="229">
+														<SimplePredicate field="HF" operator="greaterThan" value="12880.181942361984"/>
+														<Node id="288" score="0">
+															<SimplePredicate field="rMSSD" operator="lessOrEqual" value="2623.67922361914"/>
+														</Node>
+														<Node id="289" score="1">
+															<SimplePredicate field="rMSSD" operator="greaterThan" value="2623.67922361914"/>
+														</Node>
+													</Node>
+												</Node>
+											</Node>
+										</Node>
+									</Node>
+								</Node>
+							</Node>
+						</Node>
+					</Node>
+				</TreeModel>
+			</Segment>
+                        <Segment id="2">
+                                <True/>
+  <TreeModel modelName="RPart_Model" functionName="classification" algorithmName="rpart" splitCharacteristic="binarySplit" missingValueStrategy="defaultChild" noTrueChildStrategy="returnLastPrediction">
+  <MiningSchema>
+   <MiningField name="HF" usageType="active"/>
+   <MiningField name="SD1" usageType="active"/>
+   <MiningField name="SD2" usageType="active"/>
+   <MiningField name="ULF" usageType="active"/>
+   <MiningField name="VLF" usageType="active"/>
+   <MiningField name="HRVi" usageType="active"/>
+   <MiningField name="LFHF" usageType="active"/>
+   <MiningField name="SDSD" usageType="active"/>
+   <MiningField name="TINN" usageType="active"/>
+   <MiningField name="rMSSD" usageType="active"/>
+   <MiningField name="meanHR" usageType="active"/>
+   <MiningField name="meanRR" usageType="active"/>
+  </MiningSchema>
+  <Node id="1" score="0" recordCount="3217" defaultChild="2">
+   <True/>
+   <ScoreDistribution value="0" recordCount="1971" confidence="0.612682623562325"/>
+   <ScoreDistribution value="1" recordCount="1246" confidence="0.387317376437675"/>
+   <Node id="2" score="0" recordCount="1960">
+    <CompoundPredicate booleanOperator="surrogate">
+     <SimplePredicate field="VLF" operator="lessThan" value="907.478"/>
+     <SimplePredicate field="ULF" operator="lessThan" value="2920.21800489191"/>
+     <SimplePredicate field="SD2" operator="lessThan" value="16.6752405266991"/>
+     <SimplePredicate field="HRVi" operator="lessThan" value="12.4565756823822"/>
+     <SimplePredicate field="TINN" operator="lessThan" value="97.3169975186104"/>
+     <SimplePredicate field="SDSD" operator="lessThan" value="71.812885193853"/>
+    </CompoundPredicate>
+    <ScoreDistribution value="0" recordCount="1567" confidence="0.799489795918367"/>
+    <ScoreDistribution value="1" recordCount="393" confidence="0.200510204081633"/>
+   </Node>
+   <Node id="3" score="1" recordCount="1257" defaultChild="6">
+    <CompoundPredicate booleanOperator="surrogate">
+     <SimplePredicate field="VLF" operator="greaterOrEqual" value="907.478"/>
+     <SimplePredicate field="ULF" operator="greaterOrEqual" value="2920.21800489191"/>
+     <SimplePredicate field="SD2" operator="greaterOrEqual" value="16.6752405266991"/>
+     <SimplePredicate field="HRVi" operator="greaterOrEqual" value="12.4565756823822"/>
+     <SimplePredicate field="TINN" operator="greaterOrEqual" value="97.3169975186104"/>
+     <SimplePredicate field="SDSD" operator="greaterOrEqual" value="71.812885193853"/>
+    </CompoundPredicate>
+    <ScoreDistribution value="0" recordCount="404" confidence="0.32140015910899"/>
+    <ScoreDistribution value="1" recordCount="853" confidence="0.67859984089101"/>
+    <Node id="6" score="0" recordCount="456">
+     <CompoundPredicate booleanOperator="surrogate">
+      <SimplePredicate field="LFHF" operator="lessThan" value="9.373354"/>
+      <SimplePredicate field="HF" operator="greaterOrEqual" value="2136.20265871805"/>
+      <SimplePredicate field="SDSD" operator="greaterOrEqual" value="104.578987544149"/>
+      <SimplePredicate field="rMSSD" operator="greaterOrEqual" value="104.409771813937"/>
+      <SimplePredicate field="meanRR" operator="greaterOrEqual" value="1070.60644382309"/>
+      <SimplePredicate field="SD1" operator="greaterOrEqual" value="16.9099670072802"/>
+     </CompoundPredicate>
+     <ScoreDistribution value="0" recordCount="268" confidence="0.587719298245614"/>
+     <ScoreDistribution value="1" recordCount="188" confidence="0.412280701754386"/>
+    </Node>
+    <Node id="7" score="1" recordCount="801">
+     <CompoundPredicate booleanOperator="surrogate">
+      <SimplePredicate field="LFHF" operator="greaterOrEqual" value="9.373354"/>
+      <SimplePredicate field="HF" operator="lessThan" value="2136.20265871805"/>
+      <SimplePredicate field="SDSD" operator="lessThan" value="104.578987544149"/>
+      <SimplePredicate field="rMSSD" operator="lessThan" value="104.409771813937"/>
+      <SimplePredicate field="meanRR" operator="lessThan" value="1070.60644382309"/>
+      <SimplePredicate field="SD1" operator="lessThan" value="16.9099670072802"/>
+     </CompoundPredicate>
+     <ScoreDistribution value="0" recordCount="136" confidence="0.169787765293383"/>
+     <ScoreDistribution value="1" recordCount="665" confidence="0.830212234706617"/>
+    </Node>
+   </Node>
+  </Node>
+</TreeModel>
+                        </Segment>
+		</Segmentation>
+	</MiningModel>
+</PMML>
