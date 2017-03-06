@@ -76,7 +76,7 @@ feature.reduce <- function(k, counts) {
 
 a <- mapreduce(input=input,
           input.format="text",
-#          output.format="text",
+       #   output.format="text",
           map=feature.map,
           reduce=feature.reduce,
           output=output, backend.parameters=list(hadoop=list(D='mapred.reduce.tasks=1',

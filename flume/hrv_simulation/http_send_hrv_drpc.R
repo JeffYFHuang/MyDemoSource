@@ -7,11 +7,11 @@ send_one_hrv <- function (data, subject = "x01", addr="172.18.161.100", port=444
     headers = format(Sys.time(), paste('"headers":{"key":"', count, '", "topic": "hrvs"}', sep=""))
     #subject = "test"
     http_content = paste(subject, '\t', payload, sep="")
-#    print(http_content)
+    print(http_content)
     httpheader <- c(Accept="application/json; charset=UTF-8", "Content-Type"="application/json")
 #    print(httpheader)
     result=postForm(paste("http://", addr, ":", port, "/drpc/drpcFunc", sep=""), .opts=list(httpheader=httpheader, postfields=http_content))
-    print(result)
+    cat(result[1], "\n")
 }
 
 fromJSON2 <- function(hrv) {
@@ -43,7 +43,7 @@ if (length(args) != 0){
   }
 }
 
-execution = "Exe. Rscript http_send_hrv_kafka.R \"ip='10.0.0.1'\" port=44448 num=1000 sample_num=144";
+execution = "Exe. Rscript http_send_hrv_drpc.R \"ip='10.0.0.1'\" port=44448 num=1000 sample_num=144";
 if (is.null(ip))
    stop(paste("please provide flume server address!", execution))
 if (is.null(port))
@@ -65,6 +65,7 @@ hrvdata <- NULL
 now <- as.numeric(Sys.time())
 times <- now+seq(0, 300*sample_num, 300)
 count = 1
+system.time(
 while (count <= num) {
      next_sub = TRUE
      samples = sample(lines, sample_num, replace=T)
@@ -72,8 +73,8 @@ while (count <= num) {
      #print(val)
      subject = paste(nodename, "-", pid,  "-", count, sep="")
      hrvdata <- combineHRV(val)
-     send_one_hrv(hrvdata, subject, addr=flumeserver, port=port, count) 
+     send_one_hrv(hrvdata, subject, addr=flumeserver, port=port, count)
      #lapply (hrvdata, send_one_hrv, subject = paste(curSubject, "-YFnb1", count, sep=""), addr=flumeserver, port=port)
-     print(subject)
+     #print(subject)
      count = count + 1
-}
+})

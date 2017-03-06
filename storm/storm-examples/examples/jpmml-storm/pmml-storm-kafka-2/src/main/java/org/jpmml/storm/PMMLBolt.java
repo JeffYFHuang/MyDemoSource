@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.storm.shade.org.json.simple.JSONArray;
 import org.apache.storm.shade.org.json.simple.JSONObject;
@@ -40,7 +42,8 @@ import org.jpmml.evaluator.EvaluatorUtil;
 import org.jpmml.evaluator.FieldValue;
 
 public class PMMLBolt extends BaseRichBolt{
-
+	private ConcurrentHashMap<String, Integer> processing;
+	
 	private Evaluator evaluator = null;
 
 	private OutputCollector collector = null;
@@ -52,6 +55,7 @@ public class PMMLBolt extends BaseRichBolt{
 	@Override
 	public void prepare(Map configuration, TopologyContext context, OutputCollector collector){
 		setCollector(collector);
+		this.processing = new ConcurrentHashMap<String, Integer>();
 	}
 /*
 	@Override
@@ -94,10 +98,12 @@ public class PMMLBolt extends BaseRichBolt{
 	@Override
     public void execute(Tuple tuple) {
 		Evaluator evaluator = getEvaluator();
+		OutputCollector collector = getCollector();
 		
         String sentence = tuple.getString(0);
         String[] words = sentence.split("\t");
 		
+        String process_key = null;
         JSONParser parser = new JSONParser();
         try{
             Object obj = parser.parse(words[1]);
@@ -114,6 +120,8 @@ public class PMMLBolt extends BaseRichBolt{
                 // get startTime
                 if (i == 0) {
                 	results.put("startTime", (jobj.get("startTime")).toString());
+                	process_key = new String(words[0]+(jobj.get("startTime")).toString());
+                	this.processing.put(process_key, 0);
                 }
                 
     		    List<FieldName> activeFields = evaluator.getActiveFields();
@@ -147,14 +155,18 @@ public class PMMLBolt extends BaseRichBolt{
             values.add(results.toJSONString());
             
             //System.out.println(results.toJSONString());
-    		OutputCollector collector = getCollector();
-    		collector.emit(tuple, values);
-    		collector.ack(tuple);
+            if (this.processing.get(process_key) == 0) {
+    		   collector.emit(tuple, values);
+    		   collector.ack(tuple);
+    		   this.processing.put(process_key, this.processing.get(process_key) + 1);
+            }
          }catch(ParseException pe){
-   		
+        	collector.ack(tuple);
             System.out.println("position: " + pe.getPosition());
             System.out.println(pe);
          }
+
+         //collector.ack(tuple);
     }
     
 	@Override

@@ -100,9 +100,18 @@ feature.selection <- function(k, v) {
   keyval(k, list(predictors(results)))
 }
 
+backend.parameters = list(hadoop=list(D=paste('mapreduce.job.maps=', num.models, sep=""), D='mapreduce.job.reduces=16',
+                                      D='mapreduce.map.java.opts=-Xmx2048m',
+                                      D='mapreduce.reduce.java.opts=-Xmx3072m',
+                                      D='mapreduce.map.memory.mb=2048',
+                                      D='mapreduce.reduce.memory.mb=3072',
+                                      D='mapreduce.child.java.opts=-Xmx3072m'
+                                      ))
+
 a <- mapreduce(input=input,
           input.format="text",
           output.format="text",
           map=poisson.subsample,
           reduce=feature.selection,
-          output=output)
+          output=output,
+          backend.parameters=backend.parameters)

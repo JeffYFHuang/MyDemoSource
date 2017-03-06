@@ -168,7 +168,7 @@ public class Main {
 	        .withFieldDelimiter("\t")
 	        .withFields(hdfsFields);
 
-	        FileRotationPolicy rotationPolicy = new FileSizeRotationPolicy(5.0f, FileSizeRotationPolicy.Units.MB);
+	        FileRotationPolicy rotationPolicy = new FileSizeRotationPolicy(128.0f, FileSizeRotationPolicy.Units.MB);
 
 	        HdfsState.Options options = new HdfsState.HdfsFileOptions()
 	            .withFileNameFormat(fileNameFormat)
@@ -228,7 +228,7 @@ public class Main {
         //conf.put("nimbus.thrift.max_buffer_size", 16384000);
         conf.put(Config.TOPOLOGY_MESSAGE_TIMEOUT_SECS, 3600);
         if (args != null && args.length > 0) {
-           conf.setNumWorkers(3);
+           conf.setNumWorkers(8);
 
            StormSubmitter.submitTopologyWithProgressBar(args[0], conf, buildTopology(evaluator));
         } else {

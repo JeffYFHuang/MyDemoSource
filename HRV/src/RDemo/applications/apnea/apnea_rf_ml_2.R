@@ -4,6 +4,7 @@
 # script for Mapper (R-Hadoop integration)
 source("HRVFUNS.R")
 require(caret)
+require(rmr2)
 require(r2pmml)
 
 ## **** could wo with a single readLines or in blocks
@@ -24,7 +25,9 @@ close(con)
     data$label=factor(data$label)
     inTrain <- createDataPartition(y = data$label, p = .75, list = FALSE)
     #features <- c("VLF", "LFHF", "meanRR", "meanHR", "HF", "type")
-    features <- names(data)
+    features<-from.dfs("/data/feature_output")
+    features<-c("label", features$key[which(features$val>=0.9)])
+    #features <- names(data)
     
     #features <- c("SDNN", "TINN", "LFHF", "LFnu", "SD2", "SD12", "TP", "ApEn", "type")
     training <- data[inTrain, features]
@@ -33,10 +36,10 @@ close(con)
     set.seed(400)
     ctrl <- trainControl(method="repeatedcv",number=10, repeats = 3) #,classProbs=TRUE,summaryFunction = twoClassSummary)
     # Random forrest
-    mod.fit <- train(label ~ ., data = training, method = "rf", trControl = ctrl, na.action = na.omit)#, preProcess = c("center","scale"), na.action=na.omit)
+    mod.fit <- train(label ~ ., data = training, method = "rf", ntree=10, trControl = ctrl, na.action = na.omit, model = F)#, preProcess = c("center","scale"), na.action=na.omit)
     # save(mod.fit, file = "randomforest.mod")
     # Export the model to PMML
-    r2pmml(mod.fit, "rf.pmml")
+    r2pmml(mod.fit$finalModel, "rf.pmml")
 
 #    testing$label=as.integer(testing$label) - 1
 #    write.csv(testing, file = "input.csv", row.names = FALSE)

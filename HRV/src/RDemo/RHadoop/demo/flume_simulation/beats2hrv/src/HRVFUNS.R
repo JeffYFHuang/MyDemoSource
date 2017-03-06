@@ -1,6 +1,6 @@
-require(compiler)
-compilePKGS(TRUE)
-enableJIT(3)
+#require(compiler)
+#compilePKGS(TRUE)
+#enableJIT(3)
 require(RHRV)
 require(rhdfs)
 require(rjson)
@@ -243,7 +243,7 @@ createFilterHRVData <- function(data) {
   HRVData
 }
 
-createFilterHRVData <- cmpfun(createFilterHRVData)
+#createFilterHRVData <- cmpfun(createFilterHRVData)
 
 outputBeatsHRV <- function(beats, subject) {
     mod.fit = NULL
@@ -309,7 +309,7 @@ getSplitWindowBeats<-function(data, windowsize = 300, shift = 300, toHRV = F) {
 
   if (toHRV) {
      HRV = lapply(beatLists, beats2HRV, subject = data$Subject)
-     cat(data$Subject, "\t", toJSON(HRV[which(lapply(HRV, length)!=1)]), "\n", sep="")
+#     cat(data$Subject, "\t", toJSON(HRV[which(lapply(HRV, length)!=1)]), "\n", sep="")
   }
   else
      lapply(beatLists, outputWindowBeat, subject = data$Subject)

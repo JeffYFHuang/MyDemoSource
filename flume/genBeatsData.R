@@ -19,7 +19,7 @@ for (recordName in recordNames[1:10]) {
        data$Episodes = hrv.wfdb$Episodes
     }
 
-    len = 216000*5
+    len = 300*144 #216000*5
     while (length(data$Beat) < len) {
        TailBeat = tail(data$Beat, 1)
 

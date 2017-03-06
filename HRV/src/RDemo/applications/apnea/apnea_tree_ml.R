@@ -5,6 +5,10 @@
 
 source("HRVFUNS.R")
 require(caret)
+require(r2pmml)
+require(pmml)
+require(XML)
+
 splitIntoWords <- function(line) unlist(strsplit(line, "\t"))
 
 ## **** could wo with a single readLines or in blocks
@@ -46,14 +50,15 @@ close(con)
     #CART1 machine learning
     set.seed(400)
     control <- trainControl(method="repeatedcv", number=10, repeats=3)#, classProbs = TRUE)
-    tree1 = train (type~.,
+    mod.fit = train (type~.,
            training,
            method = "rpart",
            tuneLength=20,
 #           preProcess = c("center","scale"),
 #           metric="ROC",
            trControl = control)
-    model.predict = predict(object = tree1$finalModel, newdata = testing[which(names(testing)!="type")], type = "class")
+    model.predict = predict(object = mod.fit$finalModel, newdata = testing[which(names(testing)!="type")], type = "class")
+    saveXML(pmml(mod.fit$finalModel), "tree.pmml")
     confusionMatrix(testing$type, model.predict)
 
 #   boxplot between two group

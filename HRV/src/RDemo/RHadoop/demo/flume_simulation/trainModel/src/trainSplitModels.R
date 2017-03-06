@@ -111,9 +111,9 @@ fit.trees <- function(k, v) {
 
   set.seed(400)
   ctrl <- trainControl(method="repeatedcv", number=10, repeats = 3)
-  mod.fit <- train(label ~ ., data = training, method = "rf", trControl = ctrl, ntree=5, na.action=na.omit, trace=FALSE)
+#  mod.fit <- train(label ~ ., data = training, method = "rf", trControl = ctrl, ntree=5, na.action=na.omit, trace=FALSE)
 #  mod.fit <- train(label ~ ., data = training, method = "knn", trControl = ctrl, na.action=na.omit)
-#  mod.fit <- train (label ~ ., data = training, method = "rpart", trControl = ctrl, tuneLength=20, na.action=na.omit)
+  mod.fit <- train (label ~ ., data = training, method = "rpart", trControl = ctrl, tuneLength=20, na.action=na.omit)
 #  rf <- randomForest(formula=label ~ ., data=v, na.action=na.omit, ntree=5, do.trace=FALSE)
   # rf is a list so wrap it in another list to ensure that only
   # one object gets emitted. this is because keyval is vectorized

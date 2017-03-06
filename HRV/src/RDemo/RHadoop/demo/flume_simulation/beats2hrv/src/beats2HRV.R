@@ -92,12 +92,12 @@ beat2HRV <- function(k, input) {
 #input = "/data/beatsdata"
 #output = "/data/beats2hrv"
 
-backend.parameters = list(hadoop=list(D='mapreduce.map.tasks=12', D='mapreduce.reduce.tasks=4', 
-                                      D='mapreduce.map.java.opts=-Xmx2048m',
-                                      D='mapreduce.reduce.java.opts=-Xmx2048m',
-                                      D='mapreduce.map.memory.mb=2048', 
-                                      D='mapreduce.reduce.memory.mb=2048',
-                                      D='mapreduce.child.java.opts=-Xmx2048m'
+backend.parameters = list(hadoop=list(D='mapreduce.map.tasks=15', D='mapreduce.reduce.tasks=4', 
+                                      D='mapreduce.map.java.opts=-Xmx256m',
+                                      D='mapreduce.reduce.java.opts=-Xmx256m',
+                                      D='mapreduce.map.memory.mb=256', 
+                                      D='mapreduce.reduce.memory.mb=256',
+                                      D='mapreduce.child.java.opts=-Xmx256m'
                                       ))
 
 a <- mapreduce(input=input,

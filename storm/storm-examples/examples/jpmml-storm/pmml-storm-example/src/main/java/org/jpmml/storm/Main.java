@@ -98,10 +98,10 @@ public class Main {
 //		CsvWriterBolt csvWriter = new CsvWriterBolt(new File(args[2]), outputFields);
 
 		TopologyBuilder topologyBuilder = new TopologyBuilder();
-		topologyBuilder.setSpout("drpc", spout);
-		topologyBuilder.setBolt("pmml", pmmlBolt)//new ExclaimBolt())
+		topologyBuilder.setSpout("drpc", spout, 8);
+		topologyBuilder.setBolt("pmml", pmmlBolt, 16)//new ExclaimBolt())
 			.shuffleGrouping("drpc");
-		topologyBuilder.setBolt("return", new ReturnResults())
+		topologyBuilder.setBolt("return", new ReturnResults(), 16)
 			.shuffleGrouping("pmml");
 
 		Config config = new Config();
@@ -118,7 +118,7 @@ public class Main {
 		localCluster.killTopology("example");
 		localCluster.shutdown();
 */
-		config.setNumWorkers(2);
+		config.setNumWorkers(8);
 
 		StormSubmitter.submitTopology("drpc-test", config, topology);
 

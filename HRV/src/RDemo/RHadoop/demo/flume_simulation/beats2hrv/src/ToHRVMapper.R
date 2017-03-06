@@ -3,9 +3,10 @@
 # mapper.R - Wordcount program in R
 # script for Mapper (R-Hadoop integration)
 setwd("./src/")
-require(compiler)
-enableJIT(3)
-loadcmp("HRVFUNS.Rc")
+#require(compiler)
+#enableJIT(3)
+#loadcmp("HRVFUNS.Rc")
+source("HRVFUNS.R")
 
 trimWhiteSpace <- function(line) gsub("(^ +)|( +$)", "", line)
 splitIntoWords <- function(line) unlist(strsplit(line, "[[:space:]]+"))
@@ -63,7 +64,8 @@ con <- file("stdin", open = "r")
 while (length(line <- readLines(con, n = 1, warn = FALSE)) > 0) {
     val <- unlist(strsplit(line, "\t"))
     hr.data <- fromJSON(val[2])
-
+    
+    HRV <- NULL
     if (!is.null(hr.data$Episodes)) {
        hr.data<-SplitBeatsbyEpisodes(hr.data)
  #     system.time(hr.data<-SplitBeatsbyEpisodes_c(hr.data))
@@ -75,16 +77,18 @@ while (length(line <- readLines(con, n = 1, warn = FALSE)) > 0) {
           data <- list()
           data$Beat <- hr.data[[i]]
           data$Subject <- name
-          system.time(getSplitWindowBeats(data, toHRV=T))
+          HRV <- c(HRV, getSplitWindowBeats(data, toHRV=T))
+ #         getSplitWindowBeats(data, toHRV=T)
  #        system.time(getSplitWindowBeats_c(data, toHRV=T))
        }
     } else {
       data <- list()
       data$Beat <- hr.data$Beat
       data$Subject <- val[1]
-      getSplitWindowBeats(data, toHRV=T)
+      HRV <- getSplitWindowBeats(data, toHRV=T)
  #    system.time(getSplitWindowBeats_c(data, toHRV=T))
     }
+    cat(paste(val[1], "\t", toJSON(HRV[which(lapply(HRV, length)!=1)]), sep=""), "\n")
 }
 #)
 close(con)

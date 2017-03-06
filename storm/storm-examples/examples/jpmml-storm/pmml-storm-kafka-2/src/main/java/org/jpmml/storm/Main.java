@@ -60,12 +60,14 @@ public class Main {
 */		
         // Configuration
 
-        String zookeeperHost = "master:2181";
+        String zookeeperHost = "master:2181,data1:2181,data2:2181";
         ZkHosts zkHosts = new ZkHosts(zookeeperHost);
 
         SpoutConfig spoutConfig = new SpoutConfig(zkHosts, "hrvs", "", UUID.randomUUID().toString());
         spoutConfig.scheme = new SchemeAsMultiScheme(new StringScheme());
-
+        spoutConfig.bufferSizeBytes = 1024 * 1024 * 1024;
+        spoutConfig.fetchMaxWait = 100;
+        
         KafkaSpout kafkaspout = new KafkaSpout(spoutConfig);
 
 		Evaluator evaluator = PMMLBoltUtil.createEvaluator(new File(args[0]));
@@ -78,11 +80,11 @@ public class Main {
 		        .withFieldDelimiter("\t");
 
 		// sync the filesystem after every 1k tuples
-		SyncPolicy syncPolicy = new CountSyncPolicy(2);
+		SyncPolicy syncPolicy = new CountSyncPolicy(1000);
 
 		// rotate files when they reach 5MB
 //		FileRotationPolicy rotationPolicy = new TimedRotationPolicy(1.0f, TimeUnit.MINUTES);
-		FileRotationPolicy rotationPolicy = new FileSizeRotationPolicy(10.0f, Units.MB);
+		FileRotationPolicy rotationPolicy = new FileSizeRotationPolicy(128.0f, Units.MB);
 
 		FileNameFormat fileNameFormat = new DefaultFileNameFormat()
 		        .withPath("/data/stormtest/").withPrefix("terminalInfo_").withExtension(".log");
@@ -103,27 +105,29 @@ public class Main {
 		CsvWriterBolt csvWriter = new CsvWriterBolt(new File(args[1]), outputFields);
 */
 		TopologyBuilder topologyBuilder = new TopologyBuilder();
-		topologyBuilder.setSpout("input", kafkaspout, 1);
-		topologyBuilder.setBolt("pmml", pmmlBolt, 4)
+		topologyBuilder.setSpout("input", kafkaspout);
+		topologyBuilder.setBolt("pmml", pmmlBolt)
 			.shuffleGrouping("input");
 		//topologyBuilder.setBolt("csvWriter", csvWriter, 2)
 		//.shuffleGrouping("pmml");
-		topologyBuilder.setBolt("hdfsbolt", hdfsbolt, 2)
+		topologyBuilder.setBolt("hdfsbolt", hdfsbolt)
 			.shuffleGrouping("pmml");
 
 		Config config = new Config();
 		config.setDebug(true);
-
+        //config.put(Config.STORM_BLOBSTORE_INPUTSTREAM_BUFFER_SIZE_BYTES, 655360);
+        config.put(Config.TOPOLOGY_MESSAGE_TIMEOUT_SECS, 3600);
+ 
 		StormTopology topology = topologyBuilder.createTopology();
 		
         if (args != null && args.length > 1) {
-	           config.setNumWorkers(3);
+	           config.setNumWorkers(8);
 
 	           StormSubmitter.submitTopologyWithProgressBar(args[1], config, topology);
 	    } else {
 	           LocalCluster cluster = new LocalCluster();
 	           cluster.submitTopology("prediction", new Config(), topology);
-	           Thread.sleep(60 * 1000);
+	           Thread.sleep(600 * 1000);
 	           cluster.killTopology("prediction");
 
 	           cluster.shutdown();

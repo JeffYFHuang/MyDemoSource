@@ -11,6 +11,6 @@ Sys.setenv("HADOOP_STREAMING"="/media/Data/hadoop_ecosystem/hadoop/share/hadoop/
 
 con <- file("stdin", open = "r")
 while (length(line <- readLines(con, n = 1, warn = FALSE)) > 0) {
-    cat(line)
+    cat(line, "\n")
 }
 close(con)

@@ -68,7 +68,7 @@ public class HdfsFileTopology {
         FileRotationPolicy rotationPolicy = new TimedRotationPolicy(1.0f, TimedRotationPolicy.TimeUnit.MINUTES);
 
         FileNameFormat fileNameFormat = new DefaultFileNameFormat()
-                .withPath("/tmp/foo/")
+                .withPath("/foo/")
                 .withExtension(".txt");
 
         // use "|" instead of "," for field delimiter
