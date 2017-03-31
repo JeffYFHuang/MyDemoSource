@@ -168,14 +168,14 @@ genActData <- function (startTime, simu_duration, active.type = 1) {
                 type = 4
 
              if (active.type == 0) { #non active
-                context = switch(type,                      # static, walking, running, cycling, sleeping
+                context = switch(type,                      # static, walking, running, cycling, sleeping, others(tbd)
                            which(rmultinom(1, 1, prob = c(0.6, 0.15, 0.15, 0.05, 0.05)) == 1),
                            which(rmultinom(1, 1, prob = c(0.3, 0.4, 0.3, 0.199, 0.001)) == 1),
                            which(rmultinom(1, 1, prob = c(0.29, 0.005, 0.004, 0.001, 0.7)) == 1),
                            which(rmultinom(1, 1, prob = c(0.299, 0.2, 0.2, 0.001, 0.3)) == 1)
                        )
              } else {
-                context = switch(type,                      # static, walking, running, cycling, sleeping
+                context = switch(type,                      # static, walking, running, cycling, sleeping, others(tbd)
                            which(rmultinom(1, 1, prob = c(0.4, 0.15, 0.15, 0.05, 0.05)) == 1),
                            which(rmultinom(1, 1, prob = c(0.1, 0.5, 0.4, 0.199, 0.001)) == 1),
                            which(rmultinom(1, 1, prob = c(0.19, 0.005, 0.004, 0.001, 0.8)) == 1),
@@ -191,20 +191,19 @@ genActData <- function (startTime, simu_duration, active.type = 1) {
                 type = 3
 
              if (active.type == 0) { #non active
-                context = switch(type,                      # static, walking, running, cycling, sleeping
+                context = switch(type,                      # static, walking, running, cycling, sleeping, others(tbd)
                            which(rmultinom(1, 1, prob = c(0.2, 0.3, 0.2, 0.2, 0.1)) == 1),
                            which(rmultinom(1, 1, prob = c(0.1, 0.2, 0.3, 0.2, 0.2)) == 1),
                            which(rmultinom(1, 1, prob = c(0.29, 0.005, 0.004, 0.001, 0.7)) == 1)
                           )
              } else {
-                context = switch(type,                      # static, walking, running, cycling, sleeping
+                context = switch(type,                      # static, walking, running, cycling, sleeping, others(tbd)
                            which(rmultinom(1, 1, prob = c(0.1, 0.2, 0.3, 0.3, 0.1)) == 1),
                            which(rmultinom(1, 1, prob = c(0.1, 0.1, 0.4, 0.3, 0.1)) == 1),
                            which(rmultinom(1, 1, prob = c(0.29, 0.005, 0.004, 0.001, 0.7)) == 1)
                        )
              }
          }
-
 
          duration = switch(context, 
                        abs(rnorm (1, 10 * 60, 5 * 60)),    # static
@@ -227,6 +226,7 @@ genActData <- function (startTime, simu_duration, active.type = 1) {
             data$hrm_data = getHeartRateData (context, 0, time, data$duration)
          }
 
+         
          sdata[[count]] = data
          count = count + 1
          cat(context, data$duration, time, hour(time), "\n")
