@@ -441,13 +441,12 @@ uuid <- function(uppercase=FALSE) {
     sep='-')
 }
 
-genActDataV2 <- function (startTime, simu_duration, win = 60 * 60, active.type = 1) {
+genActDataV2 <- function (uid, startTime, simu_duration, win = 60 * 60, active.type = 1) {
    data <- genContextTimeStamp(startTime, simu_duration)
 
    s = seq(min(data$x), max(data$x), win)
    s = c(s, min(data$x) + length(s) * win)
 
-   uid = uuid()
    durations = diff(s)
    rr <- list()
 
