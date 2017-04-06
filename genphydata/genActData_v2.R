@@ -35,7 +35,17 @@ genSleepData <- function (startTime) {
      return(list(duration = (time - startTime), data=slp_data))
 }
 
-getHeartRateData <- function (context, status, time, duration, report.period = 5) {
+getSleepDataV2 <- function (time, duration) {
+     data = list()
+     #睡眠狀態 = 0 : 進入睡眠, 1 : 淺層睡眠, 2 : 深度睡眠, 3 : 狀態切換或起床, 4 : 結束睡眠
+     status = which(rmultinom(1, 1, prob = c(0.04, 0.1, 0.85, 0.1, 0.01))==1)
+     data$status = status
+     data$hrm_data = getHeartRateData (5, status, time, duration)
+
+     return(data)
+}
+
+getHeartRateData <- function (context, status, time, duration, report.period = 10) {
      num = round (duration / report.period)
 
      if (num == 0) return(NULL)
@@ -142,6 +152,39 @@ getStepData <- function (context, time, height = 170, weight = 65, sex = 1, acti
      
       step$hrm_data = getHeartRateData (context, type, time, duration) 
       return(list(duration = duration, data = step))
+}
+
+getStepDataV2 <- function (context, time, duration, height = 170, weight = 65, sex = 1) {
+      type = 0
+      step = list()
+      if (context == 2) { # walk
+         type = which(rmultinom(1, 1, prob = c(0.3, 0.3 ,0.3))==1)
+         step.meter = (height - 100) / 100
+         cal.type = c(3.53, 3.58, 3.61) * 1 / 3 #(cal/(m*kg))
+         speed.type = c(52, 66, 80) / 60
+         #step$type = context
+         step$distance = speed.type[type] * duration
+         step$count = step$distance / step.meter
+         step$cal = step$distance * cal.type[type] * weight
+      } else { # run
+         type = which(rmultinom(1, 1, prob = c(0.25, 0.25 ,0.25, 0.25))==1)
+         if (sex == 1) { # man
+            step.height.ratio = c(0.55, 0.75, 0.86, 0.96)
+            step.frequency = c(160.8, 172.8, 188.4, 207.0)
+         } else if (sex == 2) { #woman
+            step.height.ratio = c(0.54, 0.72, 0.87, 1.00)
+            step.frequency = c(155.4, 162.6, 174.0, 184.8)
+         }
+         step.meter = height * step.height.ratio[type] / 100
+         cal.type = c(2.50, 2.46, 2.74, 3.36) * 1 / 3 #(cal/(m*kg))
+         #step$type = context
+         step$count = step.frequency[type] / 60 * duration
+         step$distance = step$count * step.meter
+         step$cal = step$distance * cal.type[type] * weight
+      }
+
+      step$hrm_data = getHeartRateData (context, type, time, duration)
+      return(step)
 }
 
 getHourType <- function(t) {
@@ -257,9 +300,8 @@ genContextTimeStamp <- function (startTime, duration, active.type = 1) {
              }
          }
 
-         types = unlist(lapply(times+durations, getHourType))
-         dates = unlist(lapply(times+durations, date))
-         print(dates)
+         types = unlist(lapply(times + durations, getHourType))
+         dates = unlist(lapply(times + durations, date))
          #cur.date = date(t)
          #print(types)
          #durations[which(types != type)] = NA
@@ -276,10 +318,10 @@ genContextTimeStamp <- function (startTime, duration, active.type = 1) {
          }
    }
 
-   x= timestamp
+   x= timestamp#[which(timestamp <= (startTime + duration))]
    x[is.na(x)] = max(x[!is.na(x)]) + 1
    y = sort(x, method = "quick", index.return = TRUE)
-   idx = which(y$x!=max(y$x))
+   idx = which(y$x <= (startTime + duration))
    y$x = y$x[idx]
    y$ix = y$ix[idx]
    y$hour = hour(as.POSIXct(y$x, origin="1970-01-01"))
@@ -288,20 +330,132 @@ genContextTimeStamp <- function (startTime, duration, active.type = 1) {
    return(y)
 } 
 
-genBoundData <- function (data, win = 60*60) {
+#genBoundCtxData <- function (data, win = 60*60) {
+#   ts = data$x
+#   ct = data$context
+#   s = seq(min(ts), max(ts), win)
+#   for (is in s[-1]) {
+#       idx = length(which(sign(ts - is)==-1))
+#       ct = c(ct, ct[idx])
+#   }
+#   ts = c(ts, s[-1])
+   
+#   y = sort(ts, method = "quick", index.return = TRUE)
+#   ct = ct[y$ix]
+   
+#   return (list (timestamp = y$x, hour = hour(as.POSIXct(y$x, origin = "1970-01-01")), context = ct, timeBounds = c(s[-1])))
+#}
+
+getBoundCtxData <- function (data, start, duration) {
+   if (duration <= 0) return(NULL)
+
+   end = start + duration
+   if (end < min(data$x)) return(NULL)
+
    ts = data$x
    ct = data$context
-   s = seq(min(ts), max(ts), win)
-   for (is in s[-1]) {
-       idx = length(which(sign(ts - is)==-1))
-       ct = c(ct, ct[idx])
+
+   idx = which(ts >= start & ts <= end)
+   ts.bound = ts[idx]
+   ct.bound = ct[idx]
+   
+   start.idx = which(sign(ts - start) == 0)
+   if (length(start.idx) == 0) {
+      start.idx = length(which(sign(ts - start)==-1))
+      if (start.idx != 0) {
+         ct.bound = c(ct[start.idx], ct.bound)
+         ts.bound = c(start, ts.bound)
+      }
    }
-   ts = c(ts, s[-1])
-   
-   y = sort(ts, method = "quick", index.return = TRUE)
-   ct = ct[y$ix]
-   
-   return (list (timestamp = y$x, hour = hour(as.POSIXct(y$x, origin="1970-01-01")), context = ct))
+
+   end.idx = which(sign(ts - end) == 0)
+   if (length(end.idx) == 0) {
+      end.idx = length(which(sign(ts - end)==-1))
+      if (end.idx != 0) {
+         ct.bound = c(ct.bound, ct[end.idx])
+         ts.bound = c(ts.bound, end)
+      }
+   }
+
+   return (list (timestamp = ts.bound[-length(ts.bound)], context = ct.bound[-length(ct.bound)], durations = diff(ts.bound)))
+}
+
+genBoundData <- function (uid, data, start, duration) {
+   b.data <- getBoundCtxData (data, start, duration)
+
+   ts = b.data$timestamp
+   ct = b.data$context
+   durations = b.data$durations
+
+   r.data = list()
+   for (i in 1:length(ts)) {
+       r = list()
+       result = switch(ct[i],
+                       getHeartRateData (ct[i], 0, ts[i], durations[i]),    # static
+                       getStepDataV2(ct[i], ts[i], durations[i]),         # walking
+                       getStepDataV2(ct[i], ts[i], durations[i]),         # running
+                       getHeartRateData (ct[i], 0, ts[i], durations[i]),
+                       getSleepDataV2(ts[i], durations[i]))
+
+       r$context = ct[i]
+       r$timestamp = ts[i]
+       r$duration = durations[i]
+
+       if (ct[i] == 2 || ct[i] == 3) {
+          r$count = result$count
+          r$distance = result$distance
+          r$cal = result$cal
+          r$hrm = result$hrm_data       
+       } else if (ct[i] == 5) {
+          r$status = result$status
+          r$hrm = result$hrm_data
+       } else {
+          r$hrm = result
+       }
+       r.data[[i]] = r
+   }
+
+   return (list(uuid = uid, data=r.data)) 
+}
+
+## Version 4 UUIDs have the form:
+##    xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx
+##    where x is any hexadecimal digit and
+##    y is one of 8, 9, A, or B
+##    f47ac10b-58cc-4372-a567-0e02b2c3d479
+uuid <- function(uppercase=FALSE) {
+
+  hex_digits <- c(as.character(0:9), letters[1:6])
+  hex_digits <- if (uppercase) toupper(hex_digits) else hex_digits
+
+  y_digits <- hex_digits[9:12]
+
+  paste(
+    paste0(sample(hex_digits, 8), collapse=''),
+    paste0(sample(hex_digits, 4), collapse=''),
+    paste0('4', sample(hex_digits, 3), collapse=''),
+    paste0(sample(y_digits,1),
+           sample(hex_digits, 3),
+           collapse=''),
+    paste0(sample(hex_digits, 12), collapse=''),
+    sep='-')
+}
+
+genActDataV2 <- function (startTime, simu_duration, win = 60 * 60, active.type = 1) {
+   data <- genContextTimeStamp(startTime, simu_duration)
+
+   s = seq(min(data$x), max(data$x), win)
+   s = c(s, min(data$x) + length(s) * win)
+
+   uid = uuid()
+   durations = diff(s)
+   rr <- list()
+
+   for (i in 1 : (length(s)-1)) {
+       rr[[i]] <- genBoundData(uid, data, s[i], durations[i])
+   }
+
+   return(rr)
 }
 
 genActData <- function (startTime, simu_duration, active.type = 1) {
