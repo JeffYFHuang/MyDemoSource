@@ -446,6 +446,9 @@ genActDataV2 <- function (uid, startTime, simu_duration, win = 60 * 60, active.t
 
    s = seq(min(data$x), max(data$x), win)
    s = c(s, min(data$x) + length(s) * win)
+   ts = as.POSIXlt(s, origin="1970-01-01")
+   s = as.POSIXlt(paste(date(ts), hour(ts)),  format="%Y-%m-%d %H") # data is bound with hours of date.
+   s = as.numeric(s)
 
    durations = diff(s)
    rr <- list()
