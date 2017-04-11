@@ -2,9 +2,9 @@ library(RCurl)
 library(rjson)
 source("genActData_v2.R")
 
-send_phydummy <- function (data, time, addr="10.0.0.5", port=44448) {
+send_phydummy <- function (sid, data, time, addr="10.0.0.5", port=44448) {
     payload = toJSON(data)
-    headers = format(as.POSIXct(time, origin="1970-01-01"), paste('"headers":{"m_year":"%Y","m_month":"%m","m_day":"%d", "m_hour":"%H"}', sep=""))
+    headers = format(as.POSIXct(time, origin="1970-01-01"), paste('"headers":{"m_year":"%Y","m_month":"%m","m_day":"%d", "m_hour":"%H", "m_school": "', sid, '"}', sep=""))
 
     http_content = paste('[{', headers, ',"body":', "'", payload, "'", '}]', sep="")
     httpheader <- c(Accept="application/json; charset=UTF-8", "Content-Type"="application/json")
@@ -37,6 +37,12 @@ if (is.null(hours))
 
 flumeserver = ip
 
+e1 <- read.csv("e1_new.csv", header=T)
+e1.Kaohsiung <- e1[regexpr("高雄市", e1[,3]) != -1, 1]
+set.seed(100)
+school.ids <- sample(e1.Kaohsiung, 50, replace = F)
+uids.sids <- sample(school.ids, 20000, replace = T)
+
 set.seed(100)
 uids = array()
 count = 1
@@ -45,15 +51,23 @@ while (count <= num) {
    count = count + 1
 }
 
-time = now()
-time = as.POSIXlt(paste(date(time), hour(time)), format="%Y-%m-%d %H")
+#for (h in 1:4) {
+    time = now()
+    time = as.POSIXlt(paste(date(time), 8), format="%Y-%m-%d %H")
+#    time = time + (h - 1) * hours*60*60
 
-for (i in 1:length(uids)) {
-   cat(i, " ", uids[i], "\n")
-   data <- genActDataV2(uids[i], time, hours*60*60)
+i <- 1
+for (sid in school.ids) {
+    print(uids[which(uids.sids == sid)])    
+    for (uid in uids[which(uids.sids == sid)]) {
+       cat(i, sid, " ", uid, "\n")
+       data <- genActDataV2(uid, time, hours*60*60, win = 6*60*60)
    
-   for (x in data) {
-       #print(x$data[[1]]$timestamp)
-       send_phydummy (x, x$data[[1]]$timestamp)
-   }
+       for (x in data) {
+           #print(x$data[[1]]$timestamp)
+           send_phydummy (sid, x, x$data[[1]]$timestamp)
+       }
+       i <- i + 1
+    }
 }
+#}

@@ -258,22 +258,22 @@ genContextTimeStamp <- function (startTime, duration, active.type = 1) {
          if (weekday %in% workdays ) {
              if (active.type == 0) { #non active
                 durations = switch(type,                    # static, walking, running, cycling, sleeping, others(tbd)
-                             c(mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(1*60))), mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(2*60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(4*60)))),    #  7 ~ 8
+                             c(mean(rexp(100, 1/(30*60))), mean(rexp(100, 1/(1*60))), mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(2*60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(4*60)))),    #  7 ~ 8
                              c(mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(40*60))), mean(rexp(100, 1/(40*60))), mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(40*60)))), #  8 ~ 12
                              c(mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(40*60))), mean(rexp(100, 1/(40*60))), mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(40*60))), mean(rexp(100, 1/(4*60)))),     # 12 ~ 13
                              c(mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(60*60))), mean(rexp(100, 1/(60*60))), mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(40*60)))), # 13 ~ 16
-                             c(mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(4*60))), mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(60*60))), mean(rexp(100, 1/(2*60*60))), mean(rexp(100, 1/(4*60)))),    # 16 ~ 18
+                             c(mean(rexp(100, 1/(30*60))), mean(rexp(100, 1/(4*60))), mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(60*60))), mean(rexp(100, 1/(2*60*60))), mean(rexp(100, 1/(4*60)))),    # 16 ~ 18
                              c(mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(6*60))), mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(40*60)))), # 18 ~ 21
                              c(mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(9*60*60))), mean(rexp(100, 1/(10*60*60))), mean(rexp(100, 1/(20*60*60))), mean(rexp(100, 1/60)), mean(rexp(100, 1/(8*60*60)))) # 21 ~ 7
                            )
              } else {
                 #print(type)
                 durations = switch(type,                      # static, walking, running, cycling, sleeping, others(tbd)
-                             c(mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(4*60))), mean(rexp(100, 1/(4*60))), mean(rexp(100, 1/(60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(30*60)))),    # 7 ~ 8
+                             c(mean(rexp(100, 1/(30*60))), mean(rexp(100, 1/(4*60))), mean(rexp(100, 1/(4*60))), mean(rexp(100, 1/(60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(30*60)))),    # 7 ~ 8
                              c(mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(40*60))), mean(rexp(100, 1/(40*60))), mean(rexp(100, 1/(10*60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(40*60)))), # 8 ~ 12
                              c(mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(4*60))), mean(rexp(100, 1/(4*60))), mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(20*60))), mean(rexp(100, 1/(4*60)))),     # 12 ~ 13
                              c(mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(40*60))), mean(rexp(100, 1/(40*60))), mean(rexp(100, 1/(10*60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(40*60)))), # 13 ~ 16   
-                             c(mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(4*60))), mean(rexp(100, 1/(5*60))), mean(rexp(100, 1/(30*60))), mean(rexp(100, 1/(2*60*60))), mean(rexp(100, 1/(30*60)))),    # 16 ~ 18
+                             c(mean(rexp(100, 1/(30*60))), mean(rexp(100, 1/(4*60))), mean(rexp(100, 1/(5*60))), mean(rexp(100, 1/(30*60))), mean(rexp(100, 1/(2*60*60))), mean(rexp(100, 1/(30*60)))),    # 16 ~ 18
                              c(mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(6*60))), mean(rexp(100, 1/(6*60))), mean(rexp(100, 1/(60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(40*60)))), # 18 ~ 21
                              c(mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(9*60*60))), mean(rexp(100, 1/(10*60*60))), mean(rexp(100, 1/(20*60*60))), mean(rexp(100, 1/60)), mean(rexp(100, 1/(8*60*60))))  # 21 ~ 7
                            )
