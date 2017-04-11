@@ -50,6 +50,7 @@ getHeartRateData <- function (context, status, time, duration, report.period = 1
 
      if (num == 0) return(NULL)
 
+     if (context == 0) context = 6
      hrm_data = list()
      for (i in 1:num) {
          heartRate = round( switch (context,
@@ -69,7 +70,8 @@ getHeartRateData <- function (context, status, time, duration, report.period = 1
                                abs(rnorm (1, 68, 7)),
                                abs(rnorm (1, 66, 5)),
                                abs(rnorm (1, 70, 10)),
-                               abs(rnorm (1, 75, 10)))
+                               abs(rnorm (1, 75, 10))),
+                       abs(rnorm (1, 70, 10))
                      ))
          data = list()
          data$timestamp = time + i * report.period
@@ -385,6 +387,7 @@ genBoundData <- function (uid, data, start, duration) {
 
    ts = b.data$timestamp
    ct = b.data$context
+   ct[which(ct==0)] = 6
    durations = b.data$durations
 
    r.data = list()
@@ -395,9 +398,11 @@ genBoundData <- function (uid, data, start, duration) {
                        getStepDataV2(ct[i], ts[i], durations[i]),         # walking
                        getStepDataV2(ct[i], ts[i], durations[i]),         # running
                        getHeartRateData (ct[i], 0, ts[i], durations[i]),
-                       getSleepDataV2(ts[i], durations[i]))
+                       getSleepDataV2(ts[i], durations[i]),
+                       getHeartRateData (ct[i], 0, ts[i], durations[i])
+                )
 
-       r$context = ct[i]
+       r$context = ct[i]%%6
        r$timestamp = ts[i]
        r$duration = durations[i]
 
@@ -446,6 +451,9 @@ genActDataV2 <- function (uid, startTime, simu_duration, win = 60 * 60, active.t
 
    s = seq(min(data$x), max(data$x), win)
    s = c(s, min(data$x) + length(s) * win)
+   ts = as.POSIXlt(s, origin="1970-01-01")
+   s = as.POSIXlt(paste(date(ts), hour(ts)),  format="%Y-%m-%d %H") # data is bound with hours of date.
+   s = as.numeric(s)
 
    durations = diff(s)
    rr <- list()
