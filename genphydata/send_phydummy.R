@@ -56,6 +56,7 @@ while (count <= num) {
     time = as.POSIXlt(paste(date(time), 8), format="%Y-%m-%d %H")
 #    time = time + (h - 1) * hours*60*60
 
+set.seed(runif(1, 0, 10000000))
 i <- 1
 for (sid in school.ids) {
     print(uids[which(uids.sids == sid)])    
