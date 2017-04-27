@@ -38,8 +38,13 @@ sudo add-apt-repository -y ppa:openjdk-r/ppa
 sudo apt-get update   
 sudo apt-get install -y openjdk-7-jdk
 
-sudo rm /usr/lib/jvm/default-java
+jfolder="/usr/lib/jvm/default-java"
+if [ -f "$jfolder" ]
+then
+   sudo rm /usr/lib/jvm/default-java
+fi
 sudo ln /usr/lib/jvm/java-7-openjdk-amd64/ -s /usr/lib/jvm/default-java
+
 # install R using the FRONTEND call to eliminate
 # user interactive requests
 sudo apt-get install -y r-base
@@ -56,15 +61,15 @@ file="/usr/lib/libgfortran.so"
 if [ -f "$file" ]
 then
     sudo rm $file
-    sudo ln -s /usr/lib/x86_64-linux-gnu/libgfortran.so.3 $file
 fi
+sudo ln -s /usr/lib/x86_64-linux-gnu/libgfortran.so.3 $file
 
 file="/usr/lib/libquadmath.so"
 if [ -f "$file" ]
 then
    sudo rm $file
-   sudo ln -s /usr/lib/x86_64-linux-gnu/libquadmath.so.0 $file
 fi
+sudo ln -s /usr/lib/x86_64-linux-gnu/libquadmath.so.0 $file
 
 # for the package update script to run, the hadoop user needs to own the R library
 sudo chown hduser /usr/local/lib/R -R
@@ -73,7 +78,7 @@ sudo chown hduser /usr/lib/R -R
 sudo R --no-save << EOF
 install.packages(c("rJava", "Rcpp", "RJSONIO", "bitops", "digest",
                    "functional", "stringr", "plyr", "reshape2", "dplyr",
-                   "R.methodsS3", "caTools", "Hmisc", "data.table", "rjson", "memoise", "RHRV", "rjson", "randomForest"),
+                   "R.methodsS3", "caTools", "Hmisc", "data.table", "rjson", "memoise", "RHRV", "rjson", "randomForest", "RCurl", "lubridate"),
     repos="http://cran.revolutionanalytics.com", INSTALL_opts=c('--byte-compile') )
 EOF
 

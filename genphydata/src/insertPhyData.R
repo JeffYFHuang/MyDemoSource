@@ -26,10 +26,10 @@ filepath <- Sys.getenv("map_input_file")
 keyspace <- "elmtest"
 if (nchar(filepath) > 0) {
    path <- unlist(strsplit(filepath, split="/"))
-   keyspace <- path[5] 
+   keyspace <- path[6] 
 }
 
-cat(keyspace, "\n")
+#cat(keyspace, "\n")
 python.load("src/funcs.py", get.exception = T)
 python.call("setkeyspace", keyspace)
 
@@ -44,7 +44,7 @@ while (length(line <- readLines(con, n = 1, warn = FALSE)) > 0) {
         xx <- x[which(names(x)!="hrm")]
  
         if (xx["context"] != 5 && xx["context"] != 0) {
-           colnames <- c("uuid", "timestamp", "situation", "duration", "hrm_avg")
+           colnames <- c("uuid", "timestamp", "situation", "duration", "avghrm")
 
            hrm_avg = 0
            if (length(which(names(x) == 'hrm') > 0))

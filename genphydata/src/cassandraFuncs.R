@@ -22,7 +22,7 @@ CreateKeySpace <- function (sid) {
 }
 
 CqlExec <- function (cmd) {
-    cat (cmd, "\n")
+    cat (cmd, ";\n")
     python.call("cqlexec", cmd)
 }
 
@@ -69,16 +69,16 @@ CreateWeeklyTable <- function (sid) {
 }
 
 CreateMonthlyTable <- function (sid) {
-    cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(sid, ".step_week", sep=""), "(uuid varchar, year int, month int, type int, avgcount int, avgdistance int, avgcal int, PRIMARY KEY (uuid, year, month, type))")
+    cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(sid, ".step_month", sep=""), "(uuid varchar, year int, month int, type int, avgcount int, avgdistance int, avgcal int, PRIMARY KEY (uuid, year, month, type))")
     CqlExec(cmd)
 
-    cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(sid, ".sleep_week", sep=""), "(uuid varchar, year int, month int, status int, avgduration int, PRIMARY KEY (uuid, year, month, status))")
+    cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(sid, ".sleep_month", sep=""), "(uuid varchar, year int, month int, status int, avgduration int, PRIMARY KEY (uuid, year, month, status))")
     CqlExec(cmd)
 
-    cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(sid, ".context_week", sep=""), "(uuid varchar, year int, month int, situation int, avgduration int, avghrm int, activeindex int, avgmet float, PRIMARY KEY (uuid, year, month, situation))")
+    cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(sid, ".context_month", sep=""), "(uuid varchar, year int, month int, situation int, avgduration int, avghrm int, activeindex int, avgmet float, PRIMARY KEY (uuid, year, month, situation))")
     CqlExec(cmd)
 
-    cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(sid, ".hrm_week", sep=""), "(uuid varchar, year int, month int, min int, max int, mean int, median int, sd float, PRIMARY KEY (uuid, year, month))")
+    cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(sid, ".hrm_month", sep=""), "(uuid varchar, year int, month int, min int, max int, mean int, median int, sd float, PRIMARY KEY (uuid, year, month))")
     CqlExec(cmd)
 }
 
