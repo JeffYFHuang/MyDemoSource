@@ -4,12 +4,11 @@ source("genActData_v2.R")
 
 send_phydummy <- function (sid, data, time, addr="10.0.0.5", port=44448) {
     payload = toJSON(data)
-    headers = format(as.POSIXct(time, origin="1970-01-01"), paste('"headers":{"m_year":"%Y","m_month":"%m","m_day":"%d", "m_hour":"%H", "m_school": "', sid, '"}', sep=""))
+    headers = format(as.POSIXct(time, origin="1970-01-01"), paste('"headers":{"m_year":"%Y","m_month":"%m","m_day":"%d", "m_hour":"%H", "m_school": "elm', sid, '"}', sep=""))
 
     http_content = paste('[{', headers, ',"body":', "'", payload, "'", '}]', sep="")
     httpheader <- c(Accept="application/json; charset=UTF-8", "Content-Type"="application/json")
-    #print(http_content)
-    postForm(paste("http://", addr, ":", port, sep=""), .opts=list(httpheader=httpheader, postfields=http_content))
+    result = postForm(paste("http://", addr, ":", port, sep=""), .opts=list(httpheader=httpheader, postfields=http_content))
 }
 
 args=(commandArgs(TRUE))
@@ -63,10 +62,9 @@ for (sid in school.ids) {
     for (uid in uids[which(uids.sids == sid)]) {
        cat(i, sid, " ", uid, "\n")
        data <- genActDataV2(uid, time, hours*60*60, win = 6*60*60)
-   
+#       print(data)   
        for (x in data) {
-           #print(x$data[[1]]$timestamp)
-           send_phydummy (sid, x, x$data[[1]]$timestamp)
+           send_phydummy (sid, x, x$data[[1]]$timestamp, addr = flumeserver)
        }
        i <- i + 1
     }

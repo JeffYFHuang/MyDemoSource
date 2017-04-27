@@ -1,6 +1,6 @@
 from cassandra.cluster import Cluster
 import json
-cluster = Cluster(['10.0.0.44'])
+cluster = Cluster(['172.18.161.100', '172.18.161.101'])
 session = cluster.connect();
 
 #def selectAll(keyspace, tblname):
@@ -8,7 +8,14 @@ session = cluster.connect();
 #	rows = session.execute('SELECT * FROM ' + tblname)
 #        return list(rows)
 
-def cqlexec(keyspace, cqlcmd):
+def setkeyspace(keyspace):
+        return session.set_keyspace(keyspace)
+
+def cqlexec(cqlcmd):
+        result = session.execute(cqlcmd)
+        return list(result)
+
+def cqlexecwithkeyspace(keyspace, cqlcmd):
         session.set_keyspace(keyspace)
         result = session.execute(cqlcmd)
         return list(result)

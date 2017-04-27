@@ -23,17 +23,15 @@ getInsertCqlCmd <- function(tblname, colnames, values) {
 
 filepath <- Sys.getenv("map_input_file")
 
-keyspace = NULL
-if (is.null(filepath)) {
+keyspace <- "elmtest"
+if (nchar(filepath) > 0) {
    path <- unlist(strsplit(filepath, split="/"))
-   keyspace <- path[3] 
-} else {
-   keyspace <- "elmtest"
+   keyspace <- path[5] 
 }
 
 cat(keyspace, "\n")
 python.load("src/funcs.py", get.exception = T)
-#python.call("cqlexec", keyspace, cqlcmd)
+python.call("setkeyspace", keyspace)
 
 tables <- c("step", "sleep", "context", "hrm")
 ## **** could wo with a single readLines or in blocks
@@ -55,20 +53,20 @@ while (length(line <- readLines(con, n = 1, warn = FALSE)) > 0) {
            values <- unlist(c(uuid, xx["timestamp"], xx["context"], xx["duration"], hrm_avg))
            cqlcmd <- getInsertCqlCmd("context", colnames, values)
 #           cat(cqlcmd, "\n")
-           python.call("cqlexec", keyspace, cqlcmd)
+           python.call("cqlexec", cqlcmd)
            if (xx["context"] == 2 || xx["context"] == 3) {
               colnames = c("uuid", "timestamp", "type", "count", "distance", "cal")
               values = unlist(c(uuid, xx["timestamp"], xx["context"], xx["count"], xx["distance"], xx["cal"]))
               cqlcmd <- getInsertCqlCmd("step", colnames, values)
 #              cat(cqlcmd, "\n")
-              python.call("cqlexec", keyspace, cqlcmd)
+              python.call("cqlexec", cqlcmd)
            }
         } else if (xx["context"] == 5) {
            colnames = c("uuid", "timestamp", "status", "duration")
            values = unlist(c(uuid, xx["timestamp"], xx["status"], xx["duration"]))
            cqlcmd <- getInsertCqlCmd("sleep", colnames, values)
 #           cat(cqlcmd, "\n")
-           python.call("cqlexec", keyspace, cqlcmd)
+           python.call("cqlexec", cqlcmd)
         }
 
         if (length(which(names(x) == 'hrm') > 0)) {
@@ -77,7 +75,7 @@ while (length(line <- readLines(con, n = 1, warn = FALSE)) > 0) {
                values <- unlist(c(uuid, round(unlist(hrm))))
                cqlcmd <- getInsertCqlCmd("hrm", colnames, values)
 #               cat(cqlcmd, "\n")
-               python.call("cqlexec", keyspace, cqlcmd)
+               python.call("cqlexec", cqlcmd)
            }
         }
     }

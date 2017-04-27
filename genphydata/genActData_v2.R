@@ -254,7 +254,7 @@ genContextTimeStamp <- function (startTime, duration, active.type = 1) {
          hour.time = hour(t)
          type = getHourType (t)
 
-         set.seed(runif(1)*100000000)
+#         set.seed(runif(1)*100000000)
          if (weekday %in% workdays ) {
              if (active.type == 0) { #non active
                 durations = switch(type,                    # static, walking, running, cycling, sleeping, others(tbd)
@@ -264,7 +264,7 @@ genContextTimeStamp <- function (startTime, duration, active.type = 1) {
                              c(mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(60*60))), mean(rexp(100, 1/(60*60))), mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(40*60)))), # 13 ~ 16
                              c(mean(rexp(100, 1/(30*60))), mean(rexp(100, 1/(4*60))), mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(60*60))), mean(rexp(100, 1/(2*60*60))), mean(rexp(100, 1/(4*60)))),    # 16 ~ 18
                              c(mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(6*60))), mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(40*60)))), # 18 ~ 21
-                             c(mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(9*60*60))), mean(rexp(100, 1/(10*60*60))), mean(rexp(100, 1/(20*60*60))), mean(rexp(100, 1/60)), mean(rexp(100, 1/(8*60*60)))) # 21 ~ 7
+                             c(mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(9*60*60))), mean(rexp(100, 1/(10*60*60))), mean(rexp(100, 1/(20*60*60))), mean(rexp(100, 1/(5*60))), mean(rexp(100, 1/(8*60*60)))) # 21 ~ 7
                            )
              } else {
                 #print(type)
@@ -275,7 +275,7 @@ genContextTimeStamp <- function (startTime, duration, active.type = 1) {
                              c(mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(40*60))), mean(rexp(100, 1/(40*60))), mean(rexp(100, 1/(10*60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(40*60)))), # 13 ~ 16   
                              c(mean(rexp(100, 1/(30*60))), mean(rexp(100, 1/(4*60))), mean(rexp(100, 1/(5*60))), mean(rexp(100, 1/(30*60))), mean(rexp(100, 1/(2*60*60))), mean(rexp(100, 1/(30*60)))),    # 16 ~ 18
                              c(mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(6*60))), mean(rexp(100, 1/(6*60))), mean(rexp(100, 1/(60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(40*60)))), # 18 ~ 21
-                             c(mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(9*60*60))), mean(rexp(100, 1/(10*60*60))), mean(rexp(100, 1/(20*60*60))), mean(rexp(100, 1/60)), mean(rexp(100, 1/(8*60*60))))  # 21 ~ 7
+                             c(mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(9*60*60))), mean(rexp(100, 1/(10*60*60))), mean(rexp(100, 1/(20*60*60))), mean(rexp(100, 1/(5*60))), mean(rexp(100, 1/(8*60*60))))  # 21 ~ 7
                            )
              }
          } else { #weekend
@@ -287,7 +287,7 @@ genContextTimeStamp <- function (startTime, duration, active.type = 1) {
                              c(mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(20*60))), mean(rexp(100, 1/(60*60))), mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(30*60)))),  # 13 ~ 16
                              c(mean(rexp(100, 1/(20*60))), mean(rexp(100, 1/(20*60))), mean(rexp(100, 1/(40*60))), mean(rexp(100, 1/(30*60))), mean(rexp(100, 1/(2*60*60))), mean(rexp(100, 1/(40*60)))),    # 16 ~ 18
                              c(mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(20*60))), mean(rexp(100, 1/(60*60))), mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(30*60)))),  # 18 ~ 21
-                             c(mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(10*60*60))), mean(rexp(100, 1/60)), mean(rexp(100, 1/(8*60*60))))  # 21 ~ 7
+                             c(mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(10*60*60))), mean(rexp(100, 1/(5*60))), mean(rexp(100, 1/(8*60*60))))  # 21 ~ 7
                            )
              } else {
                 durations = switch(type,                      # static, walking, running, cycling, sleeping, others(tbd)
@@ -297,7 +297,7 @@ genContextTimeStamp <- function (startTime, duration, active.type = 1) {
                              c(mean(rexp(100, 1/(30*60))), mean(rexp(100, 1/(15*60))), mean(rexp(100, 1/(30*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(50*60)))),  # 13 ~ 16
                              c(mean(rexp(100, 1/(40*60))), mean(rexp(100, 1/(30*60))), mean(rexp(100, 1/(20*60))), mean(rexp(100, 1/(20*60))), mean(rexp(100, 1/(2*60*60))), mean(rexp(100, 1/(30*60)))),    # 16 ~ 18
                              c(mean(rexp(100, 1/(30*60))), mean(rexp(100, 1/(15*60))), mean(rexp(100, 1/(30*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(50*60)))),  # 18 ~ 21
-                             c(mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(20*60*60))), mean(rexp(100, 1/60)), mean(rexp(100, 1/(8*60*60))))  # 21 ~ 7
+                             c(mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(20*60*60))), mean(rexp(100, 1/(5*60))), mean(rexp(100, 1/(8*60*60))))  # 21 ~ 7
                        )
              }
          }
@@ -448,13 +448,11 @@ uuid <- function(uppercase=FALSE) {
 
 genActDataV2 <- function (uid, startTime, simu_duration, win = 60 * 60, active.type = 1) {
    data <- genContextTimeStamp(startTime, simu_duration)
-
    s = seq(min(data$x), max(data$x), win)
    s = c(s, min(data$x) + length(s) * win)
    ts = as.POSIXlt(s, origin="1970-01-01")
    s = as.POSIXlt(paste(date(ts), hour(ts)),  format="%Y-%m-%d %H") # data is bound with hours of date.
    s = as.numeric(s)
-
    durations = diff(s)
    rr <- list()
 
