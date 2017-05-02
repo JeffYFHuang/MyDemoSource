@@ -10,7 +10,7 @@ CreateKeySpacesAndTables <- function (school.ids) {
 
 CreateKeySpaceAndTables <- function (sid) {
     CreateKeySpace(sid)
-    CreateTimeTable(sid)
+    CreateHourTable(sid)
     CreateDailyTable(sid)
     CreateWeeklyTable(sid)
     CreateMonthlyTable(sid)
@@ -26,17 +26,17 @@ CqlExec <- function (cmd) {
     python.call("cqlexec", cmd)
 }
 
-CreateTimeTable <- function (sid) {
-    cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(sid, ".step", sep=""), "(uuid varchar, timestamp bigint, type int, count int, distance int, cal int, PRIMARY KEY (uuid, timestamp))")
+CreateHourTable <- function (sid) {
+    cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(sid, ".step_hour", sep=""), "(uuid varchar, datehour bigint, type int, count int, distance int, cal int, PRIMARY KEY (uuid, datehour, type))")
     CqlExec(cmd)
 
-    cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(sid, ".sleep", sep=""), "(uuid varchar, timestamp bigint, status int, duration int, PRIMARY KEY (uuid, timestamp))")
+    cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(sid, ".sleep_hour", sep=""), "(uuid varchar, datehour bigint, status int, duration int, ratio float, PRIMARY KEY (uuid, datehour, status))")
     CqlExec(cmd)
 
-    cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(sid, ".context", sep=""), "(uuid varchar, timestamp bigint, situation int, duration int, avghrm int, PRIMARY KEY (uuid, timestamp))")
+    cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(sid, ".context_hour", sep=""), "(uuid varchar, datehour bigint, situation int, duration int, avghrm float, hrmcount int, activeindex int, met int, PRIMARY KEY (uuid, datehour, situation))")
     CqlExec(cmd)
 
-    cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(sid, ".hrm", sep=""), "(uuid varchar, timestamp bigint, hrm_report int, hr_peak_rate int, PRIMARY KEY (uuid, timestamp))")
+    cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(sid, ".hrm_hour", sep=""), "(uuid varchar, datehour bigint, situation int, min int, max int, mean float, sd float, count int, PRIMARY KEY (uuid, datehour, situation))")
     CqlExec(cmd)
 }
 
@@ -44,46 +44,46 @@ CreateDailyTable <- function (sid) {
     cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(sid, ".step_date", sep=""), "(uuid varchar, date bigint, type int, count int, distance int, cal int, PRIMARY KEY (uuid, date, type))")
     CqlExec(cmd)
 
-    cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(sid, ".sleep_date", sep=""), "(uuid varchar, date bigint, status int, duration int, PRIMARY KEY (uuid, date, status))")
+    cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(sid, ".sleep_date", sep=""), "(uuid varchar, date bigint, status int, duration int, ratio float, PRIMARY KEY (uuid, date, status))")
     CqlExec(cmd)
 
-    cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(sid, ".context_date", sep=""), "(uuid varchar, date bigint, situation int, duration int, avghrm int, activeindex int, met float, PRIMARY KEY (uuid, date, situation))")
+    cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(sid, ".context_date", sep=""), "(uuid varchar, date bigint, situation int, duration int, avghrm int, hrmcount int, activeindex int, met float, PRIMARY KEY (uuid, date, situation))")
     CqlExec(cmd)
 
-    cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(sid, ".hrm_date", sep=""), "(uuid varchar, date bigint, min int, max int, mean int, median int, sd float, PRIMARY KEY (uuid, date))")
+    cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(sid, ".hrm_date", sep=""), "(uuid varchar, date bigint, situation int, min int, max int, mean int, median int, sd float, count int, PRIMARY KEY (uuid, date, situation))")
     CqlExec(cmd)
 }
 
 CreateWeeklyTable <- function (sid) {
-    cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(sid, ".step_week", sep=""), "(uuid varchar, year int, week int, type int, avgcount int, avgdistance int, avgcal int, PRIMARY KEY (uuid, year, week, type))")
+    cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(sid, ".step_week", sep=""), "(uuid varchar, wdate bigint, type int, count int, distance int, cal int, PRIMARY KEY (uuid, wdate, type))")
     CqlExec(cmd)
 
-    cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(sid, ".sleep_week", sep=""), "(uuid varchar, year int, week int, status int, avgduration int, PRIMARY KEY (uuid, year, week, status))")
+    cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(sid, ".sleep_week", sep=""), "(uuid varchar, wdate bigint, status int, duration int, ratio float, PRIMARY KEY (uuid, wdate, status))")
     CqlExec(cmd)
 
-    cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(sid, ".context_week", sep=""), "(uuid varchar, year int, week int, situation int, avgduration int, avghrm int, activeindex int, avgmet float, PRIMARY KEY (uuid, year, week, situation))")
+    cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(sid, ".context_week", sep=""), "(uuid varchar, wdate bigint, situation int, duration int, avghrm int, hrmcount int, activeindex int, met float, PRIMARY KEY (uuid, wdate, situation))")
     CqlExec(cmd)
 
-    cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(sid, ".hrm_week", sep=""), "(uuid varchar, year int, week int, min int, max int, mean int, median int, sd float, PRIMARY KEY (uuid, year, week))")
+    cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(sid, ".hrm_week", sep=""), "(uuid varchar, wdate bigint, situation int, min int, max int, mean int, sd float, count int, PRIMARY KEY (uuid, wdate, situation))")
     CqlExec(cmd)
 }
 
 CreateMonthlyTable <- function (sid) {
-    cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(sid, ".step_month", sep=""), "(uuid varchar, year int, month int, type int, avgcount int, avgdistance int, avgcal int, PRIMARY KEY (uuid, year, month, type))")
+    cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(sid, ".step_month", sep=""), "(uuid varchar, mdate bigint, type int, count int, distance int, cal int, PRIMARY KEY (uuid, mdate, type))")
     CqlExec(cmd)
 
-    cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(sid, ".sleep_month", sep=""), "(uuid varchar, year int, month int, status int, avgduration int, PRIMARY KEY (uuid, year, month, status))")
+    cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(sid, ".sleep_month", sep=""), "(uuid varchar, mdate bigint, status int, duration int, PRIMARY KEY (uuid, mdate, status))")
     CqlExec(cmd)
 
-    cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(sid, ".context_month", sep=""), "(uuid varchar, year int, month int, situation int, avgduration int, avghrm int, activeindex int, avgmet float, PRIMARY KEY (uuid, year, month, situation))")
+    cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(sid, ".context_month", sep=""), "(uuid varchar, mdate bigint, situation int, duration int, avghrm int, hrmcount int, activeindex int, met float, PRIMARY KEY (uuid, mdate, situation))")
     CqlExec(cmd)
 
-    cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(sid, ".hrm_month", sep=""), "(uuid varchar, year int, month int, min int, max int, mean int, median int, sd float, PRIMARY KEY (uuid, year, month))")
+    cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(sid, ".hrm_month", sep=""), "(uuid varchar, mdate bigint, situation int, min int, max int, mean int, sd float, count int, PRIMARY KEY (uuid, mdate, situation))")
     CqlExec(cmd)
 }
 
 DropKeySpace <- function (sid) {
-    cmd <- paste("DROP KEYSPACE", sid, "")
+    cmd <- paste("DROP KEYSPACE IF EXISTS", sid, "")
     CqlExec(cmd)
 }
 
@@ -94,6 +94,6 @@ DropKeySpaces <- function (school.ids) {
 }
 
 DropTable <- function (sid, tablename) {
-    cmd <- paste("DROP KEYSPACE", sid, ".", tablename, "")
+    cmd <- paste("DROP TABLE IF EXISTS", sid, ".", tablename, "")
     CqlExec(cmd)
 }

@@ -2,6 +2,7 @@ from cassandra.cluster import Cluster
 import json
 cluster = Cluster(['172.18.161.100', '172.18.161.101'])
 session = cluster.connect();
+session.default_timeout = 3600
 
 #def selectAll(keyspace, tblname):
 #        session.set_keyspace(keyspace)
