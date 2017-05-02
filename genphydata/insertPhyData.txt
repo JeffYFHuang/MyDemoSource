@@ -1,2 +1,2 @@
 hadoop fs -rm -r /data/phydummyoutput
-hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-2.6.0.jar -D mapreduce.job.maps=$1 -files src/ -mapper src/insertPhyData.R -input $2 -output /data/phydummyoutput
+hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-2.6.0.jar -D mapreduce.job.maps=$1 -files src/ -mapper src/processPhyData.R -input $2 -output /data/phydummyoutput

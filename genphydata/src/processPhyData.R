@@ -3,9 +3,9 @@
 # mapper.R - Wordcount program in R
 # script for Mapper (R-Hadoop integration)
 require(lubridate)
-require(rjson)
 require(rPython)
 require(data.table)
+require(rjson) #rjson lib shall be behind the lib data.table
 
 trimWhiteSpace <- function(line) gsub("(^ +)|( +$)", "", line)
 splitIntoWords <- function(line) unlist(strsplit(line, "[[:space:]]+"))
@@ -23,32 +23,53 @@ getInsertCqlCmd <- function(tblname, colnames, values) {
     return(cqlcmd) 
 }
 
-CtxbelongDate <- function (timestamp) {
-   #time = as.POSIXlt(date(timestamp), format="%Y-%m-%d %H")
-   #minTime = as.numeric(startTime) + 7 * 60 * 60
-   return(date(timestamp))
+GetCutHour <- function(t) {
+    if (is.na(t)) return(NA)
+
+    hour.time = hour(as.POSIXct(t, origin="1970-01-01"))
+
+    hour = 8 
+    if ((hour.time >= 8) && (hour.time < 14))
+       hour = 8
+    else if ((hour.time >= 14) && (hour.time < 20))
+       hour = 14
+    else if (((hour.time >= 20) && (hour.time < 24)) || ((hour.time >= 0) && (hour.time < 2)))
+       hour = 20
+    else if ((hour.time >= 2) && (hour.time < 8))
+       hour = 2
+
+    return (hour)
 }
 
-CtxbelongWeek <- function (timestamp, index = 7) {
-   return(as.POSIXlt(paste(year(timestamp), week(timestamp), index, sep="-"), format = "%Y-%U-%u"))
+CtxbelongDateHour <- function (t) {
+   hour = GetCutHour(t)
+   return(as.numeric(as.POSIXlt(date(as.POSIXct(t, origin="1970-01-01")))) + hour * 60 * 60)
 }
 
-CtxbelongMonth <- function (timestamp) {
-   return(as.POSIXlt(paste(year(timestamp), month(timestamp), 1, sep="-"), format = "%Y-%m-%d"))
+CtxbelongWeek <- function (t, index = 7) {
+   return(as.POSIXlt(paste(year(t), week(t), index, sep="-"), format = "%Y-%U-%u"))
+}
+
+CtxbelongMonth <- function (t) {
+   return(as.POSIXlt(paste(year(t), month(t), 1, sep="-"), format = "%Y-%m-%d"))
+}
+
+SleepbelongDate <- function (t) {
+   return(as.numeric(as.POSIXlt(date(as.POSIXct(t, origin="1970-01-01") - 8 * 60 * 60))))
 }
 
 GetPredictedMaxHR <- function (age) {
    return(220 - age)
 }
 
-CtxDateSummary <- function (data, age = 12, weight = 65) {
-   if (is.null(data)) return
+CtxDateSummary <- function (data, age = 12, weight = 40) {
+   if (is.null(data)) return(data)
    predicted.maxHR <- GetPredictedMaxHR (age) 
    data <- data.table(data)
    colnames(data) <- c("timestamp", "situation", "duration", "hrmsum", "count")    
+   #data$date <- lapply(data$timestamp, CtxbelongDate)
 
-   d <- data[, list(duration = sum(duration), sumhr = sum(hrmsum), hrmcount = sum(count)), by = situation]
-   d <- setkey(d, situation)[d, avghrm := sumhr / hrmcount][order(situation)]
+   d <- data[, list(duration = sum(duration), avghrm = sum(hrmsum)/sum(count), hrmcount = sum(count)), by = list(situation, CtxbelongDateHour(timestamp))]
 
    # calculate active index
    isact <- data.table(situation = c(1, 2, 3, 4), isact = c(0, 0, 1, 1))
@@ -62,24 +83,51 @@ CtxDateSummary <- function (data, age = 12, weight = 65) {
    met.tb <- data.table(situation = c(1, 2, 3, 4), met=c(1, 2.5, 10.0, 6.0))
    d <- setkey(d, situation)[met.tb, met := (duration * weight * met) / (60 * 60)][order(situation)]
 
+   d.names <- colnames(d)
+   d.names[which(d.names=="CtxbelongDateHour")] = "datehour"
+   colnames(d) = d.names
    return(d)
 }
 
 StepDateSummary <- function (data) {
-   if (is.null(data)) return
+   if (is.null(data)) return(data)
    data <- data.table(data)
    colnames(data) <- c("timestamp", "type", "count", "distance", "cal")
-   d <- data[, list(count = sum(count), distance = sum(distance), cal = sum(cal)), by = type][order(type)]
+   #data$date <- lapply(data$timestamp, CtxbelongDate)
+   d <- data[, list(count = sum(count), distance = sum(distance), cal = sum(cal)), by = list(type, CtxbelongDateHour(timestamp))][order(type)]
+
+   d.names <- colnames(d)
+   d.names[which(d.names=="CtxbelongDateHour")] = "datehour"
+   colnames(d) = d.names
    return(d)
 }
 
 HrmDateSummary <- function (data) {
-   if (is.null(data)) return
+   if (is.null(data)) return(data)
    data <- data.table(data)
    colnames(data) <- c("situation", "timestamp", "hrm_report", "hr_peak_rate")
-   d <- data[, list(min = min(hrm_report), max = max(hrm_report), mean = mean(hrm_report), median = median(hrm_report), sd = sd(hrm_report), count=length(hrm_report)), by = situation][order(situation)]
+   #data$date <- lapply(data$timestamp, CtxbelongDate)
+   d <- data[, list(min = min(hrm_report), max = max(hrm_report), mean = mean(hrm_report), sd = sd(hrm_report), count=length(hrm_report)), by = list(situation, CtxbelongDateHour(timestamp))][order(situation)]
    #hr <- data$hrm_report
    #return(list(min = min(hr), max = max(hr), mean = mean(hr), median = median(hr), sd = sd(hr), count=length(hr)))
+
+   d.names <- colnames(d)
+   d.names[which(d.names=="CtxbelongDateHour")] = "datehour"
+   colnames(d) = d.names
+   return(d)
+}
+
+sleepDateSummary <- function (data) {
+   if (is.null(data)) return(data)
+   data <- data.table(data)
+   colnames(data) <- c("timestamp", "status", "duration")
+   total.duration <- sum(data$duration)
+   #w <- data.table(status = c(1, 2, 3, 4, 5), wi = c(0, 0, 1, 0, 0))
+   d <- data[, list(duration = sum(duration), ratio = sum(duration)/total.duration), by = list(status, CtxbelongDateHour(timestamp))][order(status)]
+
+   d.names <- colnames(d)
+   d.names[which(d.names=="CtxbelongDateHour")] = "datehour"
+   colnames(d) = d.names
    return(d)
 }
 
@@ -90,6 +138,7 @@ if (nchar(filepath) > 0) {
    path <- unlist(strsplit(filepath, split="/"))
    keyspace <- path[6] 
 }
+
 
 #cat(keyspace, "\n")
 #python.load("src/funcs.py", get.exception = T)
@@ -152,10 +201,27 @@ while (length(line <- readLines(con, n = 1, warn = FALSE)) > 0) {
            }
         }
     }
-    print (CtxDateSummary(ctx.m))
-    print (StepDateSummary(step.m))
-    print (HrmDateSummary(hrm.m))
-#    cat(uuid, "\n");
+
+    ctx.t <- CtxDateSummary(ctx.m)
+    step.t <- StepDateSummary(step.m)
+    hrm.t <- HrmDateSummary(hrm.m)
+    sleep.t <- sleepDateSummary(sleep.m)
+
+    unnametable <- function (tbl) {
+       if (is.null(tbl)) return(tbl)
+       return(unname(split(tbl, 1:nrow(tbl))))
+    }
+
+    data <- list(
+                 keyspace = keyspace,
+                 uuid = uuid,
+                 context = unnametable(ctx.t),
+                 step = unnametable(step.t),
+                 sleep = unnametable(sleep.t),
+                 hrm = unnametable(hrm.t)
+            )
+
+    cat(toJSON(data), "\n")
 }
 
 close(con)
