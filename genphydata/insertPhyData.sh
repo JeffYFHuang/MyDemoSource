@@ -16,4 +16,4 @@ echo $output
 
 hadoop fs -rm -r $output
 
-hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-2.6.0.jar -D mapreduce.job.maps=$1 -files src/ -mapper src/processPhyData.R -input $input -output $output
+hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-2.6.0.jar -D mapreduce.job.maps=$1 -files src/ -mapper src/processPhyData.R -reducer src/processPhyReducer.R -input $input -output $output
