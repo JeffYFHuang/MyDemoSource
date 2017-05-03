@@ -11,7 +11,7 @@ RoundValues <- function (values) {
     fields <- c("situation", "datehour", "min", "max", "count", "duration", "hrmcount", "activeindex", "met", "type", "count", "distance", "cal", "status", "duration")
 
     values[which(names(values) != "uuid")] <- as.numeric(values[which(names(values) != "uuid")])
-    values[names(values) %in% fields] <- round(as.numeric(values[names(values) %in% fields]))
+    values[names(values) %in% fields] <- as.integer(round(as.numeric(values[names(values) %in% fields])))
     return(values[!is.na(values)])
 }
 
