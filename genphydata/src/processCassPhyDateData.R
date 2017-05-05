@@ -81,7 +81,7 @@ python.load("src/funcs.py", get.exception = T)
 keyspaces <- python.call("cqlexec", 'SELECT keyspace_name FROM system_schema.keyspaces')
 keyspaces <- keyspaces[grepl("elm", keyspaces)]
 
-# store schools keyspaces into hdfs to be input data.
+# store keyspaces of shcools into hdfs to be input data of mapreduce.
 input = to.dfs(keyspaces)
 
 ProcessContextTable <- function (tableName, beginDate, ndays) {
@@ -105,13 +105,13 @@ ProcessContextTable <- function (tableName, beginDate, ndays) {
             cqlcmd <- paste("SELECT column_name FROM system_schema.columns WHERE keyspace_name = '", keyspace, 
                             "' AND table_name = '", tableName,"'", sep="")
             columns <- python.call("cqlexec", cqlcmd)
-            columns <- paste(columns, collapse=",") 
-            cqlcmd <- paste("SELECT", columns, "FROM", paste(keyspace, ".", tableName, sep=""), 
+            cqlcmd <- paste("SELECT", paste(columns, collapse=","), "FROM", paste(keyspace, ".", tableName, sep=""), 
                              "WHERE datehour >= ", bTime, "AND datehour <=", eTime, "ALLOW FILTERING")
             data <- python.call("cqlexec", cqlcmd)
             data <- Null2NA(data)
             data <- data.frame(matrix(unlist(data), ncol=length(columns), byrow=T))
             colnames(data) <- columns
+            data$datehour <- factor(bTime)
             keyval(keyspace, data)
         }
 
@@ -119,9 +119,60 @@ ProcessContextTable <- function (tableName, beginDate, ndays) {
         #keyval(input, eTime)
      }
 
+     as.numeric.factor <- function(x) {as.numeric(levels(x))[x]}
+
+     processData <- function (data, type) {
+        if (is.null(data)) return(data)
+        data <- data.table(data)
+        #uuid | datehour   | situation | activeindex | avghrm    | duration | hrmcount | met
+        #uuid | date | situation | activeindex | avghrm | duration | hrmcount | met
+        data <- na.omit(data)
+
+        d <- NULL
+        if (type == 'context') {
+            d <- data[, list(
+                            duration = sum(as.numeric.factor(duration)), 
+                            activeindex = sum(as.numeric.factor(activeindex)),            
+                            avghrm = sum(as.numeric.factor(avghrm) * as.numeric.factor(hrmcount))/sum(as.numeric.factor(hrmcount)), 
+                            hrmcount = sum(as.numeric.factor(hrmcount)),
+                            met = sum(as.numeric.factor(met))), 
+                            by = list(uuid, date = as.numeric.factor(datehour), situation)]
+        }
+
+        if (type == 'step') {
+        # todo
+            # uuid | date | type | cal | count | distance
+        #    d <- data[, list(
+        #                    cal = sum(as.numeric.factor(cal)),
+        #                    count = sum(as.numeric.factor(count)),
+        #                    distance = sum(as.numeric.factor(distance))),
+        #                    by = list(uuid, date = as.numeric.factor(datehour), type)]
+        }
+
+        if (type == 'hrm') {
+        # todo
+        #     d <- data[, list(
+        #                    min = min(as.numeric.factor(min)),
+        #                    max = max(as.numeric.factor(max)),
+        #                    mean = as.numeric.factor(mean) * as.numeric.factor(count)/sum(as.numeric.factor(count)),
+        #                    sd = sqrt(as.numeric.factor(sd)^2 * as.numeric.factor(count)/sum(as.numeric.factor(count))),
+        #                    count = sum(count)),
+        #                    by = list(uuid, date = as.numeric.factor(datehour), situation)]
+        }
+
+        if (type == 'sleep') {
+              #  uuid | date | status | duration | ratio
+              d <- data[, list(duration = duration, status = status, date = datehour, ratio = as.numeric.factor(duration)/sum(as.numeric.factor(duration))), by = list(uuid)]
+              d <- d[, list(ratio = sum(ratio)), by = list(uuid, status)][order(uuid, status)]
+        }
+
+        return(d)
+     }
+
      reducer.process.data <- function(key, df) {
         SetupPyCasDriver()
-
+        #uuid | datehour   | situation | activeindex | avghrm    | duration | hrmcount | met
+        df <- data.frame(processData(df, type))
         keyval(key, df)
      }
 
