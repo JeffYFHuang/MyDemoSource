@@ -142,11 +142,11 @@ ProcessContextTable <- function (tableName, beginDate, ndays) {
         if (type == 'step') {
         # todo
             # uuid | date | type | cal | count | distance
-        #    d <- data[, list(
-        #                    cal = sum(as.numeric.factor(cal)),
-        #                    count = sum(as.numeric.factor(count)),
-        #                    distance = sum(as.numeric.factor(distance))),
-        #                    by = list(uuid, date = as.numeric.factor(datehour), type)]
+            d <- data[, list(
+                            cal = sum(as.numeric.factor(cal)),
+                            count = sum(as.numeric.factor(count)),
+                            distance = sum(as.numeric.factor(distance))),
+                            by = list(uuid, date = as.numeric.factor(datehour), type)]
         }
 
         if (type == 'hrm') {
