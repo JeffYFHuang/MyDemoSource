@@ -65,7 +65,8 @@ for (sid in school.ids) {
        data <- genActDataV2(uids[1], time, hours*60*60, win = 6*60*60)
        #print(data)
        for (x in data) {
-           send_phydummy (paste("elm", sid, sep=""), x, x$data[[1]]$timestamp, addr = flumeserver)
+           x$sid = paste("elm", sid, sep="")
+           send_phydummy (x$sid, x, x$data[[1]]$timestamp, addr = flumeserver)
        }
        i <- i + 1
     }
