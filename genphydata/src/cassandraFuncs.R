@@ -23,7 +23,22 @@ CreateKeySpace <- function (sid) {
 
 CqlExec <- function (cmd) {
     cat (cmd, ";\n")
-    python.call("cqlexec", cmd)
+    result <- tryCatch({
+                          python.call("cqlexec", cmd)
+                       }, warning = function(war) {
+                          print(paste("MY_WARNING:  ",war))
+                          return(war)
+                       }, error = function(err) {
+                          # error handler picks up where error was generated
+                          return(err)
+                       }, finally = {
+                          print("final")
+                          # NOTE:  Finally is evaluated in the context of of the inital
+                          # NOTE:  tryCatch block and 'e' will not exist if a warning
+                          # NOTE:  or error occurred.
+                          #print(paste("e =",e))
+                      })
+    return (result)
 }
 
 CreateHourTable <- function (sid) {
@@ -83,7 +98,7 @@ CreateMonthlyTable <- function (sid) {
 }
 
 DropKeySpace <- function (sid) {
-    cmd <- paste("DROP KEYSPACE IF EXISTS", sid, "")
+    cmd <- paste("DROP KEYSPACE IF EXISTS", sid)
     CqlExec(cmd)
 }
 
@@ -94,6 +109,17 @@ DropKeySpaces <- function (school.ids) {
 }
 
 DropTable <- function (sid, tablename) {
-    cmd <- paste("DROP TABLE IF EXISTS", sid, ".", tablename, "")
+    cmd <- paste("DROP TABLE IF EXISTS ", sid, ".", tablename, sep="")
+    CqlExec(cmd)
+}
+
+DropKeySpacesTableColumn <- function (school.ids, tablename, column) {
+    for (sid in school.ids) {
+        DropTableColumn (sid, tablename, column)
+    }
+}
+
+DropTableColumn <- function (sid, tablename, column) {
+    cmd <- paste("ALTER TABLE ", sid, ".", tablename, " DROP ", column, sep="")
     CqlExec(cmd)
 }

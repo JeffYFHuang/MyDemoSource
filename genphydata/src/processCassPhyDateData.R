@@ -120,6 +120,10 @@ ProcessContextTable <- function (tableName, beginDate, ndays) {
            return (getbTime(beginDate) + ndays * 86400) #24*60*60
         }
 
+        time.shift = 0
+        if (type == "sleep")
+           time.shift = 43200 #12*60*60
+
         bTime <- getbTime(beginDate)
         eTime <- geteTime(beginDate, ndays) 
  
@@ -128,7 +132,7 @@ ProcessContextTable <- function (tableName, beginDate, ndays) {
                             "' AND table_name = '", tableName,"'", sep="")
             columns <- python.call("cqlexec", cqlcmd)
             cqlcmd <- paste("SELECT", paste(columns, collapse=","), "FROM", paste(keyspace, ".", tableName, sep=""), 
-                             "WHERE datehour >= ", bTime, "AND datehour <=", eTime, "ALLOW FILTERING")
+                             "WHERE datehour >= ", bTime + time.shift, "AND datehour <=", eTime + time.shift, "ALLOW FILTERING")
             data <- python.call("cqlexec", cqlcmd)
             data <- Null2NA(data)
             data <- data.frame(matrix(unlist(data), ncol=length(columns), byrow=T))
@@ -158,7 +162,7 @@ ProcessContextTable <- function (tableName, beginDate, ndays) {
                             avghrm = as.integer(round(sum(as.numeric.factor(avghrm) * as.numeric.factor(hrmcount))/sum(as.numeric.factor(hrmcount)))),
                             hrmcount = as.integer(round(sum(as.numeric.factor(hrmcount)))),
                             met = as.integer(round(sum(as.numeric.factor(met))/ndays))), 
-                            by = list(uuid, date = as.numeric.factor(datehour), situation)]
+                            by = list(uuid, date = as.numeric.factor(datehour), situation = as.numeric.factor(situation))]
         }
 
         if (type == 'step') {
@@ -168,7 +172,7 @@ ProcessContextTable <- function (tableName, beginDate, ndays) {
                             cal = as.integer(round(sum(as.numeric.factor(cal))/ndays)),
                             count = as.integer(round(sum(as.numeric.factor(count))/ndays)),
                             distance = as.integer(round(sum(as.numeric.factor(distance)))/ndays)),
-                            by = list(uuid, date = as.numeric.factor(datehour), type)]
+                            by = list(uuid, date = as.numeric.factor(datehour), type = as.numeric.factor(type))]
         }
 
         if (type == 'hrm') {
@@ -176,15 +180,15 @@ ProcessContextTable <- function (tableName, beginDate, ndays) {
              d <- data[, list(
                             min = min(as.numeric.factor(min)),
                             max = max(as.numeric.factor(max)),
-                            mean = sum(as.numeric.factor(mean) * as.numeric.factor(count))/sum(as.numeric.factor(count)),
+                            mean = as.integer(round(sum(as.numeric.factor(mean) * as.numeric.factor(count))/sum(as.numeric.factor(count)))),
                             sd = sqrt(sum(as.numeric.factor(sd)^2 * as.numeric.factor(count))/sum(as.numeric.factor(count))),
                             count = as.integer(round(sum(as.numeric.factor(count))))),
-                            by = list(uuid, date = as.numeric.factor(datehour), situation)]
+                            by = list(uuid, date = as.numeric.factor(datehour), situation = as.numeric.factor(situation))]
         }
 
         if (type == 'sleep') {
               #  uuid | date | status | duration | ratio
-              d <- data[, list(duration = duration, status = status, date = as.numeric.factor(datehour), ratio = as.numeric.factor(duration)/sum(as.numeric.factor(duration))), by = list(uuid)]
+              d <- data[, list(duration = duration, status = as.numeric.factor(status), date = as.numeric.factor(datehour), ratio = as.numeric.factor(duration)/sum(as.numeric.factor(duration))), by = list(uuid)]
               d <- d[, list(duration = as.integer(round(sum(as.numeric.factor(duration))/ndays)), ratio = sum(ratio)), by = list(uuid, date, status)][order(uuid, status)]
         }
 
