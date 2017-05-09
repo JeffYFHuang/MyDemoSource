@@ -45,7 +45,7 @@ getSleepDataV2 <- function (time, duration) {
      return(data)
 }
 
-getHeartRateData <- function (context, status, time, duration, report.period = 10) {
+getHeartRateData <- function (context, status, time, duration, report.period = 30) {
      num = round (duration / report.period)
 
      if (num == 0) return(NULL)
@@ -236,7 +236,7 @@ getStartTimeforHourType <- function(t) {
     if (hour.time < 7)
        day = day - 1
     
-    startTime = as.POSIXlt(paste(day, startTime), format="%Y-%m-%d %H")
+    startTime = as.POSIXlt(paste(day, startTime), format="%Y-%m-%d %H", tz="GMT")
     return (startTime)
 }
 
@@ -250,7 +250,7 @@ genContextTimeStamp <- function (startTime, duration, active.type = 1) {
      timestamp = NULL
      context = NULL
      while (t < (startTime + duration)) {
-         weekday = weekdays(as.POSIXct(t, origin="1970-01-01"))
+         weekday = weekdays(as.POSIXct(t, origin="1970-01-01", tz="GMT"))
          hour.time = hour(t)
          type = getHourType (t)
 
@@ -258,45 +258,45 @@ genContextTimeStamp <- function (startTime, duration, active.type = 1) {
          if (weekday %in% workdays ) {
              if (active.type == 0) { #non active
                 durations = switch(type,                    # static, walking, running, cycling, sleeping, others(tbd)
-                             c(mean(rexp(100, 1/(30*60))), mean(rexp(100, 1/(1*60))), mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(2*60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(4*60)))),    #  7 ~ 8
-                             c(mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(40*60))), mean(rexp(100, 1/(40*60))), mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(40*60)))), #  8 ~ 12
-                             c(mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(40*60))), mean(rexp(100, 1/(40*60))), mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(40*60))), mean(rexp(100, 1/(4*60)))),     # 12 ~ 13
+                             c(mean(rexp(100, 1/(30*60))), mean(rexp(100, 1/(20*60))), mean(rexp(100, 1/(30*60))), mean(rexp(100, 1/(2*60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(4*60)))),    #  7 ~ 8
+                             c(mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(60*60))), mean(rexp(100, 1/(40*60))), mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(40*60)))), #  8 ~ 12
+                             c(mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(20*60))), mean(rexp(100, 1/(40*60))), mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(40*60))), mean(rexp(100, 1/(4*60)))),     # 12 ~ 13
                              c(mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(60*60))), mean(rexp(100, 1/(60*60))), mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(40*60)))), # 13 ~ 16
-                             c(mean(rexp(100, 1/(30*60))), mean(rexp(100, 1/(4*60))), mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(60*60))), mean(rexp(100, 1/(2*60*60))), mean(rexp(100, 1/(4*60)))),    # 16 ~ 18
-                             c(mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(6*60))), mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(40*60)))), # 18 ~ 21
+                             c(mean(rexp(100, 1/(30*60))), mean(rexp(100, 1/(20*60))), mean(rexp(100, 1/(30*60))), mean(rexp(100, 1/(60*60))), mean(rexp(100, 1/(2*60*60))), mean(rexp(100, 1/(4*60)))),    # 16 ~ 18
+                             c(mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(60*60))), mean(rexp(100, 1/(90*60))), mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(40*60)))), # 18 ~ 21
                              c(mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(9*60*60))), mean(rexp(100, 1/(10*60*60))), mean(rexp(100, 1/(20*60*60))), mean(rexp(100, 1/(5*60))), mean(rexp(100, 1/(8*60*60)))) # 21 ~ 7
                            )
              } else {
                 #print(type)
                 durations = switch(type,                      # static, walking, running, cycling, sleeping, others(tbd)
-                             c(mean(rexp(100, 1/(30*60))), mean(rexp(100, 1/(4*60))), mean(rexp(100, 1/(4*60))), mean(rexp(100, 1/(60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(30*60)))),    # 7 ~ 8
-                             c(mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(40*60))), mean(rexp(100, 1/(40*60))), mean(rexp(100, 1/(10*60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(40*60)))), # 8 ~ 12
-                             c(mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(4*60))), mean(rexp(100, 1/(4*60))), mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(20*60))), mean(rexp(100, 1/(4*60)))),     # 12 ~ 13
-                             c(mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(40*60))), mean(rexp(100, 1/(40*60))), mean(rexp(100, 1/(10*60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(40*60)))), # 13 ~ 16   
-                             c(mean(rexp(100, 1/(30*60))), mean(rexp(100, 1/(4*60))), mean(rexp(100, 1/(5*60))), mean(rexp(100, 1/(30*60))), mean(rexp(100, 1/(2*60*60))), mean(rexp(100, 1/(30*60)))),    # 16 ~ 18
-                             c(mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(6*60))), mean(rexp(100, 1/(6*60))), mean(rexp(100, 1/(60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(40*60)))), # 18 ~ 21
+                             c(mean(rexp(100, 1/(30*60))), mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(30*60)))),    # 7 ~ 8
+                             c(mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(60*60))), mean(rexp(100, 1/(40*60))), mean(rexp(100, 1/(10*60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(40*60)))), # 8 ~ 12
+                             c(mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(20*60))), mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(20*60))), mean(rexp(100, 1/(4*60)))),     # 12 ~ 13
+                             c(mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(60*60))), mean(rexp(100, 1/(40*60))), mean(rexp(100, 1/(10*60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(40*60)))), # 13 ~ 16   
+                             c(mean(rexp(100, 1/(30*60))), mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(30*60))), mean(rexp(100, 1/(2*60*60))), mean(rexp(100, 1/(30*60)))),    # 16 ~ 18
+                             c(mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(30*60))), mean(rexp(100, 1/(60*60))), mean(rexp(100, 1/(60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(40*60)))), # 18 ~ 21
                              c(mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(9*60*60))), mean(rexp(100, 1/(10*60*60))), mean(rexp(100, 1/(20*60*60))), mean(rexp(100, 1/(5*60))), mean(rexp(100, 1/(8*60*60))))  # 21 ~ 7
                            )
              }
          } else { #weekend
              if (active.type == 0) { #non active
                 durations = switch(type,                      # static, walking, running, cycling, sleeping, others(tbd)
-                             c(mean(rexp(100, 1/(20*60))), mean(rexp(100, 1/(20*60))), mean(rexp(100, 1/(40*60))), mean(rexp(100, 1/(30*60))), mean(rexp(100, 1/(2*60*60))), mean(rexp(100, 1/(40*60)))),    # 7 ~ 8
-                             c(mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(20*60))), mean(rexp(100, 1/(60*60))), mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(30*60)))),  # 8 ~ 12
-                             c(mean(rexp(100, 1/(5*60))), mean(rexp(100, 1/(40*60))), mean(rexp(100, 1/(40*60))), mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(4*60)))),    # 12 ~ 13
-                             c(mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(20*60))), mean(rexp(100, 1/(60*60))), mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(30*60)))),  # 13 ~ 16
-                             c(mean(rexp(100, 1/(20*60))), mean(rexp(100, 1/(20*60))), mean(rexp(100, 1/(40*60))), mean(rexp(100, 1/(30*60))), mean(rexp(100, 1/(2*60*60))), mean(rexp(100, 1/(40*60)))),    # 16 ~ 18
+                             c(mean(rexp(100, 1/(20*60))), mean(rexp(100, 1/(20*60))), mean(rexp(100, 1/(90*60))), mean(rexp(100, 1/(90*60))), mean(rexp(100, 1/(2*60*60))), mean(rexp(100, 1/(40*60)))),    # 7 ~ 8
+                             c(mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(20*60))), mean(rexp(100, 1/(90*60))), mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(30*60)))),  # 8 ~ 12
+                             c(mean(rexp(100, 1/(5*60))), mean(rexp(100, 1/(40*60))), mean(rexp(100, 1/(90*60))), mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(4*60)))),    # 12 ~ 13
+                             c(mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(20*60))), mean(rexp(100, 1/(90*60))), mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(30*60)))),  # 13 ~ 16
+                             c(mean(rexp(100, 1/(20*60))), mean(rexp(100, 1/(20*60))), mean(rexp(100, 1/(90*60))), mean(rexp(100, 1/(90*60))), mean(rexp(100, 1/(2*60*60))), mean(rexp(100, 1/(40*60)))),    # 16 ~ 18
                              c(mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(20*60))), mean(rexp(100, 1/(60*60))), mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(30*60)))),  # 18 ~ 21
                              c(mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(10*60*60))), mean(rexp(100, 1/(5*60))), mean(rexp(100, 1/(8*60*60))))  # 21 ~ 7
                            )
              } else {
                 durations = switch(type,                      # static, walking, running, cycling, sleeping, others(tbd)
-                             c(mean(rexp(100, 1/(40*60))), mean(rexp(100, 1/(30*60))), mean(rexp(100, 1/(20*60))), mean(rexp(100, 1/(20*60))), mean(rexp(100, 1/(2*60*60))), mean(rexp(100, 1/(30*60)))),    # 7 ~ 8
-                             c(mean(rexp(100, 1/(30*60))), mean(rexp(100, 1/(15*60))), mean(rexp(100, 1/(30*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(50*60)))),  # 8 ~ 12
-                             c(mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(20*60))), mean(rexp(100, 1/(20*60))), mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(4*60)))),   # 12 ~ 13
-                             c(mean(rexp(100, 1/(30*60))), mean(rexp(100, 1/(15*60))), mean(rexp(100, 1/(30*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(50*60)))),  # 13 ~ 16
-                             c(mean(rexp(100, 1/(40*60))), mean(rexp(100, 1/(30*60))), mean(rexp(100, 1/(20*60))), mean(rexp(100, 1/(20*60))), mean(rexp(100, 1/(2*60*60))), mean(rexp(100, 1/(30*60)))),    # 16 ~ 18
-                             c(mean(rexp(100, 1/(30*60))), mean(rexp(100, 1/(15*60))), mean(rexp(100, 1/(30*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(50*60)))),  # 18 ~ 21
+                             c(mean(rexp(100, 1/(40*60))), mean(rexp(100, 1/(30*60))), mean(rexp(100, 1/(60*60))), mean(rexp(100, 1/(60*60))), mean(rexp(100, 1/(2*60*60))), mean(rexp(100, 1/(30*60)))),    # 7 ~ 8
+                             c(mean(rexp(100, 1/(30*60))), mean(rexp(100, 1/(15*60))), mean(rexp(100, 1/(60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(50*60)))),  # 8 ~ 12
+                             c(mean(rexp(100, 1/(10*60))), mean(rexp(100, 1/(20*60))), mean(rexp(100, 1/(60*60))), mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(4*60)))),   # 12 ~ 13
+                             c(mean(rexp(100, 1/(30*60))), mean(rexp(100, 1/(15*60))), mean(rexp(100, 1/(60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(50*60)))),  # 13 ~ 16
+                             c(mean(rexp(100, 1/(40*60))), mean(rexp(100, 1/(30*60))), mean(rexp(100, 1/(60*60))), mean(rexp(100, 1/(60*60))), mean(rexp(100, 1/(2*60*60))), mean(rexp(100, 1/(30*60)))),    # 16 ~ 18
+                             c(mean(rexp(100, 1/(30*60))), mean(rexp(100, 1/(15*60))), mean(rexp(100, 1/(60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(4*60*60))), mean(rexp(100, 1/(50*60)))),  # 18 ~ 21
                              c(mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(8*60*60))), mean(rexp(100, 1/(20*60*60))), mean(rexp(100, 1/(5*60))), mean(rexp(100, 1/(8*60*60))))  # 21 ~ 7
                        )
              }
@@ -323,10 +323,10 @@ genContextTimeStamp <- function (startTime, duration, active.type = 1) {
    x= timestamp#[which(timestamp <= (startTime + duration))]
    x[is.na(x)] = max(x[!is.na(x)]) + 1
    y = sort(x, method = "quick", index.return = TRUE)
-   idx = which(y$x <= (startTime + duration))
+   idx = which(y$x < max(x[!is.na(x)])) #(startTime + duration))
    y$x = y$x[idx]
    y$ix = y$ix[idx]
-   y$hour = hour(as.POSIXct(y$x, origin="1970-01-01"))
+   y$hour = hour(as.POSIXct(y$x, origin="1970-01-01", tz="GMT"))
    y$context = y$ix%%6
 
    return(y)
@@ -378,12 +378,12 @@ getBoundCtxData <- function (data, start, duration) {
          ts.bound = c(ts.bound, end)
       }
    }
-
    return (list (timestamp = ts.bound[-length(ts.bound)], context = ct.bound[-length(ct.bound)], durations = diff(ts.bound)))
 }
 
 genBoundData <- function (uid, data, start, duration) {
    b.data <- getBoundCtxData (data, start, duration)
+#   print(b.data)
 
    ts = b.data$timestamp
    ct = b.data$context
@@ -448,10 +448,11 @@ uuid <- function(uppercase=FALSE) {
 
 genActDataV2 <- function (uid, startTime, simu_duration, win = 60 * 60, active.type = 1) {
    data <- genContextTimeStamp(startTime, simu_duration)
+   #print(data)
    s = seq(min(data$x), max(data$x), win)
    s = c(s, min(data$x) + length(s) * win)
-   ts = as.POSIXlt(s, origin="1970-01-01")
-   s = as.POSIXlt(paste(date(ts), hour(ts)),  format="%Y-%m-%d %H") # data is bound with hours of date.
+   ts = as.POSIXlt(s, origin="1970-01-01", tz="GMT")
+   s = as.POSIXlt(paste(date(ts), hour(ts)),  format="%Y-%m-%d %H", tz="GMT") # data is bound with hours of date.
    s = as.numeric(s)
    durations = diff(s)
    rr <- list()

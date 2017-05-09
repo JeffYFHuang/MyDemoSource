@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-input=/data/phydummy/*/$2
+input=/data/physical/in/*/$2
 echo $input
 
 p1=`echo $2 | cut -d \/ -f 1`
@@ -11,7 +11,7 @@ p5=`echo $2 | cut -d \/ -f 5`
 
 output=$p2.$p3.$p4.$p5
 #echo $output
-output=/data/phydummyoutput/$output
+output=/data/physical/out/$output
 echo $output
 
 hadoop fs -rm -r $output

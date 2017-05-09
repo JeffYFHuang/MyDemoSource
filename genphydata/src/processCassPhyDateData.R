@@ -79,7 +79,7 @@ out.table.map <- list(context = "context_date", step = "step_date", sleep = "sle
 beginDate <- date
 ndays <- 1
 if (ptype == 'week') {
-   beginDate <- floor_date(as.Date(date) - 1, "weeks") + 1
+   beginDate <- floor_date(as.Date(date) - 1, "weeks")
    ndays <- 7 
    out.table.map <- list(context = "context_week", step = "step_week", sleep = "sleep_week", hrm = "hrm_week")
 }
