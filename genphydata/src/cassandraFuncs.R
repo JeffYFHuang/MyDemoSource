@@ -2,6 +2,13 @@ require(rPython)
 
 python.load("src/funcs.py", get.exception = T)
 
+# get keyspaces for schools
+getKeyspaces <- function () {
+    keyspaces <- CqlExec('SELECT keyspace_name FROM system_schema.keyspaces')
+    keyspaces <- keyspaces[grepl("elm", keyspaces)]
+    return (keyspaces)
+}
+
 CreateKeySpacesAndTables <- function (school.ids) {
     for (sid in school.ids) {
         CreateKeySpaceAndTables(sid)
@@ -121,5 +128,24 @@ DropKeySpacesTableColumn <- function (school.ids, tablename, column) {
 
 DropTableColumn <- function (sid, tablename, column) {
     cmd <- paste("ALTER TABLE ", sid, ".", tablename, " DROP ", column, sep="")
+    CqlExec(cmd)
+}
+
+truncateKeyspacesTables <- function (school.id) {
+    tables <- c("context", "step", "sleep", "hrm")
+    tails <- c("hour", "date", "week", "month")
+
+    for (sid in school.id) {
+        for (tbl in tables) {
+            tblNames <- paste(tbl, "_", tails, sep = "")
+            for (tn in tblNames) {
+                truncateKeyspaceTable (sid, tn)
+            }
+        }
+    }
+}
+
+truncateKeyspaceTable <- function (sid, tableName) {
+    cmd <- paste("TRUNCATE ", sid, ".", tableName, sep="")
     CqlExec(cmd)
 }

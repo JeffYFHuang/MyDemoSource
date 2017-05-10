@@ -131,18 +131,13 @@ sleepDateSummary <- function (data) {
    return(d)
 }
 
-filepath <- Sys.getenv("map_input_file")
+#filepath <- Sys.getenv("map_input_file")
 
-keyspace <- "elmtest"
-if (nchar(filepath) > 0) {
-   path <- unlist(strsplit(filepath, split="/"))
-   keyspace <- path[6] 
-}
-
-
-#cat(keyspace, "\n")
-#python.load("src/funcs.py", get.exception = T)
-#python.call("setkeyspace", keyspace)
+#keyspace <- "elmtest"
+#if (nchar(filepath) > 0) {
+#   path <- unlist(strsplit(filepath, split="/"))
+#   keyspace <- path[7]
+#}
 
 tables <- c("step", "sleep", "context", "hrm")
 ## **** could wo with a single readLines or in blocks
@@ -151,6 +146,7 @@ count <- 1
 while (length(line <- readLines(con, n = 1, warn = FALSE)) > 0) {
     data <- fromJSON(line)
     uuid <- data$uuid
+    sid <- data$sid
 
     ctx.colnames <- c("timestamp", "situation", "duration", "hrmsum", "count")
     step.colnames <- c("timestamp", "type", "count", "distance", "cal")
@@ -213,7 +209,7 @@ while (length(line <- readLines(con, n = 1, warn = FALSE)) > 0) {
     }
 
     data <- list(
-                 keyspace = keyspace,
+                 keyspace = sid,
                  uuid = uuid,
                  context = unnametable(ctx.t),
                  step = unnametable(step.t),

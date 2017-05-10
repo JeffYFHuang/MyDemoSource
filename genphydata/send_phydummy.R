@@ -61,8 +61,8 @@ i <- 1
 for (sid in school.ids) {
     print(uids[which(uids.sids == sid)])
     for (uid in uids[which(uids.sids == sid)]) {
-       cat(i, sid, " ", uids[1], "\n")
-       data <- genActDataV2(uids[1], time, hours*60*60, win = 6*60*60)
+       cat(i, sid, " ", uid, "\n")
+       data <- genActDataV2(uid, time, hours*60*60, win = 6*60*60)
        #print(data)
        for (x in data) {
            x$sid = paste("elm", sid, sep="")
