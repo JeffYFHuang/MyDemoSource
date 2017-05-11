@@ -53,7 +53,7 @@ SetupPyCasDriver <- function () {
 }
 
 date <- NULL
-type <- 'context'
+phytype <- 'context'
 ptype <- 'date'
 
 args=(commandArgs(TRUE))
@@ -64,13 +64,13 @@ if (length(args) != 0){
   }
 }
 
-execution = "Exe. Rscript src/processCassPhyDateData.R date=\"'2017-04-26'\" type=\"'context'\" ptype=\"'date'\"";
+execution = "Exe. Rscript src/processCassPhyDateData.R date=\"'2017-04-26'\" phytype=\"'context'\" ptype=\"'date'\"";
 if (is.null(date))
    stop(paste("please provide date!", execution))
-if (is.null(type))
-   stop(paste("please provide a type of physical activity!", execution))
+if (is.null(phytype))
+   stop(paste("please provide a phytype of physical activity!", execution))
 if (is.null(ptype))
-   stop(paste("please provide a type of period (date, week, month)!", execution))
+   stop(paste("please provide a ptype of period (date, week, month)!", execution))
 
 in.table.map <- list(context = "context_hour", step = "step_hour", sleep = "sleep_hour", hrm = "hrm_hour")
 
@@ -91,8 +91,8 @@ if (ptype == 'month') {
    out.table.map <- list(context = "context_month", step = "step_month", sleep = "sleep_month", hrm = "hrm_month")
 }
 
-in.tableName <- in.table.map[type]
-out.tableName <- out.table.map[type]
+in.tableName <- in.table.map[phytype]
+out.tableName <- out.table.map[phytype]
 print(in.tableName)
 print(out.tableName)
 
@@ -121,7 +121,7 @@ ProcessContextTable <- function (tableName, beginDate, ndays) {
         }
 
         time.shift = 0
-        if (type == "sleep")
+        if (phytype == "sleep")
            time.shift = 43200 #12*60*60
 
         bTime <- getbTime(beginDate)
@@ -147,7 +147,7 @@ ProcessContextTable <- function (tableName, beginDate, ndays) {
 
      as.numeric.factor <- function(x) {as.numeric(levels(x))[x]}
 
-     processData <- function (data, type) {
+     processData <- function (data, phytype) {
         if (is.null(data)) return(data)
         data <- data.table(data)
         #uuid | datehour   | situation | activeindex | avghrm    | duration | hrmcount | met
@@ -155,7 +155,7 @@ ProcessContextTable <- function (tableName, beginDate, ndays) {
         data <- na.omit(data)
 
         d <- NULL
-        if (type == 'context') {
+        if (phytype == 'context') {
             d <- data[, list(
                             duration = as.integer(round(sum(as.numeric.factor(duration))/ndays)), 
                             activeindex = as.integer(round(sum(as.numeric.factor(activeindex))/ndays)),            
@@ -165,7 +165,7 @@ ProcessContextTable <- function (tableName, beginDate, ndays) {
                             by = list(uuid, date = as.numeric.factor(datehour), situation = as.numeric.factor(situation))]
         }
 
-        if (type == 'step') {
+        if (phytype == 'step') {
         # todo
             # uuid | date | type | cal | count | distance
              d <- data[, list(
@@ -175,7 +175,7 @@ ProcessContextTable <- function (tableName, beginDate, ndays) {
                             by = list(uuid, date = as.numeric.factor(datehour), type = as.numeric.factor(type))]
         }
 
-        if (type == 'hrm') {
+        if (phytype == 'hrm') {
         # todo
              d <- data[, list(
                             min = min(as.numeric.factor(min)),
@@ -186,7 +186,7 @@ ProcessContextTable <- function (tableName, beginDate, ndays) {
                             by = list(uuid, date = as.numeric.factor(datehour), situation = as.numeric.factor(situation))]
         }
 
-        if (type == 'sleep') {
+        if (phytype == 'sleep') {
               #  uuid | date | status | duration | ratio
               d <- data[, list(duration = duration, status = as.numeric.factor(status), date = as.numeric.factor(datehour), ratio = as.numeric.factor(duration)/sum(as.numeric.factor(duration))), by = list(uuid)]
               d <- d[, list(duration = as.integer(round(sum(as.numeric.factor(duration))/ndays)), ratio = sum(ratio)), by = list(uuid, date, status)][order(uuid, status)]
@@ -207,7 +207,7 @@ ProcessContextTable <- function (tableName, beginDate, ndays) {
      reducer.process.data <- function(key, df) {
         SetupPyCasDriver()
         #uuid | datehour   | situation | activeindex | avghrm    | duration | hrmcount | met
-        df <- data.frame(processData(df, type))
+        df <- data.frame(processData(df, phytype))
         nrows <- nrow(df)
         for (i in 1:nrows) {
             cqlcmd <- getInsertCqlCmd(paste(key, ".", out.tableName, sep=""), df[i, ])
