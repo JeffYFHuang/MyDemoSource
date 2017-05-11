@@ -12,9 +12,10 @@ send_phydummy <- function (sid, data, time, addr="10.0.0.5", port=44448) {
 }
 
 args=(commandArgs(TRUE))
+bdate = NULL
 ip = NULL
 port = NULL
-num = NULL
+range = NULL
 hours = NULL
 args=(commandArgs(TRUE))
 
@@ -24,13 +25,15 @@ if (length(args) != 0){
   }
 }
 
-execution = "Exe. Rscript send_phydummy.R \"ip='10.0.0.5'\" port=44448 num=10 hours=12";
+execution = "Exe. Rscript send_phydummy.R \"ip='10.0.0.5'\" bdate=\"'2017-05-01'\" port=44448 range='1:50' hours=12";
 if (is.null(ip))
    stop(paste("please provide flume server address!", execution))
 if (is.null(port))
    stop(paste("please provide port of flume service!", execution))
-if (is.null(num))
-   stop(paste("please provide the number of uuid!", execution))
+if (is.null(bdate))
+   stop(paste("please provide date!", execution))
+if (is.null(range))
+   stop(paste("please provide the range of uuid! (1:5000)", execution))
 if (is.null(hours))
    stop(paste("please provide the number of hours!", execution))
 
@@ -40,20 +43,21 @@ e1 <- read.csv("e1_new.csv", header=T)
 e1.Kaohsiung <- e1[regexpr("高雄市", e1[,3]) != -1, 1]
 set.seed(100)
 school.ids <- sample(e1.Kaohsiung, 50, replace = F)
-uids.sids <- sample(school.ids, 20000, replace = T)
+uids.sids <- sample(school.ids, length(range), replace = T)
 
-set.seed(100)
 uids = array()
 count = 1
-while (count <= num) {
+for (num in range) {
+   set.seed(num)
    uids[count] = uuid()
    count = count + 1
 }
 
 #for (h in 1:4) {
-    time = now()
-    beginDate <- floor_date(as.Date(date(time)) - 1, "weeks")
-    time = as.POSIXlt(paste(beginDate, 8), format="%Y-%m-%d %H", tz="GMT")
+#    time = now()
+#    beginDate <- floor_date(as.Date(date(now())) - 1, "months")
+    time = as.POSIXlt(paste(bdate, 8), format="%Y-%m-%d %H", tz="GMT")
+#    print(time)
 #    time = time + (h - 1) * hours*60*60
 
 set.seed(as.integer(time))
