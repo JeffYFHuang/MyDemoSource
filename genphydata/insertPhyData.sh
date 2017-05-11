@@ -7,9 +7,9 @@ p1=`echo $2 | cut -d \/ -f 1`
 p2=`echo $2 | cut -d \/ -f 2`
 p3=`echo $2 | cut -d \/ -f 3`
 p4=`echo $2 | cut -d \/ -f 4`
-p5=`echo $2 | cut -d \/ -f 5`
+#p5=`echo $2 | cut -d \/ -f 5`
 
-output=$p2.$p3.$p4.$p5
+output=$p1.$p2.$p3.$p4
 #echo $output
 output=/data/physical/out/$output
 echo $output

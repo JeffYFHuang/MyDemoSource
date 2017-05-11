@@ -72,7 +72,7 @@ CreateDailyTable <- function (sid) {
     cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(sid, ".context_date", sep=""), "(uuid varchar, date bigint, situation int, duration int, avghrm int, hrmcount int, activeindex int, met float, PRIMARY KEY (uuid, date, situation))")
     CqlExec(cmd)
 
-    cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(sid, ".hrm_date", sep=""), "(uuid varchar, date bigint, situation int, min int, max int, mean int, median int, sd float, count int, PRIMARY KEY (uuid, date, situation))")
+    cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(sid, ".hrm_date", sep=""), "(uuid varchar, date bigint, situation int, min int, max int, mean int, sd float, count int, PRIMARY KEY (uuid, date, situation))")
     CqlExec(cmd)
 }
 
@@ -94,7 +94,7 @@ CreateMonthlyTable <- function (sid) {
     cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(sid, ".step_month", sep=""), "(uuid varchar, mdate bigint, type int, count int, distance int, cal int, PRIMARY KEY (uuid, mdate, type))")
     CqlExec(cmd)
 
-    cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(sid, ".sleep_month", sep=""), "(uuid varchar, mdate bigint, status int, duration int, PRIMARY KEY (uuid, mdate, status))")
+    cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(sid, ".sleep_month", sep=""), "(uuid varchar, mdate bigint, status int, duration int, ratio float, PRIMARY KEY (uuid, mdate, status))")
     CqlExec(cmd)
 
     cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(sid, ".context_month", sep=""), "(uuid varchar, mdate bigint, situation int, duration int, avghrm int, hrmcount int, activeindex int, met float, PRIMARY KEY (uuid, mdate, situation))")
@@ -148,4 +148,16 @@ truncateKeyspacesTables <- function (school.id) {
 truncateKeyspaceTable <- function (sid, tableName) {
     cmd <- paste("TRUNCATE ", sid, ".", tableName, sep="")
     CqlExec(cmd)
+}
+
+AddTableColumn <- function (sid, tablename, column, type) {
+    #ALTER TABLE elm533611.sleep_month ADD ratio float ;
+    cmd <- paste("ALTER TABLE ", sid, ".", tablename, " ADD ", column, " ", type, sep="")
+    CqlExec(cmd)
+}
+
+AddKeySpacesTableColumn <- function (school.ids, tablename, column, type) {
+    for (sid in school.ids) {
+        AddTableColumn (sid, tablename, column, type)
+    }
 }

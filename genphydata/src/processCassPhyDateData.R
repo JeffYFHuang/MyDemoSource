@@ -214,7 +214,7 @@ ProcessContextTable <- function (tableName, beginDate, ndays) {
             python.call("cqlexec", cqlcmd)
             #keyval(key, df)
         }
-        keyval(key, df)
+        keyval(key, 1)#df[1,])
      }
 
      backend.parameters = list(hadoop=list(D=paste('mapreduce.job.maps=', 6, sep=""), D='mapreduce.job.reduces=4',
@@ -235,4 +235,5 @@ ProcessContextTable <- function (tableName, beginDate, ndays) {
      return(a)
 }
 
-print(from.dfs(ProcessContextTable(in.tableName, beginDate, ndays)))
+a <- ProcessContextTable(in.tableName, beginDate, ndays)
+#print(from.dfs(a))

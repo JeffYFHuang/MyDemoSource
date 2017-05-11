@@ -26,7 +26,7 @@ getInsertCqlCmd <- function(tblname, colnames, values) {
 GetCutHour <- function(t) {
     if (is.na(t)) return(NA)
 
-    hour.time = hour(as.POSIXct(t, origin="1970-01-01"))
+    hour.time = hour(as.POSIXct(t, origin="1970-01-01", tz="GMT"))
 
     hour = 8 
     if ((hour.time >= 8) && (hour.time < 14))
@@ -43,7 +43,7 @@ GetCutHour <- function(t) {
 
 CtxbelongDateHour <- function (t) {
    hour = GetCutHour(t)
-   return(as.numeric(as.POSIXlt(date(as.POSIXct(t, origin="1970-01-01")))) + hour * 60 * 60)
+   return(as.numeric(as.POSIXlt(date(as.POSIXct(t, origin="1970-01-01", tz="GMT")))) + hour * 60 * 60)
 }
 
 CtxbelongWeek <- function (t, index = 7) {
@@ -51,11 +51,11 @@ CtxbelongWeek <- function (t, index = 7) {
 }
 
 CtxbelongMonth <- function (t) {
-   return(as.POSIXlt(paste(year(t), month(t), 1, sep="-"), format = "%Y-%m-%d"))
+   return(as.POSIXlt(paste(year(t), month(t), 1, sep="-"), format = "%Y-%m-%d", tz="GMT"))
 }
 
 SleepbelongDate <- function (t) {
-   return(as.numeric(as.POSIXlt(date(as.POSIXct(t, origin="1970-01-01") - 8 * 60 * 60))))
+   return(as.numeric(as.POSIXlt(date(as.POSIXct(t, origin="1970-01-01", tz="GMT")), tz="GMT")))
 }
 
 GetPredictedMaxHR <- function (age) {

@@ -20,16 +20,15 @@ do
    p2=`echo $cdate | cut -d - -f 2`
    p3=`echo $cdate | cut -d - -f 3`
 
-   input=/data/physical/in/*/$p1/$p2/$p3
-   testpath=/data/physical/in/elm124614/$p1/$p2/$p3
+   path=$p1/$p2/$p3
+#   testpath=/data/physical/in/elm124614/$p1/$p2/$p3
 
    for hour in "${hours[@]}"
    do
 #      hadoop fs -test -d $testpath/$hour
 #      if [ $? == 0 ]; then
-#         echo $testpath/$hour "exists"
-         echo . ./insertPhyData.sh 6 $input/$hour/*
-         . ./insertPhyData.sh 6 $input/$hour/*
+         echo . ./insertPhyData.sh 6 $path/$hour/*
+         . ./insertPhyData.sh 6 $path/$hour
 #      else
 #         echo $testpath/$hour "not exists"
 #      fi
