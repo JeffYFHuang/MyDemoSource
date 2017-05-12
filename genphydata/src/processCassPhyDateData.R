@@ -52,9 +52,9 @@ SetupPyCasDriver <- function () {
     python.exec("def cqlexec(cqlcmd):result = session.execute(cqlcmd);return list(result)")
 }
 
-ClosePyCasDriver <- function () {
-    python.exec("cluster.shutdown()")
-}
+#ClosePyCasDriver <- function () {
+#    python.exec("session.shutdown()")
+#}
 
 date <- NULL
 phytype <- 'context'
@@ -245,7 +245,7 @@ ProcessContextTable <- function (tableName, beginDate, ndays) {
         #   n[which(n=='date')] <- 'mdate'
         #}
         #colnames(d) <- n
-        ClosePyCasDriver()
+        #ClosePyCasDriver()
 
         return(d)
      }
@@ -261,17 +261,17 @@ ProcessContextTable <- function (tableName, beginDate, ndays) {
             #keyval(key, df)
         }
 
-        ClosePyCasDriver()
+        #ClosePyCasDriver()
 
         keyval(key, 1)#df[1,])
      }
 
-     backend.parameters = list(hadoop=list(D=paste('mapreduce.job.maps=', 6, sep=""), D='mapreduce.job.reduces=4'#,
-            #                          D='mapreduce.map.java.opts=-Xmx2048m',
-            #                          D='mapreduce.reduce.java.opts=-Xmx3072m',
-            #                          D='mapreduce.map.memory.mb=2048',
-            #                          D='mapreduce.reduce.memory.mb=3072',
-            #                          D='mapreduce.child.java.opts=-Xmx3072m'
+     backend.parameters = list(hadoop=list(D='mapreduce.job.maps=24', D='mapreduce.job.reduces=24'#,
+                                     # D='mapreduce.map.java.opts=-Xmx2048m',
+                                     # D='mapreduce.reduce.java.opts=-Xmx3072m',
+                                     # D='mapreduce.map.memory.mb=1024',
+                                     # D='mapreduce.reduce.memory.mb=2048',
+                                     # D='mapreduce.child.java.opts=-Xmx2048m'
                                       ))
 
      a <- mapreduce(input=input,

@@ -22,6 +22,7 @@ getInsertCqlCmd <- function(tblname, values) {
 
     cqlcmd <- paste("INSERT INTO", tblname)
     colnames <- names(values)
+    colnames[which(colnames=="datehour")] <- "ts"
     cqlcmd <- paste(cqlcmd, "(", paste(colnames[which(colnames!='uuid')], collapse=", "), ",", colnames[which(colnames=='uuid')], ")")
     cqlcmd <- paste(cqlcmd, " VALUES (", paste(values[which(colnames != "uuid")], collapse=", "))
     cqlcmd <- paste(cqlcmd, ", '", values$uuid, "')", sep="")
