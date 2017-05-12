@@ -52,6 +52,10 @@ SetupPyCasDriver <- function () {
     python.exec("def cqlexec(cqlcmd):result = session.execute(cqlcmd);return list(result)")
 }
 
+ClosePyCasDriver <- function () {
+    python.exec("cluster.shutdown()")
+}
+
 date <- NULL
 phytype <- 'context'
 ptype <- 'date'
@@ -233,7 +237,7 @@ ProcessContextTable <- function (tableName, beginDate, ndays) {
            }
         }
 
-        n <- colnames(d)
+        #n <- colnames(d)
         #if (ptype == 'week') {
         #   n[which(n=='date')] <- 'wdate'
         #}
@@ -241,6 +245,7 @@ ProcessContextTable <- function (tableName, beginDate, ndays) {
         #   n[which(n=='date')] <- 'mdate'
         #}
         #colnames(d) <- n
+        ClosePyCasDriver()
 
         return(d)
      }
@@ -255,6 +260,9 @@ ProcessContextTable <- function (tableName, beginDate, ndays) {
             python.call("cqlexec", cqlcmd)
             #keyval(key, df)
         }
+
+        ClosePyCasDriver()
+
         keyval(key, 1)#df[1,])
      }
 
