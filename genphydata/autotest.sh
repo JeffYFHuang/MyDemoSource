@@ -28,7 +28,7 @@ do
 #      hadoop fs -test -d $testpath/$hour
 #      if [ $? == 0 ]; then
          echo . ./insertPhyData.sh 6 $path/$hour/*
-         . ./insertPhyData.sh 6 $path/$hour
+#         . ./insertPhyData.sh 6 $path/$hour
 #      else
 #         echo $testpath/$hour "not exists"
 #      fi

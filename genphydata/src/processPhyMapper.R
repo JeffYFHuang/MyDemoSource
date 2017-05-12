@@ -84,7 +84,7 @@ CtxDateSummary <- function (data, age = 12, weight = 40) {
    d <- setkey(d, situation)[met.tb, met := (duration * weight * met) / (60 * 60)][order(situation)]
 
    d.names <- colnames(d)
-   d.names[which(d.names=="CtxbelongDateHour")] = "datehour"
+   d.names[which(d.names=="CtxbelongDateHour")] = "ts"
    colnames(d) = d.names
    return(d)
 }
@@ -97,7 +97,7 @@ StepDateSummary <- function (data) {
    d <- data[, list(count = sum(count), distance = sum(distance), cal = sum(cal)), by = list(type, CtxbelongDateHour(timestamp))][order(type)]
 
    d.names <- colnames(d)
-   d.names[which(d.names=="CtxbelongDateHour")] = "datehour"
+   d.names[which(d.names=="CtxbelongDateHour")] = "ts"
    colnames(d) = d.names
    return(d)
 }
@@ -112,7 +112,7 @@ HrmDateSummary <- function (data) {
    #return(list(min = min(hr), max = max(hr), mean = mean(hr), median = median(hr), sd = sd(hr), count=length(hr)))
 
    d.names <- colnames(d)
-   d.names[which(d.names=="CtxbelongDateHour")] = "datehour"
+   d.names[which(d.names=="CtxbelongDateHour")] = "ts"
    colnames(d) = d.names
    return(d)
 }
@@ -126,7 +126,7 @@ sleepDateSummary <- function (data) {
    d <- data[, list(duration = sum(duration), ratio = sum(duration)/total.duration), by = list(status, CtxbelongDateHour(timestamp))][order(status)]
 
    d.names <- colnames(d)
-   d.names[which(d.names=="CtxbelongDateHour")] = "datehour"
+   d.names[which(d.names=="CtxbelongDateHour")] = "ts"
    colnames(d) = d.names
    return(d)
 }

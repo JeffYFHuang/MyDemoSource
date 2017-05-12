@@ -11,7 +11,7 @@ require(rjson)
 trimWhiteSpace <- function(line) gsub("(^ +)|( +$)", "", line)
 
 RoundValues <- function (values) {
-    fields <- c("situation", "datehour", "min", "max", "count", "duration", "hrmcount", "activeindex", "met", "type", "count", "distance", "cal", "status", "duration")
+    fields <- c("situation", "ts", "min", "max", "count", "duration", "hrmcount", "activeindex", "met", "type", "count", "distance", "cal", "status", "duration")
 
     colnames <- names(values)
     values[which(colnames != "uuid")] <- as.numeric(values[which(colnames != "uuid")])
@@ -80,7 +80,8 @@ beginDate <- date
 ndays <- 1
 if (ptype == 'week') {
    beginDate <- floor_date(as.Date(date) - 1, "weeks")
-   ndays <- 7 
+   ndays <- 7
+   in.table.map <- list(context = "context_date", step = "step_date", sleep = "sleep_date", hrm = "hrm_date")
    out.table.map <- list(context = "context_week", step = "step_week", sleep = "sleep_week", hrm = "hrm_week")
 }
 
@@ -88,6 +89,7 @@ if (ptype == 'month') {
    full.date <- as.POSIXct(date, tz="GMT")
    beginDate <- ymd(format(full.date, "%Y-%m-01"))
    ndays <- days_in_month(full.date)
+   in.table.map <- list(context = "context_date", step = "step_date", sleep = "sleep_date", hrm = "hrm_date")
    out.table.map <- list(context = "context_month", step = "step_month", sleep = "sleep_month", hrm = "hrm_month")
 }
 
@@ -132,12 +134,12 @@ ProcessContextTable <- function (tableName, beginDate, ndays) {
                             "' AND table_name = '", tableName,"'", sep="")
             columns <- python.call("cqlexec", cqlcmd)
             cqlcmd <- paste("SELECT", paste(columns, collapse=","), "FROM", paste(keyspace, ".", tableName, sep=""), 
-                             "WHERE datehour >= ", bTime + time.shift, "AND datehour <=", eTime + time.shift, "ALLOW FILTERING")
+                             "WHERE ts >=", bTime + time.shift, "AND ts <=", eTime + time.shift, "ALLOW FILTERING")
             data <- python.call("cqlexec", cqlcmd)
             data <- Null2NA(data)
             data <- data.frame(matrix(unlist(data), ncol=length(columns), byrow=T))
             colnames(data) <- columns
-            data$datehour <- factor(bTime)
+            data$ts <- factor(bTime)
             keyval(keyspace, data)
         }
 
@@ -150,56 +152,95 @@ ProcessContextTable <- function (tableName, beginDate, ndays) {
      processData <- function (data, phytype) {
         if (is.null(data)) return(data)
         data <- data.table(data)
-        #uuid | datehour   | situation | activeindex | avghrm    | duration | hrmcount | met
-        #uuid | date | situation | activeindex | avghrm | duration | hrmcount | met
+        #uuid | ts   | situation | activeindex | avghrm    | duration | hrmcount | met
+        #uuid | ts | situation | activeindex | avghrm | duration | hrmcount | met
         data <- na.omit(data)
 
         d <- NULL
-        if (phytype == 'context') {
-            d <- data[, list(
-                            duration = as.integer(round(sum(as.numeric.factor(duration))/ndays)), 
-                            activeindex = as.integer(round(sum(as.numeric.factor(activeindex))/ndays)),            
+        if (ptype == "date") {
+           if (phytype == 'context') {
+               d <- data[, list(
+                            duration = as.integer(round(sum(as.numeric.factor(duration)))),
+                            activeindex = as.integer(round(sum(as.numeric.factor(activeindex)))),
                             avghrm = as.integer(round(sum(as.numeric.factor(avghrm) * as.numeric.factor(hrmcount))/sum(as.numeric.factor(hrmcount)))),
                             hrmcount = as.integer(round(sum(as.numeric.factor(hrmcount)))),
-                            met = as.integer(round(sum(as.numeric.factor(met))/ndays))), 
-                            by = list(uuid, date = as.numeric.factor(datehour), situation = as.numeric.factor(situation))]
-        }
+                            met = as.integer(round(sum(as.numeric.factor(met))))),
+                            by = list(uuid, ts = as.numeric.factor(ts), situation = as.numeric.factor(situation))]
+           }
 
-        if (phytype == 'step') {
-        # todo
+           if (phytype == 'step') {
+           # todo
             # uuid | date | type | cal | count | distance
-             d <- data[, list(
-                            cal = as.integer(round(sum(as.numeric.factor(cal))/ndays)),
-                            count = as.integer(round(sum(as.numeric.factor(count))/ndays)),
-                            distance = as.integer(round(sum(as.numeric.factor(distance)))/ndays)),
-                            by = list(uuid, date = as.numeric.factor(datehour), type = as.numeric.factor(type))]
-        }
+               d <- data[, list(
+                            cal = as.integer(round(sum(as.numeric.factor(cal)))),
+                            count = as.integer(round(sum(as.numeric.factor(count)))),
+                            distance = as.integer(round(sum(as.numeric.factor(distance))))),
+                            by = list(uuid, ts = as.numeric.factor(ts), type = as.numeric.factor(type))]
+           }
 
-        if (phytype == 'hrm') {
-        # todo
-             d <- data[, list(
+           if (phytype == 'hrm') {
+           # todo
+               d <- data[, list(
                             min = min(as.numeric.factor(min)),
                             max = max(as.numeric.factor(max)),
                             mean = as.integer(round(sum(as.numeric.factor(mean) * as.numeric.factor(count))/sum(as.numeric.factor(count)))),
                             sd = sqrt(sum(as.numeric.factor(sd)^2 * as.numeric.factor(count))/sum(as.numeric.factor(count))),
                             count = as.integer(round(sum(as.numeric.factor(count))))),
-                            by = list(uuid, date = as.numeric.factor(datehour), situation = as.numeric.factor(situation))]
-        }
+                            by = list(uuid, ts = as.numeric.factor(ts), situation = as.numeric.factor(situation))]
+           }
 
-        if (phytype == 'sleep') {
+           if (phytype == 'sleep') {
               #  uuid | date | status | duration | ratio
-              d <- data[, list(duration = duration, status = as.numeric.factor(status), date = as.numeric.factor(datehour), ratio = as.numeric.factor(duration)/sum(as.numeric.factor(duration))), by = list(uuid)]
-              d <- d[, list(duration = as.integer(round(sum(as.numeric.factor(duration))/ndays)), ratio = sum(ratio)), by = list(uuid, date, status)][order(uuid, status)]
+              d <- data[, list(duration = duration, status = as.numeric.factor(status), ts = as.numeric.factor(ts), ratio = as.numeric.factor(duration)/sum(as.numeric.factor(duration))), by = list(uuid)]
+              d <- d[, list(duration = as.integer(round(sum(as.numeric.factor(duration)))), ratio = sum(ratio)), by = list(uuid, ts, status)][order(uuid, status)]
+           }
+        } else {
+           if (phytype == 'context') {
+               d <- data[, list(
+                            duration = as.integer(round(mean(as.numeric.factor(duration)))),
+                            activeindex = as.integer(round(mean(as.numeric.factor(activeindex)))),
+                            avghrm = as.integer(round(sum(as.numeric.factor(avghrm) * as.numeric.factor(hrmcount))/sum(as.numeric.factor(hrmcount)))),
+                            hrmcount = as.integer(round(sum(as.numeric.factor(hrmcount)))),
+                            met = as.integer(round(mean(as.numeric.factor(met))))),
+                            by = list(uuid, ts = as.numeric.factor(ts), situation = as.numeric.factor(situation))]
+           }
+
+           if (phytype == 'step') {
+           # todo
+            # uuid | date | type | cal | count | distance
+               d <- data[, list(
+                            cal = as.integer(round(mean(as.numeric.factor(cal)))),
+                            count = as.integer(round(mean(as.numeric.factor(count)))),
+                            distance = as.integer(round(mean(as.numeric.factor(distance))))),
+                            by = list(uuid, ts = as.numeric.factor(ts), type = as.numeric.factor(type))]
+           }
+
+           if (phytype == 'hrm') {
+           # todo
+               d <- data[, list(
+                            min = min(as.numeric.factor(min)),
+                            max = max(as.numeric.factor(max)),
+                            mean = as.integer(round(sum(as.numeric.factor(mean) * as.numeric.factor(count))/sum(as.numeric.factor(count)))),
+                            sd = sqrt(sum(as.numeric.factor(sd)^2 * as.numeric.factor(count))/sum(as.numeric.factor(count))),
+                            count = as.integer(round(sum(as.numeric.factor(count))))),
+                            by = list(uuid, ts = as.numeric.factor(ts), situation = as.numeric.factor(situation))]
+           }
+
+           if (phytype == 'sleep') {
+              #  uuid | date | status | duration | ratio
+              d <- data[, list(duration = duration, status = as.numeric.factor(status), ts = as.numeric.factor(ts), ratio = as.numeric.factor(duration)/sum(as.numeric.factor(duration))), by = list(uuid)]
+              d <- d[, list(duration = as.integer(round(mean(as.numeric.factor(duration)))), ratio = sum(ratio)), by = list(uuid, ts, status)][order(uuid, status)]
+           }
         }
 
         n <- colnames(d)
-        if (ptype == 'week') {
-           n[which(n=='date')] <- 'wdate'
-        }
-        if (ptype == 'month') {
-           n[which(n=='date')] <- 'mdate'
-        }
-        colnames(d) <- n
+        #if (ptype == 'week') {
+        #   n[which(n=='date')] <- 'wdate'
+        #}
+        #if (ptype == 'month') {
+        #   n[which(n=='date')] <- 'mdate'
+        #}
+        #colnames(d) <- n
 
         return(d)
      }
@@ -217,12 +258,12 @@ ProcessContextTable <- function (tableName, beginDate, ndays) {
         keyval(key, 1)#df[1,])
      }
 
-     backend.parameters = list(hadoop=list(D=paste('mapreduce.job.maps=', 6, sep=""), D='mapreduce.job.reduces=4',
-                                      D='mapreduce.map.java.opts=-Xmx2048m',
-                                      D='mapreduce.reduce.java.opts=-Xmx3072m',
-                                      D='mapreduce.map.memory.mb=2048',
-                                      D='mapreduce.reduce.memory.mb=3072',
-                                      D='mapreduce.child.java.opts=-Xmx3072m'
+     backend.parameters = list(hadoop=list(D=paste('mapreduce.job.maps=', 6, sep=""), D='mapreduce.job.reduces=4'#,
+            #                          D='mapreduce.map.java.opts=-Xmx2048m',
+            #                          D='mapreduce.reduce.java.opts=-Xmx3072m',
+            #                          D='mapreduce.map.memory.mb=2048',
+            #                          D='mapreduce.reduce.memory.mb=3072',
+            #                          D='mapreduce.child.java.opts=-Xmx3072m'
                                       ))
 
      a <- mapreduce(input=input,
