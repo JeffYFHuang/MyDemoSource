@@ -3,15 +3,13 @@ var uuid_url = "http://localhost:3000/schooluuids/";
 var context_url = "http://localhost:3000/contextdata/";
 var sleep_url = "http://localhost:3000/sleepdata/";
 
-var data = ["Option 1", "Option 2", "Option 3"];
-
-var select_sid = d3.select('body')
+var select_sid = d3.select("#school")
                .append('select')
   	       .attr('class','select')
                .attr("name", "select_sid")
                .on('change', updateuuids);
 
-var select_uuid = d3.select('body')
+var select_uuid = d3.select("#uuid")
                .append('select')
                .attr('class','select')
                .attr("name", "select_uuid")
@@ -19,7 +17,7 @@ var select_uuid = d3.select('body')
 
 function updateuuids() {
    var sid = d3.select('[name="select_sid"]').property('value');
-   //alert(sid)
+
    d3.json(uuid_url + sid, function (error, json) {
       // bind data
       var appending = select_uuid
@@ -32,7 +30,7 @@ function updateuuids() {
       // update existing elements
       appending.transition()
         .duration(0)
-        .text(function (d) {return d.uuid; });
+        .text(function (d) { return d.uuid; });
 
       // remove old elements
       appending.exit().remove();
@@ -40,106 +38,236 @@ function updateuuids() {
 }
 
 d3.json(sid_url, function (error, json) {
-   var options = select_sid
-                 .selectAll('option')
-	         .data(json).enter()
-	         .append('option')
-		 .text(function (d) { return d.sid; })
+   select_sid
+        .selectAll('option')
+        .data(json).enter()
+        .append('option')
+        .text(function (d) { return d.sid; })
+
    updateuuids();
 });
 
 function updatefitness() {
    var sid = d3.select('[name="select_sid"]').property('value');
    var uuid = d3.select('[name="select_uuid"]').property('value');
-
+   //alert(uuid);
    d3.json(context_url + sid + "?uuid=" + uuid, function (error, json) {
           //alert(json);
           updategraphics(json);
    });
 }
 
-function updategraphics(json) {
-  var width = 720,
-      height = 240;
+function activeIndexBarGraphic(json) {
+// set the dimensions and margins of the graph
+  var margin = {top: 10, right: 30, bottom: 30, left: 40},
+  width = 960 - margin.left - margin.right,
+  height = 250 - margin.top - margin.bottom;
 
-  d3.select("svg").remove();
-  
-  var svg = d3.select("#demo").append("svg:svg")
-  .attr("width", 820)
-  .attr("height", 300);
+  // parse the date / time
+  var parseDate = d3.timeFormat("%d-%m-%Y");
 
-  var data = json.slice()
   var activeidxFn = function(d) { return d.activeindex };
-  var tsFn = function(d) {
-                            var date = new Date(d.ts*1000)
-                            return date.getDate()*1000;
-                         };
+  var tsFn = function(d) { return new Date(d.ts*1000) };
 
-  var scaleX = d3.time.scale()
-    .range([0, width])
-    .domain(d3.extent(data, tsFn));
+  //data = json.slice();
 
-  var scaleY = d3.scale.linear()
-    .range([height, 0])
-    .domain(d3.extent(data, activeidxFn));
+  var data = d3.nest()
+     .key(function(d) { return d.ts;})
+     .rollup(function(g) { return d3.sum(g, function(d) {return d.activeindex; });})
+     .entries(json.slice());
 
-  var axisX = d3.svg.axis()
-      .scale(scaleX)
-      .orient("bottom")
-      .ticks(10);
+  data.forEach(function(d) {
+      d.ts = d.key;
+      d.activeindex = d.value;
+  });
 
-  var axisY = d3.svg.axis()
-      .scale(scaleY)
-      .orient("left")
-      .ticks(10);
+  // set the ranges
+  var x = d3.scaleTime()
+          .domain(d3.extent(data, tsFn))
+          .rangeRound([0, width]);
 
-  var svgdata = svg.selectAll("circle").data(data);
-  svgdata.enter()
-   .append("svg:circle")
-   .attr("r", 4)
-   .attr("cx", function(d) { return scaleX(tsFn(d)) })
-   .attr("cy", function(d) { return scaleY(activeidxFn(d)) })
-   .attr({
-      'fill':'none',
-      'stroke':'#000',
-      'transform':'translate(35,20)'
-     })
-   .attr("style", "cursor: pointer;")
-   .on("mouseover", function(d) {
-      d3.select("#demo .value").text("Date: " + new Date(d.ts*1000) + " activeIndex: " + activeidxFn(d))
-   })
-   .on("mouseout", function(d) {
-      d3.select("#demo .value").text("activeIndex:")
-   })
+  var y = d3.scaleLinear()
+          .range([height, 0])
+          .domain(d3.extent(data, activeidxFn));
 
-/*  svgdata.transition()
-         .duration(0)
-         .attr("r", 4)
-         .attr("cx", function(d) { return scaleX(tsFn(d)) })
-         .attr("cy", function(d) { return scaleY(activeidxFn(d)) })
-        .attr({
-           'fill':'none',
-           'stroke':'#000',
-           'transform':'translate(40,20)'
-        });*/
+  var svg = d3.select("#demo").append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+      .attr("transform",
+            "translate(" + margin.left + "," + margin.top + ")");
 
-  d3.select("svg").append('g')
-     .call(axisX)  //call axisX
-     .attr({
-      'fill':'none',
-      'stroke':'#000',
-      'transform':'translate(40,'+(height+20)+')' 
+  // format the data
+/*  data.forEach(function(d) {
+      d.date = parseDate(new Date(d.ts*1000));
+  });*/
+
+  svg.selectAll("rect").data(data)
+     .enter()
+     .append("rect")
+     .attr("class", "bar")
+     .attr("x", 1)
+     .attr("transform", function(d) {
+		  return "translate(" + x(tsFn(d)) + "," + y(activeidxFn(d)) + ")"; })
+     .attr("width", function(d) { return x(new Date(d.ts*1000+86400000)) - x(new Date(d.ts*1000)) -1 ; })
+     .attr("height", function(d) { return height - y(activeidxFn(d)); })
+     .attr("style", "cursor: pointer;")
+     .on("mouseover", function(d) {
+        d3.select("#demo .value").text("Date: " +  parseDate(new Date(d.ts*1000)) + " Active Index: " + activeidxFn(d))
+      })
+     .on("mouseout", function(d) {
+        d3.select("#demo .value").text("Active Index")
+      })
+
+  // add the x Axis
+  svg.append("g")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x));
+
+  // add the y Axis
+  svg.append("g")
+      .call(d3.axisLeft(y));
+}
+
+function contextFeature (d, type) {
+   switch(type) {
+             case 'activeindex':
+                 return d.activeindex;
+             case 'met':
+                 return d.met;
+             case 'duration':
+                 return d.duration;
+             case 'hrm':
+                 return d.avghrm;
+   }
+}
+
+function percentContextGraphic (json, type, schemecategory) {
+     var dataset = d3.nest()
+         .key(function(d) { return d.situation;})
+         .rollup(function(g) { return d3.sum(g, function(d) {return contextFeature(d, type); })/g.length;})
+         .entries(json.slice());
+
+     total = 0;
+
+     dataset.forEach(function(d) {
+         d.label = 'other';
+         switch(d.key) {
+             case '1':
+                 d.label = 'static';
+                 break;
+             case '2':
+                 d.label = 'step';
+                 break;
+             case '3':
+                 d.label = 'running';
+                 break;
+             case '4':
+                 d.label = 'cycling';
+                 break;
+         }
+
+         total = total + d.value;
      });
 
-  d3.select("svg").append('g')
-     .call(axisY)  //call axisY
-     .attr({
-      'fill':'none',
-      'stroke':'#000',
-      'transform':'translate(40, 20)' 
-     });
+        var margin = {top: 20, right: 50, bottom: 30, left: 40},
+        width = 320 - margin.left - margin.right,
+        height = 360 - margin.top - margin.bottom;
 
-  svgdata.exit().remove();
+       // var width = 250;
+       // var height = 250;
+        var radius = Math.min(width, height) / 2;
+        var donutWidth = 55;
+        var legendRectSize = 18;                                  // NEW
+        var legendSpacing = 4;                                    // NEW
+
+        var color = d3.scaleOrdinal(schemecategory);
+
+        var svg = d3.select('#chart')
+          .append('svg')
+          .attr('width', width)
+          .attr('height', height)
+          .append('g')
+          .attr('transform', 'translate(' + (width / 2) +
+            ',' + (height / 2) + ')');
+
+        var arc = d3.arc()
+          .innerRadius(radius - donutWidth)
+          .outerRadius(radius);
+
+        var pie = d3.pie()
+          .value(function(d) { return d.value; })
+          .sort(null);
+
+        var path = svg.selectAll('path')
+          .data(pie(dataset))
+          .enter()
+          .append('path')
+          .attr('d', arc)
+          .attr('fill', function(d, i) {
+            return color(d.data.label);
+          });
+
+        var text = svg.selectAll('text')
+	    .data(pie(dataset))
+	    .enter()
+	    .append("text")
+	    .attr("transform", function (d) {
+		return "translate(" + arc.centroid(d) + ")";
+            })
+	    .attr("text-anchor", "middle")
+	    .text(function(d){
+                if (type != "hrm")
+		   return Math.round(d.data.value/total*100)+"%" ;
+                else
+                   return Math.round(d.data.value);
+	    })
+	    .style({
+		fill:function(d,i){
+			return color(i);
+		},
+		'font-size':'18px',
+	    });
+
+    //Create Title
+    svg.append("text")
+    .attr("x", 0)
+    .attr("y", margin.top - height/2)
+    .style("text-anchor", "middle")
+    .text(type);
+
+        var legend = svg.selectAll('.legend')                     // NEW
+          .data(color.domain())                                   // NEW
+          .enter()                                                // NEW
+          .append('g')                                            // NEW
+          .attr('class', 'legend')                                // NEW
+          .attr('transform', function(d, i) {                     // NEW
+            var height = legendRectSize + legendSpacing;          // NEW
+            var offset =  height * color.domain().length / 2;     // NEW
+            var horz = -2 * legendRectSize;                       // NEW
+            var vert = i * height - offset;                       // NEW
+            return 'translate(' + horz + ',' + vert + ')';        // NEW
+          });                                                     // NEW
+
+        legend.append('rect')                                     // NEW
+          .attr('width', legendRectSize)                          // NEW
+          .attr('height', legendRectSize)                         // NEW
+          .style('fill', color)                                   // NEW
+          .style('stroke', color);                                // NEW
+
+        legend.append('text')                                     // NEW
+          .attr('x', legendRectSize + legendSpacing)              // NEW
+          .attr('y', legendRectSize - legendSpacing)              // NEW
+          .text(function(d) { return d; });
+}
+
+function updategraphics(json) {
+  d3.selectAll("svg").remove();
+  percentContextGraphic(json, 'activeindex', d3.schemeCategory20);
+  percentContextGraphic(json, 'met', d3.schemeCategory10);
+  percentContextGraphic(json, 'duration', d3.schemeCategory10);
+  percentContextGraphic(json, 'hrm', d3.schemeCategory20);
+  activeIndexBarGraphic(json);
 }
 
 /*JSONData = [

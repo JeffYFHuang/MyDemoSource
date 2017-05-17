@@ -44,13 +44,13 @@ app.get('/contextdata/:sid', function(req, res) {
   client.execute(query, [uuid], function(err, result) {
     res.setHeader('Content-Type', 'application/json');
     console.log(result.rows.length);
-    for (i = 0; i < result.rows.length; i++ ) {
+    /*for (i = 0; i < result.rows.length; i++ ) {
         if (result.rows[i].situation != 3) {
            console.log("remove -" + result.rows[i].situation)
            result.rows.splice(i, 1);
            i--;
         }
-    }
+    }*/
     console.log(result.rows.length);
     res.send(JSON.stringify(result.rows));
   })
