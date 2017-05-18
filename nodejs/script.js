@@ -3,6 +3,10 @@ var uuid_url = "http://localhost:3000/schooluuids/";
 var context_url = "http://localhost:3000/contextdata/";
 var sleep_url = "http://localhost:3000/sleepdata/";
 
+var url = context_url; //default
+var contenttype = "context"; //default
+var contenttitle = "Fitness Index";
+
 var select_sid = d3.select("#school")
                .append('select')
   	       .attr('class','select')
@@ -13,7 +17,51 @@ var select_uuid = d3.select("#uuid")
                .append('select')
                .attr('class','select')
                .attr("name", "select_uuid")
-               .on('change', updatefitness);
+               .on('change', updatedatagraphic);
+
+var select_content = d3.select("#content")
+               .append('select')
+               .attr('class','select')
+               .attr("name", "select_content")
+               .on('change', updatecontenturl);
+
+function setupcontenttype() {
+   var data = ["context", "sleep", "hrm", "step"];
+
+   var appending = select_content
+                   .selectAll('option')
+                   .data(data).enter()
+                   .append('option')
+                   .text(function (d) { return d; });
+}
+
+setupcontenttype();
+
+function updatecontenturl() {
+   contenttype = d3.select('[name="select_content"]').property('value');
+
+   switch(contenttype) {
+       case 'context':
+            url = context_url;
+            contenttitle = "Fitness Index";
+            break;
+       case 'sleep':
+            url = sleep_url;
+            contenttitle = "Sleep Quality";
+            break;
+       case 'hrm':
+            url = "TBD";
+            contenttitle = "Heart Rate";
+            break;
+       case 'step':
+            url = "TBD";
+            contenttitle = "Step Count";
+            break;
+   }
+
+   d3.select("#demo .value").text(contenttitle)
+   updatedatagraphic();
+}
 
 function updateuuids() {
    var sid = d3.select('[name="select_sid"]').property('value');
@@ -47,17 +95,33 @@ d3.json(sid_url, function (error, json) {
    updateuuids();
 });
 
-function updatefitness() {
+function updatedatagraphic() {
    var sid = d3.select('[name="select_sid"]').property('value');
    var uuid = d3.select('[name="select_uuid"]').property('value');
-   //alert(uuid);
-   d3.json(context_url + sid + "?uuid=" + uuid, function (error, json) {
+   //alert(url);
+   d3.json(url + sid + "?uuid=" + uuid, function (error, json) {
           //alert(json);
           updategraphics(json);
    });
 }
 
-function activeIndexBarGraphic(json) {
+function Fn(d, type) {
+    switch (type) {
+           case "context":
+                return d.activeindex;
+           case "sleep":
+                if (d.status == 3)
+                   return d.ratio;
+                else
+                   return 0;
+           case "hrm":
+                return d.mean * d.count;
+           case "step":
+                return d.count;
+    }
+}
+
+function plotBarGraphic(json, type) {
 // set the dimensions and margins of the graph
   var margin = {top: 10, right: 30, bottom: 30, left: 40},
   width = 960 - margin.left - margin.right,
@@ -66,19 +130,25 @@ function activeIndexBarGraphic(json) {
   // parse the date / time
   var parseDate = d3.timeFormat("%d-%m-%Y");
 
-  var activeidxFn = function(d) { return d.activeindex };
   var tsFn = function(d) { return new Date(d.ts*1000) };
+  var yFn = function(d) { return d.value };
 
   //data = json.slice();
-
   var data = d3.nest()
      .key(function(d) { return d.ts;})
-     .rollup(function(g) { return d3.sum(g, function(d) {return d.activeindex; });})
+//.rollup(function(g) { return d3.sum(g, function(d) {return d.activeindex; });})
+     .rollup(function(g) {
+         var count = 1;
+         if (type == "hrm")
+            count = d3.sum(g, function(d) { return d.count });
+
+         return d3.sum(g, function(d) { return Fn(d, type) }) / count;
+     })
      .entries(json.slice());
 
   data.forEach(function(d) {
       d.ts = d.key;
-      d.activeindex = d.value;
+      //d.activeindex = d.value;
   });
 
   // set the ranges
@@ -88,7 +158,7 @@ function activeIndexBarGraphic(json) {
 
   var y = d3.scaleLinear()
           .range([height, 0])
-          .domain(d3.extent(data, activeidxFn));
+          .domain(d3.extent(data, yFn));
 
   var svg = d3.select("#demo").append("svg")
       .attr("width", width + margin.left + margin.right)
@@ -108,15 +178,15 @@ function activeIndexBarGraphic(json) {
      .attr("class", "bar")
      .attr("x", 1)
      .attr("transform", function(d) {
-		  return "translate(" + x(tsFn(d)) + "," + y(activeidxFn(d)) + ")"; })
+		  return "translate(" + x(tsFn(d)) + "," + y(yFn(d)) + ")"; })
      .attr("width", function(d) { return x(new Date(d.ts*1000+86400000)) - x(new Date(d.ts*1000)) -1 ; })
-     .attr("height", function(d) { return height - y(activeidxFn(d)); })
+     .attr("height", function(d) { return height - y(d.value); })
      .attr("style", "cursor: pointer;")
      .on("mouseover", function(d) {
-        d3.select("#demo .value").text("Date: " +  parseDate(new Date(d.ts*1000)) + " Active Index: " + activeidxFn(d))
+        d3.select("#demo .value").text("Date: " +  parseDate(new Date(d.ts*1000)) + " " + contenttitle + ": " + d.value)
       })
      .on("mouseout", function(d) {
-        d3.select("#demo .value").text("Active Index")
+        d3.select("#demo .value").text(contenttitle)
       })
 
   // add the x Axis
@@ -129,50 +199,104 @@ function activeIndexBarGraphic(json) {
       .call(d3.axisLeft(y));
 }
 
-function contextFeature (d, type) {
-   switch(type) {
-             case 'activeindex':
-                 return d.activeindex;
-             case 'met':
-                 return d.met;
-             case 'duration':
-                 return d.duration;
-             case 'hrm':
-                 return d.avghrm;
+function contextFeature (d, field) {
+/*  fieldsMap.set("sleep", ["duration", "ratio"]);
+  fieldsMap.set("hrm", ["count", "mean", "max", "min"]);
+  fieldsMap.set("step", ["cal", "count", "distance"]);
+*/
+   switch (field) {
+          case 'activeindex':
+               return d.activeindex;
+          case 'met':
+               return d.met;
+          case 'duration':
+               return d.duration;
+          case 'hrm':
+               return d.avghrm;
+          case 'ratio':
+               return d.ratio;
+          case 'count':
+               return d.count;
+          case 'mean':
+               return d.mean;
+          case 'max':
+               return d.max;
+          case 'min':
+               return d.min;
+          case 'cal':
+               return d.cal;
+          case 'distance':
+               return d.activeindex;
    }
 }
 
-function percentContextGraphic (json, type, schemecategory) {
+function setupdata (json, type, field) {
      var dataset = d3.nest()
-         .key(function(d) { return d.situation;})
-         .rollup(function(g) { return d3.sum(g, function(d) {return contextFeature(d, type); })/g.length;})
+         .key ( function(d) {
+                               switch (type) {
+                                  case "context":
+                                      return d.situation;
+                                  case "sleep":
+                                      return d.status;
+                                  case "hrm":
+                                      return d.situation;
+                                  case "step":
+                                      return d.type;
+                               }
+                            })
+         .rollup(function(g) { return d3.sum(g, function(d) {return contextFeature(d, field); })/g.length;})
          .entries(json.slice());
 
-     total = 0;
-
+// 0 : 進入睡眠, 1 : 淺層睡眠, 2 : 深度睡眠, 3 : 狀態切換或起床, 4 : 結束睡眠
      dataset.forEach(function(d) {
          d.label = 'other';
          switch(d.key) {
              case '1':
-                 d.label = 'static';
+                 if (type == "sleep")
+                    d.label = '進入睡眠';
+                 else
+                    d.label = 'static';
                  break;
              case '2':
-                 d.label = 'step';
+                 if (type == "sleep")
+                    d.label = '淺層睡眠';
+                 else
+                    d.label = 'step';
                  break;
              case '3':
-                 d.label = 'running';
+                 if (type == "sleep")
+                    d.label = '深度睡眠';
+                 else
+                    d.label = 'running';
                  break;
              case '4':
-                 d.label = 'cycling';
+                 if (type == "sleep")
+                    d.label = '狀態切換或起床';
+                 else
+                    d.label = 'cycling';
                  break;
+             case '5':
+                 if (type == "sleep")
+                    d.label = '結束睡眠';
+                 else
+                    d.label = 'sleep';
          }
+     });
 
+     return dataset;
+}
+
+function percentGraphic (json, type, field, schemecategory) {
+     var dataset = setupdata(json, type, field);
+
+     var total = 0;
+     dataset.forEach(function(d) {
          total = total + d.value;
      });
 
         var margin = {top: 20, right: 50, bottom: 30, left: 40},
-        width = 320 - margin.left - margin.right,
-        height = 360 - margin.top - margin.bottom;
+        width = 400 - margin.left - margin.right,
+        height = 440 - margin.top - margin.bottom;
 
        // var width = 250;
        // var height = 250;
@@ -217,7 +341,7 @@ function percentContextGraphic (json, type, schemecategory) {
             })
 	    .attr("text-anchor", "middle")
 	    .text(function(d){
-                if (type != "hrm")
+                if (field != "hrm")
 		   return Math.round(d.data.value/total*100)+"%" ;
                 else
                    return Math.round(d.data.value);
@@ -234,7 +358,7 @@ function percentContextGraphic (json, type, schemecategory) {
     .attr("x", 0)
     .attr("y", margin.top - height/2)
     .style("text-anchor", "middle")
-    .text(type);
+    .text(field);
 
         var legend = svg.selectAll('.legend')                     // NEW
           .data(color.domain())                                   // NEW
@@ -261,13 +385,23 @@ function percentContextGraphic (json, type, schemecategory) {
           .text(function(d) { return d; });
 }
 
+function pieCharts (json, contenttype) {
+  var fieldsMap = new Map();
+  fieldsMap.set("context", ["activeindex", "met", "duration", "hrm"]);
+  fieldsMap.set("sleep", ["duration"]);
+  fieldsMap.set("hrm", ["count", "mean", "max", "min"]);
+  fieldsMap.set("step", ["cal", "count", "distance"]);
+
+  fieldsMap.get(contenttype).forEach( function (d) {
+      percentGraphic(json, contenttype, d, d3.schemeCategory20);
+  });
+}
+
 function updategraphics(json) {
   d3.selectAll("svg").remove();
-  percentContextGraphic(json, 'activeindex', d3.schemeCategory20);
-  percentContextGraphic(json, 'met', d3.schemeCategory10);
-  percentContextGraphic(json, 'duration', d3.schemeCategory10);
-  percentContextGraphic(json, 'hrm', d3.schemeCategory20);
-  activeIndexBarGraphic(json);
+
+  pieCharts (json, contenttype);
+  plotBarGraphic(json, contenttype);
 }
 
 /*JSONData = [
