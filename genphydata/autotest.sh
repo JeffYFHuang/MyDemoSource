@@ -7,10 +7,8 @@ firstdayofmonth=$1
 daysofmonth=$2
 hours=(02 08 14 20)
 phytypes=('context' 'step' 'sleep' 'hrm')
-ptypes=('date' 'week' 'month')
+ptypes=('month') #('date', 'week', 'month')
 
-for ptype in "${ptypes[@]}"
-do
    for i in `seq 0 $daysofmonth`
    do
       cdate=$(date '+%C%y-%m-%d' -d "$firstdayofmonth+$i days")
@@ -25,21 +23,23 @@ do
       path=$p1/$p2/$p3
 #   testpath=/data/physical/in/elm124614/$p1/$p2/$p3
 
-      for hour in "${hours[@]}"
-      do
+#      for hour in "${hours[@]}"
+#      do
 #         hadoop fs -test -d $testpath/$hour
 #         if [ $? == 0 ]; then
-            echo . ./insertPhyData.sh 6 $path/$hour/*
-            . ./insertPhyData.sh 6 $path/$hour
+#            echo . ./insertPhyData.sh 6 $path/$hour/*
+#            . ./insertPhyData.sh 6 $path/$hour
 #         else
 #            echo $testpath/$hour "not exists"
 #         fi
-      done
+#      done
 
-      for phytype in "${phytypes[@]}"
+      for ptype in "${ptypes[@]}"
       do
-          echo Rscript src/processCassPhyDateData.R date="'$cdate'" phytype="'$phytype'" ptype="'$ptype'"
-          Rscript src/processCassPhyDateData.R date="'$cdate'" phytype="'$phytype'" ptype="'$ptype'"
+          for phytype in "${phytypes[@]}"
+          do
+              echo Rscript src/processCassPhyDateData.R date="'$cdate'" phytype="'$phytype'" ptype="'$ptype'"
+              Rscript src/processCassPhyDateData.R date="'$cdate'" phytype="'$phytype'" ptype="'$ptype'"
+          done
       done
    done
-done

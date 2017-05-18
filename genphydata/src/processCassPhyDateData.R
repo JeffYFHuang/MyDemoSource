@@ -144,9 +144,25 @@ ProcessContextTable <- function (tableName, beginDate, ndays) {
             data <- data.frame(matrix(unlist(data), ncol=length(columns), byrow=T))
             colnames(data) <- columns
             data$ts <- factor(bTime)
+     #       data$keyspace <- rep(keyspace, nrow(data))
+           # data
             keyval(keyspace, data)
         }
 
+        #df <- NULL
+        #for (i in 1:length(input)) {
+        #    df <- rbind(df, getData(input[i]))
+        #}
+
+        #uuids <- unique(df$uuid)
+
+        #groupbyuuid <- function(uuid) {
+        #    keyval(uuid, df[which(df$uuid==uuid), ])
+        #}
+
+        #gc()
+        # here is where we generate the actual sampled data
+        #c.keyval(lapply(uuids, groupbyuuid))
         c.keyval(lapply(as.list(input), getData))
         #keyval(input, eTime)
      }
@@ -253,6 +269,7 @@ ProcessContextTable <- function (tableName, beginDate, ndays) {
      reducer.process.data <- function(key, df) {
         SetupPyCasDriver()
         #uuid | datehour   | situation | activeindex | avghrm    | duration | hrmcount | met
+     #   keyspace <- df$keyspace[1]
         df <- data.frame(processData(df, phytype))
         nrows <- nrow(df)
         for (i in 1:nrows) {
@@ -261,17 +278,20 @@ ProcessContextTable <- function (tableName, beginDate, ndays) {
             #keyval(key, df)
         }
 
+        rm(df)
+        gc()
         #ClosePyCasDriver()
 
         keyval(key, 1)#df[1,])
      }
 
-     backend.parameters = list(hadoop=list(D='mapreduce.job.maps=24', D='mapreduce.job.reduces=24'#,
-                                     # D='mapreduce.map.java.opts=-Xmx2048m',
-                                     # D='mapreduce.reduce.java.opts=-Xmx3072m',
-                                     # D='mapreduce.map.memory.mb=1024',
-                                     # D='mapreduce.reduce.memory.mb=2048',
-                                     # D='mapreduce.child.java.opts=-Xmx2048m'
+     backend.parameters = list(hadoop=list(D='mapreduce.job.maps=25', D='mapreduce.job.reduces=10',
+#                                      D='yarn.scheduler.minimum-allocation-mb=2048',
+                                      D='mapreduce.map.memory.mb=6144',
+                                      D='mapreduce.reduce.memory.mb=6144',
+#                                      D='mapreduce.map.java.opts=-Xmx2048m',
+                                      D='mapreduce.reduce.java.opts=-Xmx2048m'#,
+#                                      D='mapreduce.child.java.opts=-Xmx3072m'
                                       ))
 
      a <- mapreduce(input=input,
