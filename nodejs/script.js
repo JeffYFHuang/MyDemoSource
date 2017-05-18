@@ -230,6 +230,8 @@ function contextFeature (d, field) {
                return d.cal;
           case 'distance':
                return d.distance;
+          case 'sd':
+               return d.sd;
    }
 }
 
@@ -392,7 +394,7 @@ function pieCharts (json, contenttype) {
   var fieldsMap = new Map();
   fieldsMap.set("context", ["activeindex", "met", "duration", "hrm"]);
   fieldsMap.set("sleep", ["duration"]);
-  fieldsMap.set("hrm", ["count", "mean", "min", "max"]);
+  fieldsMap.set("hrm", ["count", "mean", "min", "max", "sd"]);
   fieldsMap.set("step", ["cal", "count", "distance"]);
 
   fieldsMap.get(contenttype).forEach( function (d) {
