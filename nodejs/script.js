@@ -2,6 +2,8 @@ var sid_url = "http://localhost:3000/schoolids";
 var uuid_url = "http://localhost:3000/schooluuids/"; 
 var context_url = "http://localhost:3000/contextdata/";
 var sleep_url = "http://localhost:3000/sleepdata/";
+var hrm_url = "http://localhost:3000/hrmdata/";
+var step_url = "http://localhost:3000/stepdata/";
 
 var url = context_url; //default
 var contenttype = "context"; //default
@@ -50,11 +52,11 @@ function updatecontenturl() {
             contenttitle = "Sleep Quality";
             break;
        case 'hrm':
-            url = "TBD";
+            url = hrm_url;
             contenttitle = "Heart Rate";
             break;
        case 'step':
-            url = "TBD";
+            url = step_url;
             contenttitle = "Step Count";
             break;
    }
@@ -226,7 +228,7 @@ function contextFeature (d, field) {
           case 'cal':
                return d.cal;
           case 'distance':
-               return d.activeindex;
+               return d.distance;
    }
 }
 
@@ -341,7 +343,7 @@ function percentGraphic (json, type, field, schemecategory) {
             })
 	    .attr("text-anchor", "middle")
 	    .text(function(d){
-                if (field != "hrm")
+                if (field != "hrm" && type != "hrm")
 		   return Math.round(d.data.value/total*100)+"%" ;
                 else
                    return Math.round(d.data.value);
@@ -389,7 +391,7 @@ function pieCharts (json, contenttype) {
   var fieldsMap = new Map();
   fieldsMap.set("context", ["activeindex", "met", "duration", "hrm"]);
   fieldsMap.set("sleep", ["duration"]);
-  fieldsMap.set("hrm", ["count", "mean", "max", "min"]);
+  fieldsMap.set("hrm", ["count", "mean", "min", "max"]);
   fieldsMap.set("step", ["cal", "count", "distance"]);
 
   fieldsMap.get(contenttype).forEach( function (d) {

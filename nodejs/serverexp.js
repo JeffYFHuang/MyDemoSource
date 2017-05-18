@@ -66,6 +66,26 @@ app.get('/sleepdata/:sid', function(req, res) {
   })
 })
 
+app.get('/hrmdata/:sid', function(req, res) {
+  var sid = req.params.sid;
+  var uuid = req.query.uuid;
+  var query = "SELECT * FROM " + sid + ".hrm_date WHERE uuid=?";
+  client.execute(query, [uuid], function(err, result) {
+    res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify(result.rows));
+  })
+})
+
+app.get('/stepdata/:sid', function(req, res) {
+  var sid = req.params.sid;
+  var uuid = req.query.uuid;
+  var query = "SELECT * FROM " + sid + ".step_date WHERE uuid=?";
+  client.execute(query, [uuid], function(err, result) {
+    res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify(result.rows));
+  })
+})
+
 var server = app.listen(3000, function () {
 
    var host = server.address().address
