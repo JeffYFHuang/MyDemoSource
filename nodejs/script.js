@@ -150,7 +150,8 @@ function plotBarGraphic(json, type) {
 
   data.forEach(function(d) {
       d.ts = d.key;
-      //d.activeindex = d.value;
+      if (type == "hrm")
+         d.value = Math.round(d.value);
   });
 
   // set the ranges
