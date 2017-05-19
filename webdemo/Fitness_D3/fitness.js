@@ -140,7 +140,7 @@ var indexMap = new Map();
 indexMap.set("context", [1 ,2 ,3 ,4]);
 indexMap.set("sleep", [1, 2, 3, 4, 5]);
 indexMap.set("hrm", [0, 1, 2, 3, 4 ,5]);
-indexMap.set("step", [3, 4]);
+indexMap.set("step", [2, 3]);
 
 function plotMultiLine(json, contenttype, field, groupfield) { //20170519
   var tsFn = function(d) { return new Date(d.ts*1000); };
@@ -179,9 +179,11 @@ function plotMultiLine(json, contenttype, field, groupfield) { //20170519
     };
 
     // set the dimensions and margins of the graph
-    var margin = {top: 30, right: 30, bottom: 30, left: 60},
-    width = 960 - margin.left - margin.right,
-    height = 250 - margin.top - margin.bottom;
+    var margin = {top: 40, right: 120, bottom: 30, left: 60},
+    width = 1024 - margin.left - margin.right,
+    height = 220 - margin.top - margin.bottom;
+    var legendRectSize = 16;                                  // NEW
+    var legendSpacing = 2;                                    // NEW
 
     // set the ranges
     var x = d3.scaleTime().range([0, width]);
@@ -250,12 +252,37 @@ function plotMultiLine(json, contenttype, field, groupfield) { //20170519
     // Add the Y Axis
     svg.append("g")
       .call(d3.axisLeft(y));
+
+        var legend = svg.selectAll('.legend')                     // NEW
+          .data(color.domain())                                   // NEW
+          .enter()                                                // NEW
+          .append('g')                                            // NEW
+          .attr('class', 'legend')                                // NEW
+          .attr('transform', function(d, i) {                     // NEW
+            var height = legendRectSize + legendSpacing;          // NEW
+            var offset =  height * color.domain().length / 2;     // NEW
+            var horz = width + 10;                                 // NEW
+            var vert = i * height;                       // NEW
+            return 'translate(' + horz + ',' + vert + ')';        // NEW
+          });                                                     // NEW
+
+        legend.append('rect')                                     // NEW
+          .attr('width', legendRectSize)                          // NEW
+          .attr('height', legendRectSize)                         // NEW
+          .style('fill', color)                                   // NEW
+          .style('stroke', color);                                // NEW
+
+        legend.append('text')                                     // NEW
+          .attr('x', legendRectSize + legendSpacing)              // NEW
+          .attr('y', legendRectSize - legendSpacing)              // NEW
+          .style("font-size", "12px")
+          .text(function(d) { return d; });
 }
 
 function plotBarGraphic(json, contenttype) {
 // set the dimensions and margins of the graph
-  var margin = {top: 30, right: 30, bottom: 30, left: 60},
-  width = 960 - margin.left - margin.right,
+  var margin = {top: 30, right: 120, bottom: 30, left: 60},
+  width = 1024 - margin.left - margin.right,
   height = 250 - margin.top - margin.bottom;
 
   // parse the date / time
@@ -424,13 +451,13 @@ function percentGraphic (json, contenttype, field, schemecategory) {
      });
 
         var margin = {top: 20, right: 50, bottom: 30, left: 40},
-        width = 400 - margin.left - margin.right,
-        height = 440 - margin.top - margin.bottom;
+        width = 320 - margin.left - margin.right,
+        height = 340 - margin.top - margin.bottom;
 
        // var width = 250;
        // var height = 250;
         var radius = Math.min(width, height) / 2;
-        var donutWidth = 55;
+        var donutWidth = 40;
         var legendRectSize = 18;                                  // NEW
         var legendSpacing = 4;                                    // NEW
 
@@ -469,17 +496,12 @@ function percentGraphic (json, contenttype, field, schemecategory) {
 		return "translate(" + arc.centroid(d) + ")";
             })
 	    .attr("text-anchor", "middle")
+	    .style("font-size", "12px")
 	    .text(function(d){
                 if (field != "avghrm" && contenttype != "hrm")
 		   return Math.round(d.data.value/total*100)+"%" ;
                 else
                    return Math.round(d.data.value);
-	    })
-	    .style({
-		fill:function(d,i){
-			return color(i);
-		},
-		'font-size':'18px',
 	    });
 
     //Create Title
@@ -511,6 +533,7 @@ function percentGraphic (json, contenttype, field, schemecategory) {
         legend.append('text')                                     // NEW
           .attr('x', legendRectSize + legendSpacing)              // NEW
           .attr('y', legendRectSize - legendSpacing)              // NEW
+          .style("font-size", "12px")
           .text(function(d) { return d; });
 }
 
