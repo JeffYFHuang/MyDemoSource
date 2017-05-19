@@ -1,3 +1,8 @@
+/**
+ * @author Jeff Huang
+ * @email  gsmcci58@gmail.com
+ */
+
 var sid_url = "http://localhost:3000/schoolids";
 var uuid_url = "http://localhost:3000/schooluuids/"; 
 var context_url = "http://localhost:3000/contextdata/";
@@ -61,7 +66,7 @@ function updatecontenturl() {
             break;
    }
 
-   d3.select("#demo .value").text(contenttitle)
+   d3.select("#demo .value").text(contenttitle);
    updatedatagraphic();
 }
 
@@ -85,6 +90,10 @@ function updateuuids() {
       // remove old elements
       appending.exit().remove();
    });
+
+   //clean all graphics
+   d3.select("#demo .value").text("");
+   d3.selectAll("svg").remove();
 }
 
 d3.json(sid_url, function (error, json) {
@@ -92,8 +101,9 @@ d3.json(sid_url, function (error, json) {
         .selectAll('option')
         .data(json).enter()
         .append('option')
-        .text(function (d) { return d.sid; })
+        .text(function (d) { return d.sid; });
 
+   console.log("test!");
    updateuuids();
 });
 
@@ -107,8 +117,8 @@ function updatedatagraphic() {
    });
 }
 
-function Fn(d, type) {
-    switch (type) {
+function Fn(d, contenttype) {
+    switch (contenttype) {
            case "context":
                 return d.activeindex;
            case "sleep":
@@ -123,17 +133,136 @@ function Fn(d, type) {
     }
 }
 
-function plotBarGraphic(json, type) {
+var contextsituation = {1: "static", 2: "step", 3: "running", 4: "cycling", 5: "sleep", 0: "other"};
+var sleepstatus = {1: "進入睡眠", 2: "淺層睡眠", 3: "深度睡眠", 4: "狀態切換或起床", 5: "結束睡眠"};
+
+var indexMap = new Map();
+indexMap.set("context", [1 ,2 ,3 ,4]);
+indexMap.set("sleep", [1, 2, 3, 4, 5]);
+indexMap.set("hrm", [0, 1, 2, 3, 4 ,5]);
+indexMap.set("step", [3, 4]);
+
+function plotMultiLine(json, contenttype, field, groupfield) { //20170519
+  var tsFn = function(d) { return new Date(d.ts*1000); };
+  var yFn = function(d) { return d.value; };
+
+  var situation = contextsituation;
+  if (contenttype == "sleep") {
+  	 situation = sleepstatus;
+  }
+
+  //data = json.slice();
+  var data = d3.nest()
+     .key(function(d) { return d.ts;})
+     .rollup(function(g) {
+     	 return d3.nest().
+     	 key(function(gd) {return gd[groupfield];})
+     	 .rollup(function(gg) {return gg[0][field];})
+     	 .entries(g);
+     })
+     .entries(json.slice());
+
+    data.forEach(function(d) {
+      d.date = new Date(d.key*1000);
+      d.max = 0;
+      d.value.forEach(function (k) { // keyname is field name of table.
+         d[situation[k.key]] = k.value;
+         d.max = Math.max(d.max, k.value); //get max value of d.value.
+      });
+    });
+
+    var naomitFn = function (d, key) {if (typeof d[key] != 'undefined') {
+         return d[key];
+      } else {
+         return 0;
+      }
+    };
+
+    // set the dimensions and margins of the graph
+    var margin = {top: 30, right: 30, bottom: 30, left: 60},
+    width = 960 - margin.left - margin.right,
+    height = 250 - margin.top - margin.bottom;
+
+    // set the ranges
+    var x = d3.scaleTime().range([0, width]);
+    var y = d3.scaleLinear().range([height, 0]);
+
+    var svg = d3.select("#linechart").append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    x.domain(d3.extent(data, function (d) {
+      return d.date;
+    }));
+
+    y.domain([0, d3.max(data, function (d) {
+      return d.max;
+    })]);
+
+    // define the line
+    var line = d3.line()
+      .x(function (d) {
+        return x(d.date);
+      });
+
+    var color = d3.scaleOrdinal(d3.schemeCategory20);
+
+    indexMap.get(contenttype).forEach ( function (i) {
+      key = situation[i];
+      line.y(function (d) {
+        return y(naomitFn(d, key));
+      });
+      
+      // Add the line path.
+      svg.append("path")
+         .attr("class", "line")
+         .style("fill", "none")
+         .attr("d", line(data))
+         .style("stroke", color(key));
+
+      // Add sales to the scatterplot
+      svg.selectAll("." + key + "-circle")
+         .data(data)
+         .enter().append("circle")
+         .attr('class', key + "-circle")
+         .attr("r", 5)
+         .attr("cx", function(d) { return x(d.date); })
+         .attr("cy", function(d) { return y(naomitFn(d, key)); })
+         .style("fill", color(key));
+    });
+
+    //Create Title
+    svg.append("text")
+       .attr("x", width / 2)
+       .attr("y", 0 - margin.top / 2)
+       .style("text-anchor", "middle")
+       .style("font-size", "14px") 
+       .text(field);
+
+    // Add the X Axis
+    svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x));
+
+    // Add the Y Axis
+    svg.append("g")
+      .call(d3.axisLeft(y));
+}
+
+function plotBarGraphic(json, contenttype) {
 // set the dimensions and margins of the graph
-  var margin = {top: 10, right: 30, bottom: 30, left: 40},
+  var margin = {top: 30, right: 30, bottom: 30, left: 60},
   width = 960 - margin.left - margin.right,
   height = 250 - margin.top - margin.bottom;
 
   // parse the date / time
   var parseDate = d3.timeFormat("%d-%m-%Y");
 
-  var tsFn = function(d) { return new Date(d.ts*1000) };
-  var yFn = function(d) { return d.value };
+  var tsFn = function(d) { return new Date(d.ts*1000); };
+  var yFn = function(d) { return d.value; };
 
   //data = json.slice();
   var data = d3.nest()
@@ -141,16 +270,16 @@ function plotBarGraphic(json, type) {
 //.rollup(function(g) { return d3.sum(g, function(d) {return d.activeindex; });})
      .rollup(function(g) {
          var count = 1;
-         if (type == "hrm")
-            count = d3.sum(g, function(d) { return d.count });
+         if (contenttype == "hrm")
+            count = d3.sum(g, function(d) { return d.count; });
 
-         return d3.sum(g, function(d) { return Fn(d, type) }) / count;
+         return d3.sum(g, function(d) { return Fn(d, contenttype); }) / count;
      })
      .entries(json.slice());
 
   data.forEach(function(d) {
       d.ts = d.key;
-      if (type == "hrm")
+      if (contenttype == "hrm")
          d.value = Math.round(d.value);
   });
 
@@ -161,19 +290,14 @@ function plotBarGraphic(json, type) {
 
   var y = d3.scaleLinear()
           .range([height, 0])
-          .domain(d3.extent(data, yFn));
+          .domain([0, d3.max(data, yFn)]);
 
-  var svg = d3.select("#demo").append("svg")
+  var svg = d3.select("#barchart").append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
       .append("g")
       .attr("transform",
             "translate(" + margin.left + "," + margin.top + ")");
-
-  // format the data
-/*  data.forEach(function(d) {
-      d.date = parseDate(new Date(d.ts*1000));
-  });*/
 
   svg.selectAll("rect").data(data)
      .enter()
@@ -186,11 +310,11 @@ function plotBarGraphic(json, type) {
      .attr("height", function(d) { return height - y(d.value); })
      .attr("style", "cursor: pointer;")
      .on("mouseover", function(d) {
-        d3.select("#demo .value").text("Date: " +  parseDate(new Date(d.ts*1000)) + " " + contenttitle + ": " + d.value)
+        d3.select("#barchart .value").text("Date: " +  parseDate(new Date(d.ts*1000)) + " " + contenttitle + ": " + d.value);
       })
      .on("mouseout", function(d) {
-        d3.select("#demo .value").text(contenttitle)
-      })
+        d3.select("#barchart .value").text(contenttitle);
+     });
 
   // add the x Axis
   svg.append("g")
@@ -214,7 +338,7 @@ function contextFeature (d, field) {
                return d.met;
           case 'duration':
                return d.duration;
-          case 'hrm':
+          case 'avghrm':
                return d.avghrm;
           case 'ratio':
                return d.ratio;
@@ -235,10 +359,10 @@ function contextFeature (d, field) {
    }
 }
 
-function setupdata (json, type, field) {
+function setupdata (json, contenttype, field) {
      var dataset = d3.nest()
          .key ( function(d) {
-                               switch (type) {
+                               switch (contenttype) {
                                   case "context":
                                       return d.situation;
                                   case "sleep":
@@ -252,36 +376,36 @@ function setupdata (json, type, field) {
          .rollup(function(g) { return d3.sum(g, function(d) {return contextFeature(d, field); })/g.length;})
          .entries(json.slice());
 
-// 0 : 進入睡眠, 1 : 淺層睡眠, 2 : 深度睡眠, 3 : 狀態切換或起床, 4 : 結束睡眠
+// 1 : 進入睡眠, 2 : 淺層睡眠, 3 : 深度睡眠, 4 : 狀態切換或起床, 5 : 結束睡眠
      dataset.forEach(function(d) {
          d.label = 'other';
          switch(d.key) {
              case '1':
-                 if (type == "sleep")
+                 if (contenttype == "sleep")
                     d.label = '進入睡眠';
                  else
                     d.label = 'static';
                  break;
              case '2':
-                 if (type == "sleep")
+                 if (contenttype == "sleep")
                     d.label = '淺層睡眠';
                  else
                     d.label = 'step';
                  break;
              case '3':
-                 if (type == "sleep")
+                 if (contenttype == "sleep")
                     d.label = '深度睡眠';
                  else
                     d.label = 'running';
                  break;
              case '4':
-                 if (type == "sleep")
+                 if (contenttype == "sleep")
                     d.label = '狀態切換或起床';
                  else
                     d.label = 'cycling';
                  break;
              case '5':
-                 if (type == "sleep")
+                 if (contenttype == "sleep")
                     d.label = '結束睡眠';
                  else
                     d.label = 'sleep';
@@ -291,8 +415,8 @@ function setupdata (json, type, field) {
      return dataset;
 }
 
-function percentGraphic (json, type, field, schemecategory) {
-     var dataset = setupdata(json, type, field);
+function percentGraphic (json, contenttype, field, schemecategory) {
+     var dataset = setupdata(json, contenttype, field);
 
      var total = 0;
      dataset.forEach(function(d) {
@@ -346,7 +470,7 @@ function percentGraphic (json, type, field, schemecategory) {
             })
 	    .attr("text-anchor", "middle")
 	    .text(function(d){
-                if (field != "hrm" && type != "hrm")
+                if (field != "avghrm" && contenttype != "hrm")
 		   return Math.round(d.data.value/total*100)+"%" ;
                 else
                    return Math.round(d.data.value);
@@ -390,15 +514,27 @@ function percentGraphic (json, type, field, schemecategory) {
           .text(function(d) { return d; });
 }
 
-function pieCharts (json, contenttype) {
-  var fieldsMap = new Map();
-  fieldsMap.set("context", ["activeindex", "met", "duration", "hrm"]);
-  fieldsMap.set("sleep", ["duration"]);
-  fieldsMap.set("hrm", ["count", "mean", "min", "max", "sd"]);
-  fieldsMap.set("step", ["cal", "count", "distance"]);
+var fieldsMap = new Map();
+fieldsMap.set("context", ["activeindex", "met", "duration", "avghrm"]);
+fieldsMap.set("sleep", ["duration"]);
+fieldsMap.set("hrm", ["mean", "min", "max", "sd"]);
+fieldsMap.set("step", ["cal", "count", "distance"]);
 
+function pieCharts (json, contenttype) {
   fieldsMap.get(contenttype).forEach( function (d) {
       percentGraphic(json, contenttype, d, d3.schemeCategory20);
+  });
+}
+
+function lineCharts (json, contenttype) {
+  groupfield = "situation";
+  if (contenttype == "sleep")
+     groupfield = "status";
+  else if (contenttype == "step")
+     groupfield = "type";
+
+  fieldsMap.get(contenttype).forEach( function (d) {
+      plotMultiLine(json, contenttype, d, groupfield);
   });
 }
 
@@ -407,6 +543,8 @@ function updategraphics(json) {
 
   pieCharts (json, contenttype);
   plotBarGraphic(json, contenttype);
+  lineCharts(json, contenttype);
+  //plotMultiLine(json, contenttype, "hrm", "situation");
 }
 
 /*JSONData = [

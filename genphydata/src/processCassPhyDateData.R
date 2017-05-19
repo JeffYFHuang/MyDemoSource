@@ -160,7 +160,6 @@ ProcessContextTable <- function (tableName, beginDate, ndays) {
         #    keyval(uuid, df[which(df$uuid==uuid), ])
         #}
 
-        #gc()
         # here is where we generate the actual sampled data
         #c.keyval(lapply(uuids, groupbyuuid))
         c.keyval(lapply(as.list(input), getData))
@@ -279,7 +278,6 @@ ProcessContextTable <- function (tableName, beginDate, ndays) {
         }
 
         rm(df)
-        gc()
         #ClosePyCasDriver()
 
         keyval(key, 1)#df[1,])
