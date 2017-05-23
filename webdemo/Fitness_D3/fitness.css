@@ -5,6 +5,15 @@ body {
     height: 100%;
 }
 
+.bar rect {
+  fill: steelblue;
+}
+
+.bar text {
+  fill: #fff;
+  font: 10px sans-serif;
+}
+
 rect.bar { fill: steelblue; }
 
 .line {

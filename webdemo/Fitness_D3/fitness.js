@@ -10,13 +10,16 @@ var sleep_url = "http://localhost:3000/sleepdata/";
 var hrm_url = "http://localhost:3000/hrmdata/";
 var step_url = "http://localhost:3000/stepdata/";
 
+var default_width = 900;
+var default_height = 250;
+
 var url = context_url; //default
 var contenttype = "context"; //default
 var contenttitle = "Fitness Index";
 
 var select_sid = d3.select("#school")
                .append('select')
-  	       .attr('class','select')
+             .attr('class','select')
                .attr("name", "select_sid")
                .on('change', updateuuids);
 
@@ -24,13 +27,20 @@ var select_uuid = d3.select("#uuid")
                .append('select')
                .attr('class','select')
                .attr("name", "select_uuid")
-               .on('change', updatedatagraphic);
+               .on('change', updatedatagraphic)
+               .on('click', updatedatagraphic);
 
 var select_content = d3.select("#content")
                .append('select')
                .attr('class','select')
                .attr("name", "select_content")
                .on('change', updatecontenturl);
+
+var select_index = d3.select("#index")
+               .append('select')
+               .attr('class','select')
+               .attr("name", "select_index")
+               .on('change', plothistogram);
 
 function setupcontenttype() {
    var data = ["context", "sleep", "hrm", "step"];
@@ -42,6 +52,17 @@ function setupcontenttype() {
                    .text(function (d) { return d; });
 }
 
+function setupindextype() {
+   var data = ["fitness index", "sleep quailty", "avg hr", "step count"];
+
+   var appending = select_index
+                   .selectAll('option')
+                   .data(data).enter()
+                   .append('option')
+                   .text(function (d) { return d; });
+}
+
+setupindextype();
 setupcontenttype();
 
 function updatecontenturl() {
@@ -93,7 +114,49 @@ function updateuuids() {
 
    //clean all graphics
    d3.select("#demo .value").text("");
-   d3.selectAll("svg").remove();
+   d3.select("#subjectchart").selectAll("svg").remove();
+
+   plothistogram();
+}
+
+var i = 0;
+function plothistogram() {
+   if (i == 0)
+      d3.select("#hischart").append("svg");
+   i = 1;
+   d3.select("#hischart").select("g").remove();
+
+   var sid = d3.select('[name="select_sid"]').property('value');
+   var indextype = d3.select('[name="select_index"]').property('value');
+
+   var data = ["fitness index", "sleep quailty", "avg hr", "step count"];
+
+   var url = "";
+   var field = "";
+
+   switch(indextype) {
+      case data[0]:
+           url = context_url;
+          field = "activeindex";
+          break;
+      case data[1]:
+           url = sleep_url;
+          field = "ratio";
+          break;
+      case data[2]:
+           url = hrm_url;
+          field = "mean";
+          break;
+      case data[3]:
+           url = step_url;
+           field = "count";
+          break;
+   };
+
+   //histogram
+   d3.json(url + sid, function (error, json) {
+       plotHistormGraphic(json, field);
+   });
 }
 
 d3.json(sid_url, function (error, json) {
@@ -115,6 +178,102 @@ function updatedatagraphic() {
           //alert(json);
           updategraphics(json);
    });
+}
+
+function plotHistormGraphic(json, field) {
+// set the dimensions and margins of the graph
+  var margin = {top: 10, right: 60, bottom: 50, left: 60},
+  width = default_width - margin.left - margin.right,
+  height = default_height - margin.top - margin.bottom;
+
+  var tsFn = function(d) { return new Date(d.ts*1000); };
+  var yFn = function(d) { return d.value; };
+
+  //data = json.slice();
+  var data = d3.nest()
+     .key(function(d) { return d.uuid;})
+     .rollup(function(g) {
+     if (field != "ratio")
+           return d3.sum(g, function(d) { return d[field]; });
+        else {
+           return d3.sum(g, function(d) { if (d.status == 3) return d[field]; else return 0;});
+        }
+     })
+     .entries(json.slice());
+
+  var data2 = new Array();
+  data.forEach(function(d) {
+      d.ts = d.key;
+      data2.push(d.value);
+  });
+
+var formatCount = d3.format(",.0f");
+
+  var svg = d3.select("#hischart").selectAll("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+      .attr("transform",
+            "translate(" + margin.left + "," + margin.top + ")");
+
+    g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+var x = d3.scaleLinear()
+    .domain(d3.extent(data, yFn))
+    .nice(20)
+    .rangeRound([0, width]);
+
+var bins = d3.histogram()
+    .domain(x.domain())
+    .thresholds(x.ticks(20))
+    (data2);
+
+var y = d3.scaleLinear()
+    .domain([0, d3.max(bins, function(d) { return d.length; })])
+    .range([height, 0]);
+
+var bar = g.selectAll(".bar")
+  .data(bins)
+  .enter().append("g")
+    .attr("class", "bar")
+    .attr("transform", function(d) {return "translate(" + x(d.x0) + "," + y(d.length) + ")"; });
+
+bar.append("rect")
+    .attr("x", 1)
+    .attr("width", x(bins[0].x1) - x(bins[0].x0) - 1)
+    .attr("height", function(d) { return height - y(d.length); })
+     .on("click", function(d) {
+        min = d3.min(d);
+        max = d3.max(d);
+
+        select_uuid.selectAll('option').remove();
+
+         var appending = select_uuid
+                      .selectAll('option')
+                      .data(data.filter(function(d) { return d.value >= min && d.value <= max; }));
+
+         // add new elements
+         appending.enter().append('option').text(function (d) { return d.key; });
+
+         appending.exit().remove();
+         d3.select("#subjectchart").selectAll("svg").remove();
+         //d3.select("#barchart .value").text(d3.min(d) + ", " + d3.max(d));
+      })
+     .on("mouseout", function(d) {
+        //d3.select("#barchart .value").text(contenttitle);
+     });
+
+bar.append("text")
+    .attr("dy", ".75em")
+    .attr("y", 2)
+    .attr("x", (x(bins[0].x1) - x(bins[0].x0)) / 2)
+    .attr("text-anchor", "middle")
+    .text(function(d) { return formatCount(d.length); });
+
+g.append("g")
+    .attr("class", "axis axis--x")
+    .attr("transform", "translate(0," + height + ")")
+    .call(d3.axisBottom(x));
 }
 
 function Fn(d, contenttype) {
@@ -148,17 +307,17 @@ function plotMultiLine(json, contenttype, field, groupfield) { //20170519
 
   var situation = contextsituation;
   if (contenttype == "sleep") {
-  	 situation = sleepstatus;
+   situation = sleepstatus;
   }
 
   //data = json.slice();
   var data = d3.nest()
      .key(function(d) { return d.ts;})
      .rollup(function(g) {
-     	 return d3.nest().
-     	 key(function(gd) {return gd[groupfield];})
-     	 .rollup(function(gg) {return gg[0][field];})
-     	 .entries(g);
+      return d3.nest().
+      key(function(gd) {return gd[groupfield];})
+      .rollup(function(gg) {return gg[0][field];})
+      .entries(g);
      })
      .entries(json.slice());
 
@@ -179,9 +338,9 @@ function plotMultiLine(json, contenttype, field, groupfield) { //20170519
     };
 
     // set the dimensions and margins of the graph
-    var margin = {top: 40, right: 120, bottom: 30, left: 60},
-    width = 1024 - margin.left - margin.right,
-    height = 220 - margin.top - margin.bottom;
+    var margin = {top: 40, right: 120, bottom: 30, left: 120},
+    width = default_width - margin.left - margin.right,
+    height = default_height - margin.top - margin.bottom;
     var legendRectSize = 16;                                  // NEW
     var legendSpacing = 2;                                    // NEW
 
@@ -281,9 +440,9 @@ function plotMultiLine(json, contenttype, field, groupfield) { //20170519
 
 function plotBarGraphic(json, contenttype) {
 // set the dimensions and margins of the graph
-  var margin = {top: 30, right: 120, bottom: 30, left: 60},
-  width = 1024 - margin.left - margin.right,
-  height = 250 - margin.top - margin.bottom;
+  var margin = {top: 30, right: 120, bottom: 30, left: 120},
+  width = default_width - margin.left - margin.right,
+  height = default_height - margin.top - margin.bottom;
 
   // parse the date / time
   var parseDate = d3.timeFormat("%d-%m-%Y");
@@ -332,7 +491,7 @@ function plotBarGraphic(json, contenttype) {
      .attr("class", "bar")
      .attr("x", 1)
      .attr("transform", function(d) {
-		  return "translate(" + x(tsFn(d)) + "," + y(yFn(d)) + ")"; })
+  return "translate(" + x(tsFn(d)) + "," + y(yFn(d)) + ")"; })
      .attr("width", function(d) { return x(new Date(d.ts*1000+86400000)) - x(new Date(d.ts*1000)) -1 ; })
      .attr("height", function(d) { return height - y(d.value); })
      .attr("style", "cursor: pointer;")
@@ -450,9 +609,9 @@ function percentGraphic (json, contenttype, field, schemecategory) {
          total = total + d.value;
      });
 
-        var margin = {top: 20, right: 50, bottom: 30, left: 40},
-        width = 320 - margin.left - margin.right,
-        height = 340 - margin.top - margin.bottom;
+        var margin = {top: 20, right: 60, bottom: 30, left: 60},
+        width = 400 - margin.left - margin.right,
+        height = 460 - margin.top - margin.bottom;
 
        // var width = 250;
        // var height = 250;
@@ -489,20 +648,20 @@ function percentGraphic (json, contenttype, field, schemecategory) {
           });
 
         var text = svg.selectAll('text')
-	    .data(pie(dataset))
-	    .enter()
-	    .append("text")
-	    .attr("transform", function (d) {
-		return "translate(" + arc.centroid(d) + ")";
+    .data(pie(dataset))
+    .enter()
+    .append("text")
+    .attr("transform", function (d) {
+return "translate(" + arc.centroid(d) + ")";
             })
-	    .attr("text-anchor", "middle")
-	    .style("font-size", "12px")
-	    .text(function(d){
+    .attr("text-anchor", "middle")
+    .style("font-size", "12px")
+    .text(function(d){
                 if (field != "avghrm" && contenttype != "hrm")
-		   return Math.round(d.data.value/total*100)+"%" ;
+   return Math.round(d.data.value/total*100)+"%" ;
                 else
                    return Math.round(d.data.value);
-	    });
+    });
 
     //Create Title
     svg.append("text")
@@ -562,7 +721,7 @@ function lineCharts (json, contenttype) {
 }
 
 function updategraphics(json) {
-  d3.selectAll("svg").remove();
+  d3.select("#subjectchart").selectAll("svg").remove();
 
   pieCharts (json, contenttype);
   plotBarGraphic(json, contenttype);
