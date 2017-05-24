@@ -56,6 +56,7 @@ sudo apt-get install -y mesa-common-dev libx11-dev mesa-common-dev libglu1-mesa-
 dpkg -S /usr/include/GL/gl.h
 # some packages have trouble installing without this link
 sudo apt-get install libgfortran3
+sudo apt-get install libnlopt-dev
 
 file="/usr/lib/libgfortran.so"
 if [ -f "$file" ]
@@ -78,7 +79,8 @@ sudo chown hduser /usr/lib/R -R
 sudo R --no-save << EOF
 install.packages(c("rJava", "Rcpp", "RJSONIO", "bitops", "digest",
                    "functional", "stringr", "plyr", "reshape2", "dplyr",
-                   "R.methodsS3", "caTools", "Hmisc", "data.table", "rjson", "memoise", "RHRV", "rjson", "randomForest", "RCurl", "lubridate"),
+                   "R.methodsS3", "caTools", "Hmisc", "data.table", "rjson", "memoise", "RHRV", "rjson", "randomForest", "RCurl", "lubridate",
+                   "outliers", "rPython", "data.table", "MVN"),
     repos="http://cran.revolutionanalytics.com", INSTALL_opts=c('--byte-compile') )
 EOF
 
