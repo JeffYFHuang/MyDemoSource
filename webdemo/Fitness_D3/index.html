@@ -5,24 +5,25 @@
     <script src="http://d3js.org/d3.v4.min.js" charset='utf-8'></script>
     <link rel='stylesheet' href='fitness.css'>
   </head>
-  <body>
-		<div>
-			<header>
-				<h1>Fitness Demo</h1>
-			</header>
-                <div width = "900" height="250"> <!-- style="text-align: center;"-->
-                  <div style='display: inline-block; vertical-align: top;'>
+  <body style="width:100%;">
+       <div style="center; width:80%;">
+           <header>
+             <h2>Fitness Demo</h2>
+           </header>
+       </div>
+           <div style="font-size:18px; width:80%">
+               <div>
                     <div id="school" style='display: inline-block; vertical-align: top;'>
                       School id:
                     </div>
                     <div id="index" style='display: inline-block; vertical-align: top;'>
-                      Summary by:
+                      Summarized by:
                     </div>
                     <div id="hischart">
                         <p class="value"></p>
                     </div>
-                  </div>
-                  <div>
+               </div>
+               <div>
                     <div id="subjectchart">
                       <div id="uuid" style='display: inline-block; vertical-align: top;'>
                         uuid:
@@ -33,22 +34,25 @@
                       <div id="barchart">
                         <p class="value"></p>
                       </div>
-                      <div id="linechart">
+                      <div id="mixchart">
+                      </div>
+                      <!--div id="linechart" style='display: inline-block; vertical-align: top;'>
                         <p class="value"></p>
                       </div>
-                      <div id="chart" class="chart-container">
-                      </div>
+                      <div id="circlechart" style='display: inline-block; vertical-align: top;' class="chart-container">
+                      </div-->
                     </div>
-                  </div>
+               </div>
                   <script type='text/javascript' src='fitness.js'></script>
-			    </div>
-	   </div>
-        <div>
-			<footer>
-				<p>
-					&copy; Copyright  by
-				</p>
-			</footer>
-		</div>
-	</body>
+           </div>
+       <div>
+           <footer>
+           <p style="font-size:10px">
+                &copy;
+                 Copyright by <br>Author: Yuan-Fu Huang@2017
+                 <br>Email: jeff.huang@liteon.com.tw
+                 </p>
+           </footer>
+       </div>
+</body>
 </html>

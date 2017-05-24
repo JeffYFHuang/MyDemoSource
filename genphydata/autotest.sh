@@ -7,7 +7,7 @@ firstdayofmonth=$1
 daysofmonth=$2
 hours=(02 08 14 20)
 phytypes=('context' 'step' 'sleep' 'hrm')
-ptypes=('date') #, 'week', 'month')
+ptypes=('month') #('date', 'week', 'month')
 
    for i in `seq 0 $daysofmonth`
    do
