@@ -3,13 +3,14 @@
  * @email  gsmcci58@gmail.com
  */
 
-var host = "172.18.161.1";
-var sid_url = "http://" + host + ":3000/schoolids";
-var uuid_url = "http://" + host + ":3000/schooluuids/";
-var context_url = "http://" + host + ":3000/contextdata/";
-var sleep_url = "http://" + host + ":3000/sleepdata/";
-var hrm_url = "http://" + host + ":3000/hrmdata/";
-var step_url = "http://" + host + ":3000/stepdata/";
+var host = "192.168.0.123";  //"172.18.161.100";
+var port = 3001;
+var sid_url = "http://" + host + ":" + port + "/schoolids";
+var uuid_url = "http://" + host + ":" + port + "/schooluuids/";
+var context_url = "http://" + host + ":" + port + "/contextdata/";
+var sleep_url = "http://" + host + ":" + port + "/sleepdata/";
+var hrm_url = "http://" + host + ":" + port + "/hrmdata/";
+var step_url = "http://" + host + ":" + port + "/stepdata/";
 
 var default_width = 760;
 var default_height = 200;
@@ -133,7 +134,6 @@ function plothistogram() {
    if (i == 0)
       d3.select("#hischart").append("svg");
    i = 1;
-   d3.select("#hischart").selectAll("g").remove();
 
    var sid = d3.select('[name="select_sid"]').property('value');
    var indextype = d3.select('[name="select_index"]').property('value');
@@ -164,6 +164,7 @@ function plothistogram() {
 
    //histogram
    d3.json(url + sid, function (error, json) {
+       d3.select("#hischart").selectAll("g").remove();
        plotHistormGraphic(json, field);
    });
 }
@@ -251,7 +252,7 @@ var bar = g.selectAll(".bar")
 
 bar.append("rect")
     .attr("x", 1)
-    .attr("width", x(bins[0].x1) - x(bins[0].x0) - 1)
+    .attr("width", x(bins[0].x1) - x(bins[0].x0) - 3)
     .attr("height", function(d) { return height - y(d.length); })
      .on("click", function(d) {
         min = d3.min(d);
