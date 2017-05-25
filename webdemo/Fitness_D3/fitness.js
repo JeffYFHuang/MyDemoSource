@@ -15,11 +15,13 @@ var step_url = "http://" + host + ":" + port + "/stepdata/";
 element = d3.select('#hischart').node();
 
 var default_width = element.getBoundingClientRect().width;
-var default_height = 300;
+var default_height = 0.2 * default_width;
+//var ratio_circle_width = 0.3;
+var ratio_lines_width = 0.8;
 
 var url = context_url; //default
 var contenttype = "context"; //default
-var contenttitle = "Fitness Index";
+var contenttitle = "Active Index";
 
 var select_sid = d3.select("#school")
                .append('select')
@@ -75,7 +77,7 @@ function updatecontenturl() {
    switch(contenttype) {
        case 'context':
             url = context_url;
-            contenttitle = "Fitness Index";
+            contenttitle = "Active Index";
             break;
        case 'sleep':
             url = sleep_url;
@@ -335,7 +337,7 @@ function plotMultiLine(json, contenttype, field, groupfield) { //20170519
          if (field == "duration")
             return gx[0][field]/60;
          else if (field == "cal")
-            return gx[0][field]/60;
+            return gx[0][field]/1000;
 
          return gx[0][field];
       })
@@ -360,8 +362,8 @@ function plotMultiLine(json, contenttype, field, groupfield) { //20170519
     };
 
     // set the dimensions and margins of the graph
-    var margin = {top: 10, right: 30, bottom: 30, left: 80},
-    width = default_width - margin.left - margin.right - default_height - 10;
+    var margin = {top: 10, right: 10, bottom: 30, left: 70},
+    width = default_width * ratio_lines_width - margin.left - margin.right,
     height = default_height - margin.top - margin.bottom;
     var legendRectSize = 16;                                  // NEW
     var legendSpacing = 2;                                    // NEW
@@ -446,11 +448,21 @@ function plotMultiLine(json, contenttype, field, groupfield) { //20170519
   var getLabel = function(field) {
    switch (field) {
       case "duration":
-         return "duration (minutes)";
+         return "Duration (minutes)";
       case "cal":
          return "Kcal";
       case "met":
            return "MET (KCal/KG*H)";
+      case "distance":
+           return "Meters";
+      case "count":
+           return "Steps";
+      case "avghrm":
+           return "Avg Heart Rate";
+      case "activeindex":
+           return "Fitness Index";
+      case "mean":
+           return "Avg HR";
       default:
          return field;
      }
@@ -458,11 +470,11 @@ function plotMultiLine(json, contenttype, field, groupfield) { //20170519
 
   svg.append("text")
       .attr("transform", "rotate(-90)")
-      .attr("y", 0 - margin.left)
+      .attr("y", 0 - margin.left * 0.9)
       .attr("x",0 - (height / 2))
       .attr("dy", "1em")
       .style("text-anchor", "middle")
-      .style("font-size", "18px")
+      .style("font-size", "16px")
       .text(getLabel(field));
 /*
         var legend = svg.selectAll('.legend')                     // NEW
@@ -494,7 +506,7 @@ function plotMultiLine(json, contenttype, field, groupfield) { //20170519
 
 function plotBarGraphic(json, contenttype) {
 // set the dimensions and margins of the graph
-  var margin = {top: 10, right: 30, bottom: 30, left: 80},
+  var margin = {top: 10, right: 30, bottom: 30, left: 70},
   width = default_width - margin.left - margin.right,
   height = default_height - margin.top - margin.bottom;
 
@@ -584,7 +596,7 @@ function plotBarGraphic(json, contenttype) {
   // text label for the y axis
   svg.append("text")
       .attr("transform", "rotate(-90)")
-      .attr("y", 0 - margin.left)
+      .attr("y", 0 - margin.left * 0.9)
       .attr("x",0 - (height / 2))
       .attr("dy", "1em")
       .style("text-anchor", "middle")
@@ -688,16 +700,22 @@ function percentGraphic (json, contenttype, field, schemecategory) {
          total = total + d.value;
      });
 
-        var margin = {top: 20, right: 20, bottom: 20, left: 60},
-        width = default_height + 70 - margin.left - margin.right,
-        height = default_height + 70 - margin.top - margin.bottom;
+    var margin = {top: 0, right: 0, bottom: 15, left: 15},
+    width = default_height - margin.left - margin.right, //default_width * ratio_circle_width - margin.left - margin.right,
+    height = default_height;// - margin.top - margin.bottom;
+
+   /*     var margin = {top: 20, right: 10, bottom: 50, left: 30},
+        width = default_width * ratio_circle_width - margin.left - margin.right,
+        height = default_height - margin.top - margin.bottom;
+   */
+       // alert(width + " " + height)
 
        // var width = 250;
        // var height = 250;
         var radius = Math.min(width, height) / 2;
-        var donutWidth = 30;
-        var legendRectSize = 18;                                  // NEW
-        var legendSpacing = 4;                                    // NEW
+        var donutWidth = radius * 0.3;
+        var legendRectSize = (0.7 * radius)/5;//18;
+        var legendSpacing = 4;
 
         var color = d3.scaleOrdinal(schemecategory);
 
@@ -707,7 +725,7 @@ function percentGraphic (json, contenttype, field, schemecategory) {
           .attr('height', height)
           .append('g')
           .attr('transform', 'translate(' + (width / 2) +
-            ',' + (height / 2) + ')');
+            ',' + (height / 2 - 5) + ')');
 
         var arc = d3.arc()
           .innerRadius(radius - donutWidth)
