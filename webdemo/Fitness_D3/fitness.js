@@ -12,8 +12,10 @@ var sleep_url = "http://" + host + ":" + port + "/sleepdata/";
 var hrm_url = "http://" + host + ":" + port + "/hrmdata/";
 var step_url = "http://" + host + ":" + port + "/stepdata/";
 
-var default_width = 760;
-var default_height = 200;
+element = d3.select('#hischart').node();
+
+var default_width = element.getBoundingClientRect().width;
+var default_height = 300;
 
 var url = context_url; //default
 var contenttype = "context"; //default
@@ -192,11 +194,11 @@ function updatedatagraphic() {
 
 function plotHistormGraphic(json, field) {
 // set the dimensions and margins of the graph
-  var margin = {top: 10, right: 60, bottom: 50, left: 60},
+  var margin = {top: 10, right: 70, bottom: 30, left: 10},
   width = default_width - margin.left - margin.right,
   height = default_height - margin.top - margin.bottom;
 
-  var tsFn = function(d) { return new Date(d.ts*1000); };
+  var tsFn = function(d) { return new Date(d.ts * 1000); };
   var yFn = function(d) { return d.value; };
   var formatCount = d3.format(",.0f");
 
@@ -329,7 +331,14 @@ function plotMultiLine(json, contenttype, field, groupfield) { //20170519
      .rollup(function(g) {
       return d3.nest().
       key(function(gd) {return gd[groupfield];})
-      .rollup(function(gg) {return gg[0][field];})
+      .rollup(function(gx) {
+         if (field == "duration")
+            return gx[0][field]/60;
+         else if (field == "cal")
+            return gx[0][field]/60;
+
+         return gx[0][field];
+      })
       .entries(g);
      })
      .entries(json.slice());
@@ -351,8 +360,8 @@ function plotMultiLine(json, contenttype, field, groupfield) { //20170519
     };
 
     // set the dimensions and margins of the graph
-    var margin = {top: 10, right: 30, bottom: 30, left: 120},
-    width = default_width - margin.left - margin.right,
+    var margin = {top: 10, right: 30, bottom: 30, left: 80},
+    width = default_width - margin.left - margin.right - default_height - 10;
     height = default_height - margin.top - margin.bottom;
     var legendRectSize = 16;                                  // NEW
     var legendSpacing = 2;                                    // NEW
@@ -434,13 +443,27 @@ function plotMultiLine(json, contenttype, field, groupfield) { //20170519
       .call(d3.axisLeft(y));
 
   // text label for the y axis
+  var getLabel = function(field) {
+   switch (field) {
+      case "duration":
+         return "duration (minutes)";
+      case "cal":
+         return "Kcal";
+      case "met":
+           return "MET (KCal/KG*H)";
+      default:
+         return field;
+     }
+  };
+
   svg.append("text")
       .attr("transform", "rotate(-90)")
-      .attr("y", 0 - margin.left*0.6)
+      .attr("y", 0 - margin.left)
       .attr("x",0 - (height / 2))
       .attr("dy", "1em")
       .style("text-anchor", "middle")
-      .text(field);
+      .style("font-size", "18px")
+      .text(getLabel(field));
 /*
         var legend = svg.selectAll('.legend')                     // NEW
           .data(color.domain())                                   // NEW
@@ -471,7 +494,7 @@ function plotMultiLine(json, contenttype, field, groupfield) { //20170519
 
 function plotBarGraphic(json, contenttype) {
 // set the dimensions and margins of the graph
-  var margin = {top: 10, right: 60, bottom: 30, left: 120},
+  var margin = {top: 10, right: 30, bottom: 30, left: 80},
   width = default_width - margin.left - margin.right,
   height = default_height - margin.top - margin.bottom;
 
@@ -561,7 +584,7 @@ function plotBarGraphic(json, contenttype) {
   // text label for the y axis
   svg.append("text")
       .attr("transform", "rotate(-90)")
-      .attr("y", 0 - margin.left * 0.6)
+      .attr("y", 0 - margin.left)
       .attr("x",0 - (height / 2))
       .attr("dy", "1em")
       .style("text-anchor", "middle")
@@ -666,8 +689,8 @@ function percentGraphic (json, contenttype, field, schemecategory) {
      });
 
         var margin = {top: 20, right: 20, bottom: 20, left: 60},
-        width = default_height + 80 - margin.left - margin.right,
-        height = default_height + 80 - margin.top - margin.bottom;
+        width = default_height + 70 - margin.left - margin.right,
+        height = default_height + 70 - margin.top - margin.bottom;
 
        // var width = 250;
        // var height = 250;

@@ -5,13 +5,16 @@
     <script src="http://d3js.org/d3.v4.min.js" charset='utf-8'></script>
     <link rel='stylesheet' href='fitness.css'>
   </head>
-  <body style="width:100%;">
-       <div style="center; width:960px;">
+  <body style="width:100%;position: relative;">
+    <div class="container">
+    <div class="column-center">
+       <div>
            <header>
              <h2>Fitness Demo</h2>
            </header>
        </div>
-           <div style="font-size:18px; width:960px">
+           <div style="font-size:16px; width:100%">
+               <p style></p>
                <div>
                     <div id="school" style='display: inline-block; vertical-align: top;'>
                       School id:
@@ -23,6 +26,7 @@
                         <p class="value"></p>
                     </div>
                </div>
+               <p style></p>
                <div>
                     <div id="subjectchart">
                       <div id="uuid" style='display: inline-block; vertical-align: top;'>
@@ -54,5 +58,9 @@
                  </p>
            </footer>
        </div>
+   </div>
+   <div class="column-left"></div>
+   <div class="column-right"></div>
+   </div>
 </body>
 </html>

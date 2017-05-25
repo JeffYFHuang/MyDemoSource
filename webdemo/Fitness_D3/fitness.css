@@ -5,6 +5,29 @@ body {
     height: 100%;
 }
 
+p {border-top-style:ridge; border-top-width:medium;}
+
+.container {
+	position: relative;
+	width: 100%;
+}
+
+.column-left {
+	width: 5%;
+	left: 0;
+	position: absolute;
+}
+.column-center {
+	width: 90%;
+	margin-left: 5%;
+	position: absolute;
+}
+.column-right {
+	width: 5%;
+	right: 0;
+	position: absolute;
+}
+
 .bar rect {
   fill: steelblue;
 }
