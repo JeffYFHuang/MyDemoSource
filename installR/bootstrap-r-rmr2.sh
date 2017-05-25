@@ -39,7 +39,7 @@ sudo apt-get update
 sudo apt-get install -y openjdk-7-jdk
 
 jfolder="/usr/lib/jvm/default-java"
-if [ -f "$jfolder" ]
+if [ -d $jfolder ]
 then
    sudo rm /usr/lib/jvm/default-java
 fi
@@ -55,18 +55,18 @@ sudo apt-get install -y libcurl4-openssl-dev
 sudo apt-get install -y mesa-common-dev libx11-dev mesa-common-dev libglu1-mesa-dev tk-dev
 dpkg -S /usr/include/GL/gl.h
 # some packages have trouble installing without this link
-sudo apt-get install libgfortran3
-sudo apt-get install libnlopt-dev
+sudo apt-get install -y libgfortran3
+sudo apt-get install -y libnlopt-dev
 
 file="/usr/lib/libgfortran.so"
-if [ -f "$file" ]
+if [ -f $file ]
 then
     sudo rm $file
 fi
 sudo ln -s /usr/lib/x86_64-linux-gnu/libgfortran.so.3 $file
 
 file="/usr/lib/libquadmath.so"
-if [ -f "$file" ]
+if [ -f $file ]
 then
    sudo rm $file
 fi
@@ -80,7 +80,7 @@ sudo R --no-save << EOF
 install.packages(c("rJava", "Rcpp", "RJSONIO", "bitops", "digest",
                    "functional", "stringr", "plyr", "reshape2", "dplyr",
                    "R.methodsS3", "caTools", "Hmisc", "data.table", "rjson", "memoise", "RHRV", "rjson", "randomForest", "RCurl", "lubridate",
-                   "outliers", "rPython", "data.table", "MVN"),
+                   "outliers", "rPython", "data.table", "MVN", "compiler"),
     repos="http://cran.revolutionanalytics.com", INSTALL_opts=c('--byte-compile') )
 EOF
 
@@ -102,3 +102,9 @@ sudo -E R CMD INSTALL --byte-compile rhdfs
 #' >> /etc/profile 
  
 #EOF1
+
+#install cassandra
+curl -L https://debian.datastax.com/debian/repo_key | sudo apt-key add -
+sudo apt-get update
+sudo apt-get install -y dsc30
+sudo apt-get install -y cassandra-tools
