@@ -2,8 +2,12 @@
 
 # reducer.R - Wordcount program in R
 # script for Reducer (R-Hadoop integration)
-library(rjson)
+require(rjson)
 require(rPython)
+
+GetPredictedMaxHR <- function (age) {
+   return(220 - age)
+}
 
 trimWhiteSpace <- function(line) gsub("(^ +)|( +$)", "", line)
 

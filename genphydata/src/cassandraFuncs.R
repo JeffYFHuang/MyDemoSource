@@ -23,6 +23,15 @@ CreateKeySpaceAndTables <- function (sid) {
     CreateMonthlyTable(sid)
 }
 
+CreateSchoolsInfo <- function (keyspace_name) {
+    CreateKeySpace(keyspace_name)
+    cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(keyspace_name, ".schools", table_name, sep=""), "(sid varchar, PRIMARY KEY (sid))")
+    CqlExec(cmd)
+
+    cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(keyspace_name, ".sidsuuids", sep=""), "(sid varchar, uuid varchar, PRIMARY KEY (sid, uuid))")
+    CqlExec(cmd)
+}
+
 CreateKeySpace <- function (sid) {
     cmd <- paste("CREATE KEYSPACE IF NOT EXISTS", sid, "WITH REPLICATION = { 'class' : 'NetworkTopologyStrategy', 'datacenter1' : 3 }")
     CqlExec(cmd)

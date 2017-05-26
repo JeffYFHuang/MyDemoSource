@@ -4,6 +4,7 @@
 # script for Mapper (R-Hadoop integration)
 require(lubridate)
 require(rPython)
+require(MVN)
 require(data.table)
 require(rjson) #rjson lib shall be behind the lib data.table
 
@@ -117,6 +118,20 @@ HrmDateSummary <- function (data) {
    return(d)
 }
 
+DetectAbnormalHR <- function (data) {
+   if (is.null(data)) return(data)
+   data <- na.omit(data)
+#   print(data)
+   data <- data.frame(data)
+   colnames(data) <- c("situation", "timestamp", "hrm_report", "hr_peak_rate")
+   #d <- data[, list(test = chisq.out.test(hrm_report, opposite = TRUE)), by = list(situation)]
+   data <- data.frame(as.matrix(c(data$hrm_report, data$hrm_report), ncol=2));
+   print(data)
+   #print(solve(var(data[, c("situation", "hrm_report")])))
+   #result = mvOutlier(data[, c("hr_peak_rate", "hrm_report")], qqplot = T, method = "adj.quan", label = TRUE)
+   #print(result$newData)
+}
+
 sleepDateSummary <- function (data) {
    if (is.null(data)) return(data)
    data <- data.table(data)
@@ -202,6 +217,7 @@ while (length(line <- readLines(con, n = 1, warn = FALSE)) > 0) {
     step.t <- StepDateSummary(step.m)
     hrm.t <- HrmDateSummary(hrm.m)
     sleep.t <- sleepDateSummary(sleep.m)
+#    DetectAbnormalHR(hrm.m)
 
     unnametable <- function (tbl) {
        if (is.null(tbl)) return(tbl)

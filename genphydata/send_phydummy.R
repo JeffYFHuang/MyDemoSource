@@ -60,7 +60,7 @@ for (num in range) {
 #    print(time)
 #    time = time + (h - 1) * hours*60*60
 
-set.seed(as.integer(time))
+set.seed(as.integer(as.numeric(time)))
 i <- 1
 for (sid in school.ids) {
     print(uids[which(uids.sids == sid)])
