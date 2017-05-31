@@ -43,7 +43,7 @@ e1 <- read.csv("e1_new.csv", header=T)
 e1.Kaohsiung <- e1[regexpr("高雄市", e1[,3]) != -1, 1]
 set.seed(100)
 school.ids <- sample(e1.Kaohsiung, 50, replace = F)
-uids.sids <- sample(school.ids, length(range), replace = T)
+uids.sids <- sample(school.ids, 20000, replace = T)[range] #length(range), replace = T)
 
 uids = array()
 count = 1
@@ -62,7 +62,7 @@ for (num in range) {
 
 set.seed(as.integer(as.numeric(time)))
 i <- 1
-for (sid in school.ids) {
+for (sid in unique(uids.sids)) {
     print(uids[which(uids.sids == sid)])
     for (uid in uids[which(uids.sids == sid)]) {
        cat(i, sid, " ", uid, "\n")
@@ -75,4 +75,5 @@ for (sid in school.ids) {
        i <- i + 1
     }
 }
+
 #}

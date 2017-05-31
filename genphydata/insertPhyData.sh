@@ -11,7 +11,7 @@ p4=`echo $2 | cut -d \/ -f 4`
 
 output=$p1.$p2.$p3.$p4
 #echo $output
-output=/data/physical/out/$output
+output=/data/physical/out2/$output
 echo $output
 
 hadoop fs -rm -r $output

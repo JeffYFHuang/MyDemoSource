@@ -28,7 +28,7 @@ uids.sids <- sample(school.ids, number, replace = T) #This shall be modified for
 #uids.sids <- c(uids.sids, uids.sids, uids.sids, uids.sids)
 
 for (sid in school.ids) {
-   sid <- paste("elm", uids.sids[num], sep="")
+   sid <- paste("elm", sid, sep="")
    cqlcmd <- paste("INSERT INTO schoolsinfo.schools (sid) VALUES ('", sid, "')", sep="")
    cat(cqlcmd, "\n")
    python.call("cqlexec", cqlcmd)
