@@ -46,10 +46,12 @@ school.ids <- sample(e1.Kaohsiung, 50, replace = F)
 uids.sids <- sample(school.ids, 20000, replace = T)[range] #length(range), replace = T)
 
 uids = array()
+uuid.seeds = array()
 count = 1
 for (num in range) {
    set.seed(num)
    uids[count] = uuid()
+   uuid.seeds[count] = count
    count = count + 1
 }
 
@@ -60,18 +62,21 @@ for (num in range) {
 #    print(time)
 #    time = time + (h - 1) * hours*60*60
 
-set.seed(as.integer(as.numeric(time)))
+#set.seed(as.integer(as.numeric(time)))
 i <- 1
 for (sid in unique(uids.sids)) {
     print(uids[which(uids.sids == sid)])
+    count <- 1
+    seeds <- uuid.seeds[which(uids.sids == sid)]
     for (uid in uids[which(uids.sids == sid)]) {
        cat(i, sid, " ", uid, "\n")
+       set.seed(as.integer(as.numeric(time)) + as.integer(seeds[count]))
        data <- genActDataV2(uid, time, hours*60*60, win = 6*60*60)
-       #print(data)
        for (x in data) {
            x$sid = paste("elm", sid, sep="")
            send_phydummy (x$sid, x, x$data[[1]]$timestamp, addr = flumeserver)
        }
+       count <- count + 1
        i <- i + 1
     }
 }

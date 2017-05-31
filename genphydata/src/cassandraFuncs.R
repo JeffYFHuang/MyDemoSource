@@ -45,6 +45,7 @@ CqlExec <- function (cmd) {
                           print(paste("MY_WARNING:  ",war))
                           return(war)
                        }, error = function(err) {
+                          print(err)
                           # error handler picks up where error was generated
                           return(err)
                        }, finally = {
