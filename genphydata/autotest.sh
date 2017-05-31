@@ -24,10 +24,10 @@ ptypes=('date') #('date', 'week', 'month')
 
       sleep 5
       if `isProcessRunning $$`; then
-         Rscript send_phydummy.R "ip='172.18.161.1'" port=44448 bdate="'$cdate'" range=1:50 hours=24 &
-         Rscript send_phydummy.R "ip='172.18.161.1'" port=44448 bdate="'$cdate'" range=51:100 hours=24 &
-         Rscript send_phydummy.R "ip='172.18.161.1'" port=44448 bdate="'$cdate'" range=101:150 hours=24 &
-         Rscript send_phydummy.R "ip='172.18.161.1'" port=44448 bdate="'$cdate'" range=151:200 hours=24 &
+         Rscript send_phydummy.R "ip='172.18.161.1'" port=44448 bdate="'$cdate'" range=1:500 hours=24 &
+         Rscript send_phydummy.R "ip='172.18.161.1'" port=44448 bdate="'$cdate'" range=501:1000 hours=24 &
+         Rscript send_phydummy.R "ip='172.18.161.1'" port=44448 bdate="'$cdate'" range=1001:1500 hours=24 &
+         Rscript send_phydummy.R "ip='172.18.161.1'" port=44448 bdate="'$cdate'" range=1501:2000 hours=24 &
       fi
 
       while true; do

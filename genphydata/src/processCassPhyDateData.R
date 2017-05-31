@@ -45,7 +45,7 @@ Null2NA <- function (data) {
 SetupPyCasDriver <- function () {
     python.exec("from cassandra.cluster import Cluster")
     python.exec("import json")
-    python.exec("cluster = Cluster(['172.16.0.7', '172.16.0.6', '172.16.0.11'])")
+    python.exec("cluster = Cluster(['172.18.161.100', '172.18.161.101'])")
     python.exec("session = cluster.connect();")
     python.exec("session.default_timeout = 3600")
     python.exec("def setkeyspace(keyspace):return session.set_keyspace(keyspace)")

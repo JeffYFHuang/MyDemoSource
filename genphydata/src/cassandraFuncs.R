@@ -25,7 +25,7 @@ CreateKeySpaceAndTables <- function (sid) {
 
 CreateSchoolsInfo <- function (keyspace_name) {
     CreateKeySpace(keyspace_name)
-    cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(keyspace_name, ".schools", table_name, sep=""), "(sid varchar, PRIMARY KEY (sid))")
+    cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(keyspace_name, ".schools", sep=""), "(sid varchar, PRIMARY KEY (sid))")
     CqlExec(cmd)
 
     cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(keyspace_name, ".sidsuuids", sep=""), "(sid varchar, uuid varchar, PRIMARY KEY (sid, uuid))")
