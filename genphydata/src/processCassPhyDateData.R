@@ -210,8 +210,8 @@ ProcessContextTable <- function (tableName, beginDate, ndays) {
 
            if (phytype == 'sleep') {
               #  uuid | date | status | duration | ratio
-              d <- data[, list(duration = duration, status = as.numeric.factor(status), ts = as.numeric.factor(ts), ratio = as.numeric.factor(duration)/sum(as.numeric.factor(duration))), by = list(uuid)]
-              d <- d[, list(duration = as.integer(round(sum(as.numeric.factor(duration)))), ratio = sum(ratio)), by = list(uuid, ts, status)][order(uuid, status)]
+              d <- data[, list(duration = as.numeric.factor(duration), status = as.numeric.factor(status), ts = as.numeric.factor(ts), ratio = as.numeric.factor(duration)/sum(as.numeric.factor(duration))), by = list(uuid)]
+              d <- d[, list(duration = as.integer(round(sum(duration))), ratio = sum(ratio)), by = list(uuid, ts, status)][order(uuid, status)]
            }
         } else {
            if (phytype == 'context') {
