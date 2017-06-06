@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 
-#hadoop fs -rmr /tmp/restore
-#hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-2.6.0.jar -D mapreduce.job.maps=$1 -files src/ -mapper src/processPhyReducer.R -input $2 -output /tmp/restore
-#hadoop fs -rmr /tmp/restore
+hadoop fs -rmr /tmp/restore
+hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-2.6.0.jar -D mapreduce.job.maps=$1 -files src/ -mapper src/processPhyReducer.R -input $2 -output /tmp/restore
+hadoop fs -rmr /tmp/restore
 
 firstdayofmonth=$3
 daysofmonth=$4
 phytypes=('context' 'step' 'sleep' 'hrm')
-ptypes=('date' 'week' 'month')
+ptypes=('date') # 'week' 'month')
 
 for ptype in "${ptypes[@]}"
 do
