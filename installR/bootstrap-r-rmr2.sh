@@ -103,7 +103,12 @@ sudo -E R CMD INSTALL --byte-compile rhdfs
  
 #EOF1
 
+sudo add-apt-repository ppa:webupd8team/java
+sudo apt-get update
+sudo apt-get install -y oracle-java8-installer
+
 #install cassandra
+echo "deb http://debian.datastax.com/community stable main" | sudo tee -a /etc/apt/sources.list.d/cassandra.sources.list
 curl -L https://debian.datastax.com/debian/repo_key | sudo apt-key add -
 sudo apt-get update
 sudo apt-get install -y dsc30
