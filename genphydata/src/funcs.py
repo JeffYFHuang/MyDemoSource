@@ -1,6 +1,6 @@
 from cassandra.cluster import Cluster
 import json
-cluster = Cluster(['172.18.161.100', '172.18.161.101'])
+cluster = Cluster(['172.18.161.100', '172.18.161.101'], control_connection_timeout=None)
 session = cluster.connect();
 session.default_timeout = 3600
 

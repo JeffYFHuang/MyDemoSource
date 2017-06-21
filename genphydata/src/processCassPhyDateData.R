@@ -8,6 +8,9 @@ require(rmr2)
 require(rPython)
 require(rjson)
 
+Sys.setenv("HADOOP_CMD"="/media/data/hadoop_ecosystem/hadoop/bin/hadoop")
+Sys.setenv("HADOOP_STREAMING"="/media/data/hadoop_ecosystem/hadoop/share/hadoop/tools/lib/hadoop-streaming-2.6.0.jar")
+
 trimWhiteSpace <- function(line) gsub("(^ +)|( +$)", "", line)
 
 RoundValues <- function (values) {
@@ -45,7 +48,7 @@ Null2NA <- function (data) {
 SetupPyCasDriver <- function () {
     python.exec("from cassandra.cluster import Cluster")
     python.exec("import json")
-    python.exec("cluster = Cluster(['172.18.161.100', '172.18.161.101'])")
+    python.exec("cluster = Cluster(['172.18.161.100', '172.18.161.101'], control_connection_timeout=None)")
     python.exec("session = cluster.connect();")
     python.exec("session.default_timeout = 3600")
     python.exec("def setkeyspace(keyspace):return session.set_keyspace(keyspace)")
@@ -251,16 +254,6 @@ ProcessContextTable <- function (tableName, beginDate, ndays) {
               d <- d[, list(duration = as.integer(round(mean(as.numeric.factor(duration)))), ratio = sum(ratio)), by = list(uuid, ts, status)][order(uuid, status)]
            }
         }
-
-        #n <- colnames(d)
-        #if (ptype == 'week') {
-        #   n[which(n=='date')] <- 'wdate'
-        #}
-        #if (ptype == 'month') {
-        #   n[which(n=='date')] <- 'mdate'
-        #}
-        #colnames(d) <- n
-        #ClosePyCasDriver()
 
         return(d)
      }
