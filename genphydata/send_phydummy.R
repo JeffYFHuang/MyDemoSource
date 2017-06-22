@@ -52,7 +52,7 @@ count = 1
 for (num in range) {
    set.seed(num)
    uids[count] = uuid()
-   uuid.seeds[count] = count
+   uuid.seeds[count] = num
    count = count + 1
 }
 
