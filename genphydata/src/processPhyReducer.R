@@ -39,18 +39,44 @@ python.load("src/funcs.py", get.exception = T)
 
 con <- file("stdin", open = "r")
 while (length(line <- readLines(con, n = 1, warn = FALSE)) > 0) {
-    data <- fromJSON(line)
+    data <- NULL
+    tryCatch({
+               data <- fromJSON(line)
+            }, warning = function(war) {
+               return(NULL)
+            }, error = function(err) {
+               # error handler picks up where error was generated
+               return(NULL)
+            }, finally = {
+               # NOTE:  Finally is evaluated in the context of of the inital
+               # NOTE:  tryCatch block and 'e' will not exist if a warning
+               # NOTE:  or error occurred.
+               #print(paste("e =",e))
+    })
+
+    if(is.null(data)) next
+    #data <- fromJSON(line)
 
     keyspace <- data$keyspace
     for (n in names(data)[-c(1, 2)]) {
         for (d in data[[n]]) {
            d$uuid <- data$uuid
            # for hour table
-           cqlcmd <- getInsertCqlCmd(paste(keyspace, ".", n, "_hour", sep=""), d)
+           cqlcmd <- NULL
+           if (n != "abn") {
+              cqlcmd <- getInsertCqlCmd(paste(keyspace, ".", n, "_hour", sep=""), d)
+           } else {
+              if (d$ab == TRUE) {
+                 d$ab <- NULL
+                 d$hr_peak_rate <- NULL
+                 cqlcmd <- getInsertCqlCmd(paste(keyspace, ".", n, "_hrm", sep=""), d)
+              }
+           }
            #cat(cqlcmd, "\n")
+           if(!is.null(cqlcmd)) 
            python.call("cqlexec", cqlcmd)
         }
     }    
-    cat(line, "\n")
+    #cat(line, "\n")
 }
 close(con)

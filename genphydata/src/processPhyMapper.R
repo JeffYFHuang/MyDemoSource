@@ -118,18 +118,16 @@ HrmDateSummary <- function (data) {
    return(d)
 }
 
-DetectAbnormalHR <- function (data) {
+DetectAbnormalHR <- function (data, qratio = 0.975) {
    if (is.null(data)) return(data)
    data <- na.omit(data)
 #   print(data)
-   data <- data.frame(data)
-   colnames(data) <- c("situation", "timestamp", "hrm_report", "hr_peak_rate")
-   #d <- data[, list(test = chisq.out.test(hrm_report, opposite = TRUE)), by = list(situation)]
-   data <- data.frame(as.matrix(c(data$hrm_report, data$hrm_report), ncol=2));
-   print(data)
-   #print(solve(var(data[, c("situation", "hrm_report")])))
-   #result = mvOutlier(data[, c("hr_peak_rate", "hrm_report")], qqplot = T, method = "adj.quan", label = TRUE)
-   #print(result$newData)
+   data <- data.table(data)
+   colnames(data) <- c("situation", "ts", "hrm_report", "hr_peak_rate")
+   d <- data[, list(mean = mean(hrm_report), sd = sd(hrm_report), count = length(hrm_report)), by = list(situation)][order(situation)]
+   d <- d[, list(mean, sd, error = qnorm(qratio)*sd), by = list(situation)][order(situation)]
+   d <- setkey(data, situation)[d, ab := (hrm_report < mean - error | hrm_report > mean + error)][order(situation)]
+   return(d)
 }
 
 sleepDateSummary <- function (data) {
@@ -159,7 +157,22 @@ tables <- c("step", "sleep", "context", "hrm")
 con <- file("stdin", open = "r")
 count <- 1
 while (length(line <- readLines(con, n = 1, warn = FALSE)) > 0) {
-    data <- fromJSON(line)
+    data <- NULL
+    tryCatch({
+               data<-fromJSON(line)
+            }, warning = function(war) {
+            }, error = function(err) {
+               # error handler picks up where error was generated
+            }, finally = {
+               # NOTE:  Finally is evaluated in the context of of the inital
+               # NOTE:  tryCatch block and 'e' will not exist if a warning
+               # NOTE:  or error occurred.
+               #print(paste("e =",e))
+    })
+
+    if (is.null(data)) next
+
+    #data <- fromJSON(line)
     uuid <- data$uuid
     sid <- data$sid
 
@@ -217,7 +230,7 @@ while (length(line <- readLines(con, n = 1, warn = FALSE)) > 0) {
     step.t <- StepDateSummary(step.m)
     hrm.t <- HrmDateSummary(hrm.m)
     sleep.t <- sleepDateSummary(sleep.m)
-#    DetectAbnormalHR(hrm.m)
+    abn.t <- DetectAbnormalHR(hrm.m)
 
     unnametable <- function (tbl) {
        if (is.null(tbl)) return(tbl)
@@ -230,7 +243,8 @@ while (length(line <- readLines(con, n = 1, warn = FALSE)) > 0) {
                  context = unnametable(ctx.t),
                  step = unnametable(step.t),
                  sleep = unnametable(sleep.t),
-                 hrm = unnametable(hrm.t)
+                 hrm = unnametable(hrm.t),
+                 abn = unnametable(abn.t)
             )
 
     cat(toJSON(data), "\n")

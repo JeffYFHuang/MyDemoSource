@@ -21,6 +21,12 @@ CreateKeySpaceAndTables <- function (sid) {
     CreateDailyTable(sid)
     CreateWeeklyTable(sid)
     CreateMonthlyTable(sid)
+    CreateAbnormalHRMTable(sid)
+}
+
+CreateAbnormalHRMTable <- function (sid) {
+    cmd <- paste("CREATE TABLE IF NOT EXISTS", paste(sid, ".abn_hrm", sep=""), "(uuid varchar, ts bigint, situation int, hrm_report int, PRIMARY KEY (uuid, ts))")
+    CqlExec(cmd)
 }
 
 CreateSchoolsInfo <- function (keyspace_name) {

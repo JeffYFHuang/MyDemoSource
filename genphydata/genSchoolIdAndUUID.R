@@ -14,7 +14,7 @@ getInsertCqlCmd <- function(tblname, values) {
     return(cqlcmd)
 }
 
-number <- 20000
+number <- 2000
 e1 <- read.csv("e1_new.csv", header=T)
 e1.Kaohsiung <- e1[regexpr("高雄市", e1[,3]) != -1, 1]
 set.seed(100)

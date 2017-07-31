@@ -3,7 +3,7 @@
 #start flume service
 #flume-ng agent --conf-file hdfs_phydummy.conf --name a1 -Dflume.root.logger=INFO,console & #-Dflume.monitoring.type=ganglia -Dflume.monitoring.hosts=localhost:8649
 
-Rscript truncateKeyspacesTables.R
+#Rscript truncateKeyspacesTables.R
 isProcessRunning() { if [ $1 > /dev/null ]; then retval=true; else retval=false; fi; echo $retval; }
 
 firstdayofmonth=$1
