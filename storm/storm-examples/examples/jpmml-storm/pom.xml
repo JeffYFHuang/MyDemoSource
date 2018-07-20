@@ -30,6 +30,8 @@
 		<module>pmml-storm</module>
 		<module>pmml-storm-example</module>
                 <module>pmml-storm-kafka</module>
+                <module>pmml-storm-kafka-2</module>
+                <module>pmml-kafka-storm-hdfs-mqtt</module>
 	</modules>
 
 	<scm>

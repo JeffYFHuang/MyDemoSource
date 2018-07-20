@@ -73,8 +73,8 @@ fi
 sudo ln -s /usr/lib/x86_64-linux-gnu/libquadmath.so.0 $file
 
 # for the package update script to run, the hadoop user needs to own the R library
-sudo chown hduser /usr/local/lib/R -R
-sudo chown hduser /usr/lib/R -R
+sudo chown iasuser /usr/local/lib/R -R
+sudo chown iasuser /usr/lib/R -R
 # Install rmr2's prerequisite packages from CRAN, plus plyr and some other favorites:
 sudo R --no-save << EOF
 install.packages(c("rJava", "Rcpp", "RJSONIO", "bitops", "digest",

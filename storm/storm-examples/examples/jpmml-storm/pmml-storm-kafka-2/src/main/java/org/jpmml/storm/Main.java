@@ -60,7 +60,7 @@ public class Main {
 */		
         // Configuration
 
-        String zookeeperHost = "master:2181,data1:2181,data2:2181";
+        String zookeeperHost = "localhost:2181";
         ZkHosts zkHosts = new ZkHosts(zookeeperHost);
 
         SpoutConfig spoutConfig = new SpoutConfig(zkHosts, "hrvs", "", UUID.randomUUID().toString());
@@ -90,12 +90,12 @@ public class Main {
 		        .withPath("/data/stormtest/").withPrefix("terminalInfo_").withExtension(".log");
 
 		HdfsBolt hdfsbolt = new HdfsBolt()
-		        .withFsUrl("hdfs://10.0.0.5:9000")
+		        .withFsUrl("hdfs://192.168.0.154:9000")
 		        .withFileNameFormat(fileNameFormat)
 		        .withRecordFormat(format)
 		        .withRotationPolicy(rotationPolicy)
-		        .withSyncPolicy(syncPolicy);
-//		        .addRotationAction(new MoveFileAction().toDestination("/data/stormtest/"));
+		        .withSyncPolicy(syncPolicy)
+		        .addRotationAction(new MoveFileAction().toDestination("/data/stormtest/"));
 
 /*		List<FieldName> outputFields = new ArrayList<>();
 		outputFields.add(new FieldName("subject"));
@@ -117,6 +117,7 @@ public class Main {
 		config.setDebug(true);
         //config.put(Config.STORM_BLOBSTORE_INPUTSTREAM_BUFFER_SIZE_BYTES, 655360);
         config.put(Config.TOPOLOGY_MESSAGE_TIMEOUT_SECS, 3600);
+        config.put(Config.NIMBUS_THRIFT_MAX_BUFFER_SIZE, 25384000);
  
 		StormTopology topology = topologyBuilder.createTopology();
 		

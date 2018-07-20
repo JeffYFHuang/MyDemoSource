@@ -59,7 +59,7 @@ public class MqttBrokerPublisher {
     public static void startPublisher() throws Exception {
         MQTT client = new MQTT();
         client.setTracer(new MqttLogger());
-        client.setHost("tcp://localhost:1883");
+        client.setHost("tcp://192.168.0.149:1883");
         client.setClientId("MqttBrokerPublisher");
         connection = client.blockingConnection();
 
@@ -95,7 +95,7 @@ public class MqttBrokerPublisher {
     }
 
     public static void main(String[] args) throws Exception{
-        startBroker();
+        //startBroker();
         startPublisher();
         publish();
     }

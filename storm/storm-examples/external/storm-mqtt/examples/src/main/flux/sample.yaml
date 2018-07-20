@@ -29,7 +29,7 @@ components:
     className: "org.apache.storm.mqtt.common.MqttOptions"
     properties:
       - name: "url"
-        value: "tcp://localhost:1883"
+        value: "tcp://192.168.0.149:1883"
       - name: "topics"
         value:
           - "/users/tgoetz/#"
