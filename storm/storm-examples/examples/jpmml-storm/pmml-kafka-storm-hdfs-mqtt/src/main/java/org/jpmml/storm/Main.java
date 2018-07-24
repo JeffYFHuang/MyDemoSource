@@ -105,11 +105,11 @@ public class Main {
 */
 		TopologyBuilder topologyBuilder = new TopologyBuilder();
 		topologyBuilder.setSpout("input", kafkaspout);
-		topologyBuilder.setBolt("pmml", pmmlBolt, 3)
+		topologyBuilder.setBolt("pmml", pmmlBolt, 2)
 			.shuffleGrouping("input");
 		//topologyBuilder.setBolt("csvWriter", csvWriter, 2)
 		//.shuffleGrouping("pmml");
-		topologyBuilder.setBolt("hdfsbolt", hdfsbolt, 3)
+		topologyBuilder.setBolt("hdfsbolt", hdfsbolt, 1)
 			.shuffleGrouping("pmml");
 
 		Config config = new Config();
