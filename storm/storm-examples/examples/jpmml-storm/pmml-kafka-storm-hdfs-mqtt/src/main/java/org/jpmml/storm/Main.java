@@ -89,7 +89,7 @@ public class Main {
 		        .withPath("/data/stormtest/").withPrefix("terminalInfo_").withExtension(".log");
 
 		HdfsBolt hdfsbolt = new HdfsBolt()
-		        .withFsUrl("hdfs://192.168.0.154:9000")
+		        .withFsUrl("hdfs://localhost:9000")
 		        .withFileNameFormat(fileNameFormat)
 		        .withRecordFormat(format)
 		        .withRotationPolicy(rotationPolicy)
@@ -105,7 +105,7 @@ public class Main {
 */
 		TopologyBuilder topologyBuilder = new TopologyBuilder();
 		topologyBuilder.setSpout("input", kafkaspout);
-		topologyBuilder.setBolt("pmml", pmmlBolt, 2)
+		topologyBuilder.setBolt("pmml", pmmlBolt, 3)
 			.shuffleGrouping("input");
 		//topologyBuilder.setBolt("csvWriter", csvWriter, 2)
 		//.shuffleGrouping("pmml");

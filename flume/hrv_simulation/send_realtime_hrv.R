@@ -48,6 +48,7 @@ if (length(args) != 0){
   }
 }
 
+#cat(ip)
 execution = "Exe. Rscript http_send_hrv_kafka.R \"ip='10.0.0.1'\" port=44448 num=1000 sample_num=144";
 if (is.null(ip))
    stop(paste("please provide flume server address!", execution))
@@ -77,7 +78,7 @@ while (count <= num) {
      #print(val)
      #subject = paste(nodename, "-", pid,  "-", count, sep="")
      subject = nodename
-     #subject = "iasuser-u16043"#nodename
+     #subject = "hrvdemo" #nodename
      hrvdata <- combineHRV(val)
      send_one_hrv(hrvdata, subject, addr=flumeserver, port=port, count) 
      #lapply (hrvdata, send_one_hrv, subject = paste(curSubject, "-YFnb1", count, sep=""), addr=flumeserver, port=port)

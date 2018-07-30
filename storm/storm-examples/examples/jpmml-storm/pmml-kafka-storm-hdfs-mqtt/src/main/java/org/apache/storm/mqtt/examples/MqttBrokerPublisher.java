@@ -39,7 +39,7 @@ public class MqttBrokerPublisher {
     public static void startBroker() throws Exception {
         LOG.info("Starting broker...");
         broker = new BrokerService();
-        broker.addConnector("mqtt://192.168.0.122:1883");
+        broker.addConnector("mqtt://127.0.0.1:1883");
         broker.setDataDirectory("target");
         broker.start();
         LOG.info("MQTT broker started");
@@ -60,7 +60,7 @@ public class MqttBrokerPublisher {
         LOG.info("username: "+username);
         MQTT client = new MQTT();
         client.setTracer(new MqttLogger());
-        client.setHost("tcp://192.168.0.122:1883");
+        client.setHost("tcp://127.0.0.1:1883");
         client.setClientId(username);
         //client.setUserName(username);
         connection = client.blockingConnection();
