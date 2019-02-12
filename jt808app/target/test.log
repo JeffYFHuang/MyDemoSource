@@ -1,0 +1,18 @@
+main:jt808App
+main:connectToServer
+main:JT808_JT808Client  connect: 192.168.0.122:5015
+gpm:8:GPSManager.openGps( 0, 115200 );
+main:JT808_Connection  connect called
+main:JT808_Connection  start connect thread
+Connect thread:JT808_Connection  connecting
+Connect thread:JT808_Connection  create socket
+gps:3:GpsNmeaParser{0:115200}.portOpen:1 ex : class java.io.FileNotFoundException : /dev/smd7 (No such file or directory)
+Connect thread:JT808_Connection  connect SUCCESS !!!
+Connect thread:thread onSuccess
+Thread-3:thread onSuccess
+Thread-3:连接成功
+Thread-3:registerClient
+262907932489
+Thread-3:JT808_JT808Client  registerClient { id=0100, prov=44, city=307, mfrs=[55, 48, 57, 54, 48], model=[84, 55, 45, 84, 56, 48, 56, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], cltId=[48, 51, 50, 57, 49, 55, 48], pClr=-2, pTxt= }
+Pigeon Message Writer ( ):JT808_MessageWriter  writePackets: { id=100, lng=false, ciph=0, phn=[38, 41, 7, -109, 36, -119], sn=1, ttl=0, idx=0, pld=[0, 44, 1, 51, 55, 48, 57, 54, 48, 84, 55, 45, 84, 56, 48, 56, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 48, 51, 50, 57, 49, 55, 48, -2] }
+7E010000252629079324890001002C0133373039363054372D543830380000000000000000000000000030333239313730FEDF7EPigeon Message Writer ( ):

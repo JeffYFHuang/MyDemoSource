@@ -12,7 +12,7 @@ send_one_hrv <- function (data, subject = "x01", addr="172.18.161.100", port=444
     httpheader <- c(Accept="application/json; charset=UTF-8", "Content-Type"="application/json")
 #    print(httpheader)
     result=postForm(paste("http://", addr, ":", port, "/drpc/drpcFunc", sep=""), .opts=list(httpheader=httpheader, postfields=http_content))
-#    print(result)
+    print(result)
 }
 
 fromJSON2 <- function(hrv) {
@@ -25,7 +25,7 @@ combineHRV <- function(hrvdata) {
     now <- round(as.numeric(Sys.time())*1000, digits=0)
     for (i in 1:length(hrvdata)){
          hrvdata[[i]]$startTime <- now + times[i]
-         hrvdata[[i]]$endTime <- now + times[i] + 300
+         hrvdata[[i]]$endTime <- hrvdata[[i]]$startTime + 300*1000
 #        hrvdata[[i]]$token<-"iashrvtest"
 #        hrvdata[[i]]$startTime <- as.numeric(as.POSIXlt(now + times[i], origin='1970-01-01'))
 #        hrvdata[[i]]$endTime <- as.numeric(as.POSIXlt(now + times[i] + 300, origin='1970-01-01'))
@@ -68,8 +68,9 @@ lines <-readLines(conn)
 pid = Sys.getpid()
 curSubject <- ""
 hrvdata <- NULL
-now <- as.numeric(Sys.time())
-times <- seq(0, 300*sample_num, 300)
+#now <- as.numeric(Sys.time())
+now <- round(as.numeric(Sys.time())*1000, digits=0)
+times <- seq(0, 300*sample_num*1000, 300*1000)
 count = 1
 while (count <= num) {
      next_sub = TRUE

@@ -105,12 +105,12 @@ public class Main {
 */
 		TopologyBuilder topologyBuilder = new TopologyBuilder();
 		topologyBuilder.setSpout("input", kafkaspout);
-		topologyBuilder.setBolt("pmml", pmmlBolt, 3)
+		topologyBuilder.setBolt("pmml", pmmlBolt, 1)
 			.shuffleGrouping("input");
 		//topologyBuilder.setBolt("csvWriter", csvWriter, 2)
 		//.shuffleGrouping("pmml");
-		topologyBuilder.setBolt("hdfsbolt", hdfsbolt, 1)
-			.shuffleGrouping("pmml");
+		//topologyBuilder.setBolt("hdfsbolt", hdfsbolt, 1)
+		//`	.shuffleGrouping("pmml");
 
 		Config config = new Config();
 		config.setDebug(true);
@@ -121,7 +121,7 @@ public class Main {
 		StormTopology topology = topologyBuilder.createTopology();
 		
         if (args != null && args.length > 1) {
-	           config.setNumWorkers(8);
+	           config.setNumWorkers(3);
 
 	           StormSubmitter.submitTopologyWithProgressBar(args[1], config, topology);
 	    } else {
