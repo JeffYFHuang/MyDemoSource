@@ -1,0 +1,843 @@
+    1  ls
+    2  sudo apt-get autoclean ; sudo apt-get autoremove -y -f ; sudo apt-get dist-upgrade -y -f ; sudo apt-get update ; sudo apt-get upgrade -y -f ; sudo apt-get autoclean ; sudo apt-get autoremove -y -f
+    3  sudo reboot 
+    4  dmesg 
+    5  ls
+    6  ifconfig 
+    7  sudo -i
+    8  vim .bashrc 
+    9  exit
+   10  sudo apt-get autoclean ; sudo apt-get autoremove -y -f ; sudo apt-get dist-upgrade -y -f ; sudo apt-get update ; sudo apt-get upgrade -y -f ; sudo apt-get autoclean ; sudo apt-get autoremove -y -f
+   11  sudo apt -y install linux-image-extra-4.4.0-112
+   12  sudo reboot 
+   13  flume-ng
+   14  ls
+   15  cd 
+   16  sudo -i
+   17  ps -aux | grep flume-ng
+   18  sudo -i
+   19  sudo apt -y purge linux-image-4.4.0-104-generic linux-image-4.4.0-108-generic linux-image-4.4.0-109-generic
+   20  sudo apt-get autoclean ; sudo apt-get autoremove -y -f ; sudo apt-get dist-upgrade -y -f ; sudo apt-get update ; sudo apt-get upgrade -y -f ; sudo apt-get autoclean ; sudo apt-get autoremove -y -f
+   21  cd /usr/lib/jvm/
+   22  ls
+   23  ll
+   24  sudo add-apt-repository ppa:webupd8team/java
+   25  sudo apt-get autoclean ; sudo apt-get autoremove -y -f ; sudo apt-get dist-upgrade -y -f ; sudo apt-get update ; sudo apt-get upgrade -y -f ; sudo apt-get autoclean ; sudo apt-get autoremove -y -f
+   26  sudo apt -y install oracle-java8-installer
+   27  sudo apt -y purge openjdk-8-j
+   28  sudo apt -y purge openjdk-8-j*
+   29  sudo apt-get autoclean ; sudo apt-get autoremove -y -f ; sudo apt-get dist-upgrade -y -f ; sudo apt-get update ; sudo apt-get upgrade -y -f ; sudo apt-get autoclean ; sudo apt-get autoremove -y -f
+   30  ls
+   31  ll
+   32  cat ~/.bashrc 
+   33  ls
+   34  rm default-java 
+   35  sudo rm default-java 
+   36  ls
+   37  vim ~/.bashrc 
+   38  sudo -i
+   39  ll
+   40  cd 
+   41  ls
+   42  ll
+   43  sudo apt-get autoclean ; sudo apt-get autoremove -y -f ; sudo apt-get dist-upgrade -y -f ; sudo apt-get update ; sudo apt-get upgrade -y -f ; sudo apt-get autoclean ; sudo apt-get autoremove -y -f
+   44  dmesg 
+   45  sudo apt-get autoclean ; sudo apt-get autoremove -y -f ; sudo apt-get dist-upgrade -y -f ; sudo apt-get update ; sudo apt-get upgrade -y -f ; sudo apt-get autoclean ; sudo apt-get autoremove -y -f
+   46  sudo -i
+   47  dmesg 
+   48  sudo -i
+   49  exit
+   50  sudo -i
+   51  exit
+   52  sudo vim /etc/default/locale 
+   53  exit
+   54  sudo apt-get autoclean ; sudo apt-get autoremove -y -f ; sudo apt-get dist-upgrade -y -f ; sudo apt-get update ; sudo apt-get upgrade -y -f --allow-downgrades ; sudo apt-get autoclean ; sudo apt-get autoremove -y -f
+   55  exit
+   56  sudo apt-get autoclean ; sudo apt-get autoremove -y -f ; sudo apt-get dist-upgrade -y -f ; sudo apt-get update ; sudo apt-get upgrade -y -f --allow-downgrades ; sudo apt-get autoclean ; sudo apt-get autoremove -y -f
+   57  exit
+   58  sudo apt -y install ganglia-monitor
+   59  sudo vim /etc/ganglia/gmond.conf 
+   60  sudo service ganglia-monitor restart 
+   61  exit
+   62  sudo systemctl enable ganglia-monitor
+   63  exit
+   64  sudo -i
+   65  sudo apt-get autoclean ; sudo apt-get autoremove -y -f ; sudo apt-get dist-upgrade -y -f ; sudo apt-get update ; sudo apt-get upgrade -y -f --allow-downgrades ; sudo apt-get autoclean ; sudo apt-get autoremove -y -f
+   66  exit
+   67  dmesg 
+   68  ll
+   69  exit
+   70  sudo apt-get autoclean ; sudo apt-get autoremove -y -f ; sudo apt-get dist-upgrade -y -f ; sudo apt-get update ; sudo apt-get upgrade -y -f --allow-downgrades ; sudo apt-get autoclean ; sudo apt-get autoremove -y -f
+   71  exit
+   72  sudo apt-get autoclean ; sudo apt-get autoremove -y -f ; sudo apt-get dist-upgrade -y -f ; sudo apt-get update ; sudo apt-get upgrade -y -f --allow-downgrades ; sudo apt-get autoclean ; sudo apt-get autoremove -y -f
+   73  sudo reboot 
+   74  ls
+   75  sudo -i
+   76  exit
+   77  sudo apt-get autoclean ; sudo apt-get autoremove -y -f ; sudo apt-get dist-upgrade -y -f ; sudo apt-get update ; sudo apt-get upgrade -y -f --allow-downgrades ; sudo apt-get autoclean ; sudo apt-get autoremove -y -f
+   78  exit
+   79  sudo apt-get autoclean ; sudo apt-get autoremove -y -f ; sudo apt-get dist-upgrade -y -f ; sudo apt-get update ; sudo apt-get upgrade -y -f --allow-downgrades ; sudo apt-get autoclean ; sudo apt-get autoremove -y -f
+   80  exit
+   81  tail -f /var/log/flume.log 
+   82  sudo apt-get autoclean ; sudo apt-get autoremove -y -f ; sudo apt-get dist-upgrade -y -f ; sudo apt-get update ; sudo apt-get upgrade -y -f --allow-downgrades ; sudo apt-get autoclean ; sudo apt-get autoremove -y -f
+   83  exit
+   84  sudo -i
+   85  sudo -i
+   86  ps -aux | flume
+   87  ps -aux | grep flume
+   88  telnet 192.168.0.90 44448
+   89  ifconfig
+   90  telnet 172.18.0.34 44448
+   91  ls
+   92  more /usr/local/flume/conf/flume.conf
+   93  ifconfig
+   94  telnet 172.18.0.34 44448
+   95  telnet 192.168.0.90 44448
+   96  ls
+   97  more /etc/
+   98  telnet 192.168.0.90 44448
+   99  telnet 192.168.0.95 1883
+  100  ls
+  101  exit
+  102  ls
+  103  ps -aux | grep flume
+  104  kill -9 968
+  105  sudo kill -9 968
+  106  crontab -l
+  107  ps -aux | grep flume
+  108  kill -9 997
+  109  sudo kill -9 997
+  110  sudo /usr/local/flume/bin/flume-ng agent --conf conf --conf-file /usr/local/flume/conf/flume.conf --name a1 -Dflume.root.logger=INFO,LOGFILE &
+  111  ps -aux | grep flume
+  112  telnet localhost 44448
+  113  telnet 192.168.0.90 44448
+  114  netstat --help
+  115  netstat -s -n 44448
+  116  telnet 192.168.0.90 44448
+  117  history
+  118  history | more
+  119  more .bashrc 
+  120  ls
+  121  cd scripts/
+  122  ls
+  123  cd logs/
+  124  more /var/log/flume.log 
+  125  ls /var/log/flume.log 
+  126  ps -aux | grep flume
+  127  kill -9 29557
+  128  sudo kill -9 29557
+  129  sudo kill -9 29558
+  130  sudo /usr/local/flume/bin/flume-ng agent --conf conf --conf-file /usr/local/flume/conf/flume.conf --name a1 -Dflume.root.logger=INFO,LOGFILE
+  131  java --version
+  132  java -version
+  133  sudo /usr/local/flume/bin/flume-ng agent --conf conf --conf-file /usr/local/flume/conf/flume.conf --name a1 -Dflume.root.logger=INFO,LOGFILE
+  134  export JAVA_HOME=/usr/lib/jvm/java-8-oracle/
+  135  sudo /usr/local/flume/bin/flume-ng agent --conf conf --conf-file /usr/local/flume/conf/flume.conf --name a1 -Dflume.root.logger=INFO,LOGFILE
+  136  sudo vim /usr/local/flume/bin/flume-ng
+  137  sudo /usr/local/flume/bin/flume-ng agent --conf conf --conf-file /usr/local/flume/conf/flume.conf --name a1 -Dflume.root.logger=INFO,LOGFILE
+  138  sudo vim /usr/local/flume/bin/flume-ng
+  139  sudo /usr/local/flume/bin/flume-ng agent --conf conf --conf-file /usr/local/flume/conf/flume.conf --name a1 -Dflume.root.logger=INFO,LOGFILE
+  140  sudo /usr/local/flume/bin/flume-ng agent --conf conf --conf-file /usr/local/flume/conf/flume.conf --name a1 -Dflume.root.logger=INFO,LOGFILE | more
+  141  sudo vim /usr/local/flume/bin/flume-ng
+  142  echo $JAVA_HOME
+  143  ls /usr/lib/jvm/java-8-oracle/
+  144  cd /usr/local/flume/
+  145  sudo /usr/local/flume/bin/flume-ng agent --conf conf --conf-file /usr/local/flume/conf/flume.conf --name a1 -Dflume.root.logger=INFO,LOGFILE
+  146  ls
+  147  more conf/
+  148  more conf/flume-env.sh.template 
+  149  ls
+  150  cp conf/flume-env.sh.template conf/flume-env.sh
+  151  vim conf/flume-env.sh
+  152  ls /usr/lib/jvm/java-8-oracle
+  153  sudo /usr/local/flume/bin/flume-ng agent --conf conf --conf-file /usr/local/flume/conf/flume.conf --name a1 -Dflume.root.logger=INFO,LOGFILE
+  154  ls
+  155  vim conf/flume.conf 
+  156  ls
+  157  more conf/
+  158  more conf/flume.conf 
+  159  more /etc/hosts
+  160  telnet hadoop-cluster-hadoop-master-50g-0 9000
+  161  ls
+  162  more conf/flume.conf 
+  163  cd ~
+  164  ls
+  165  cd /home
+  166  ls
+  167  cd /usr/local/flume/
+  168  ls
+  169  vim conf/flume.conf 
+  170  sudo vim conf/flume.conf 
+  171  ls
+  172  more conf/flume.conf 
+  173  mkdir /home/ubuntu/checkpoint
+  174  mkdir /home/ubuntu/data
+  175  sudo /usr/local/flume/bin/flume-ng agent --conf conf --conf-file flume.conf --name a1 -Dflume.root.logger=INFO,LOGFILE
+  176  ps -aux | grep flume
+  177  sudo vim conf/flume.conf 
+  178  sudo /usr/local/flume/bin/flume-ng agent --conf conf --conf-file conf/flume.conf --name a1 -Dflume.root.logger=INFO,LOGFILE
+  179  sudo vim conf/flume.conf 
+  180  sudo /usr/local/flume/bin/flume-ng agent --conf-file conf/flume.conf --name a1 -Dflume.root.logger=INFO,LOGFILE
+  181  sudo /usr/local/flume/bin/flume-ng agent --conf conf --conf-file conf/flume.conf --name a1
+  182  vim conf/flume-env.sh
+  183  vim bin/flume-ng
+  184  sudo /usr/local/flume/bin/flume-ng agent --conf-file conf/flume.conf --name a1 -Dflume.root.logger=INFO,LOGFILE
+  185  sudo /usr/local/flume/bin/flume-ng agent - --conf conf -conf-file conf/flume.conf --name a1 -Dflume.root.logger=INFO,LOGFILE
+  186  sudo /usr/local/flume/bin/flume-ng agent --conf conf -conf-file conf/flume.conf --name a1 -Dflume.root.logger=INFO,LOGFILE
+  187  ls
+  188  sudo vim conf/flume.conf 
+  189  sudo /usr/local/flume/bin/flume-ng agent --conf conf -conf-file conf/flume.conf --name a1 -Dflume.root.logger=INFO,LOGFILE
+  190  sudo vim conf/flume.conf 
+  191  sudo /usr/local/flume/bin/flume-ng agent --conf conf -conf-file conf/flume.conf --name a1 -Dflume.root.logger=INFO,LOGFILE
+  192  sudo vim conf/flume.conf 
+  193  vim bin/flume-ng
+  194  sudo /usr/local/flume/bin/flume-ng agent --conf conf -conf-file conf/flume.conf --name a1 -Dflume.root.logger=INFO,LOGFILE
+  195  sudo vim conf/flume.conf 
+  196  more /etc/hosts
+  197  sudo /usr/local/flume/bin/flume-ng agent --conf conf -conf-file conf/flume.conf --name a1 -Dflume.root.logger=INFO,LOGFILE
+  198  ls
+  199  sudo /usr/local/flume/bin/flume-ng agent -conf-file conf/flume.conf --name a1 -Dflume.root.logger=INFO,LOGFILE
+  200  git clone https://github.com/JeffYFHuang/workspace/tree/master/genphydata
+  201  ping 8.8.8.8
+  202  cd ~
+  203  git clone https://github.com/JeffYFHuang/workspace
+  204  ls
+  205  cd workspace/
+  206  ls
+  207  rm hbase/ flume/ hive kafka/ README.md storm/ -rf
+  208  ls
+  209  rm webdemo/ -rf
+  210  ls
+  211  rm installR/ -rf
+  212  ls
+  213  rm nodejs/ -rf
+  214  rm HRV/ -rf
+  215  ls
+  216  rm Spark/
+  217  rm Spark/ -rf
+  218  ls
+  219  rm .git/ -rf
+  220  ls
+  221  cd genphydata/
+  222  ls
+  223  rm genActData_v2.R
+  224  rm genActData.R
+  225  ls
+  226  vim hdfs_phydummy.conf 
+  227  sudo vim /usr/local/flume/conf/flume.conf 
+  228  vim hdfs_phydummy.conf 
+  229  ls
+  230  more send_phydummy.sh
+  231  ls
+  232  more send_phydummy.sh
+  233  flume-ng agent --conf-file hdfs_phydummy.conf --name a1 -Dflume.root.logger=INFO,console
+  234  ls
+  235  cd 
+  236  cd ..
+  237  ls
+  238  cd ubuntu/
+  239  ls
+  240  cd scripts/
+  241  ls
+  242  cd includes/
+  243  ls
+  244  cd ..
+  245  ls
+  246  cd ..
+  247  wget http://archive.apache.org/dist/flume/stable/apache-flume-1.8.0-bin.tar.gz
+  248  ls
+  249  cd /usr/
+  250  cd local/
+  251  ls
+  252  mv flume/ flume.old
+  253  sudo mv flume/ flume.old
+  254  sudo cp ~/apache-flume-1.8.0-bin.tar.gz .
+  255  sudo tar -zxvf apache-flume-1.8.0-bin.tar.gz 
+  256  ls
+  257  mv apache-flume-1.8.0-bin flume
+  258  sudo mv apache-flume-1.8.0-bin flume
+  259  vi ~/.bashrc 
+  260  ls -asl
+  261  cd ~
+  262  ls
+  263  rm apache-flume-1.8.0-bin.tar.gz 
+  264  cd workspace/
+  265  flume-ng agent --conf-file hdfs_phydummy.conf --name a1 -Dflume.root.logger=INFO,console
+  266  . ~/.bashrc 
+  267  flume-ng agent --conf-file hdfs_phydummy.conf --name a1 -Dflume.root.logger=INFO,console
+  268  sudo flume-ng agent --conf-file hdfs_phydummy.conf --name a1 -Dflume.root.logger=INFO,console
+  269  sudo /usr/local/flume/bin/flume-ng agent --conf-file hdfs_phydummy.conf --name a1 -Dflume.root.logger=INFO,console
+  270  ls
+  271  sudo /usr/local/flume/bin/flume-ng agent --conf-file genphydata/hdfs_phydummy.conf --name a1 -Dflume.root.logger=INFO,console
+  272  sudo /usr/local/flume/bin/flume-ng agent --conf-file genphydata/hdfs_phydummy.conf --name a1 -Dflume.root.logger=INFO,ERROR,console
+  273  ls
+  274  cd /usr/local/
+  275  mv flume flume.new
+  276  sudo mv flume flume.new
+  277  sudo mv flume.old/ flume
+  278  cd flume
+  279  ls
+  280  vim conf/flume-env.sh
+  281  sudo /usr/local/flume/bin/flume-ng agent --conf-file genphydata/hdfs_phydummy.conf --name a1 -Dflume.root.logger=INFO,ERROR,console
+  282  ls
+  283  cd ~
+  284  sudo /usr/local/flume/bin/flume-ng agent --conf-file genphydata/hdfs_phydummy.conf --name a1 -Dflume.root.logger=INFO,ERROR,console
+  285  ls
+  286  cd workspace/
+  287  ls
+  288  cd genphydata/
+  289  sudo /usr/local/flume/bin/flume-ng agent --conf-file genphydata/hdfs_phydummy.conf --name a1 -Dflume.root.logger=INFO,ERROR,console
+  290  sudo /usr/local/flume/bin/flume-ng agent --conf /usr/local/flume/conf/ --conf-file genphydata/hdfs_phydummy.conf --name a1 -Dflume.root.logger=INFO,ERROR,console
+  291  ls
+  292  cd workspace/
+  293  ls
+  294  cd genphydata/
+  295  ls
+  296  sudo /usr/local/flume/bin/flume-ng agent --conf /usr/local/flume/conf/ --conf-file genphydata/hdfs_phydummy.conf --name a1 -Dflume.root.logger=INFO,ERROR,console
+  297  more hdfs_phydummy.conf 
+  298  cd ..
+  299  wget https://archive.apache.org/dist/hadoop/core/hadoop-2.7.1/hadoop-2.7.1.tar.gz
+  300  tar -zxvf hadoop-2.7.1.tar.gz 
+  301  ls
+  302  sudo mv hadoop-2.7.1 /usr/local/hadoop
+  303  sud chown -R hadoop:hadoop /usr/local/hadoop/
+  304  sudo chown -R hadoop:hadoop /usr/local/hadoop/
+  305  useradd hadoop
+  306  sudo useradd hadoop
+  307  sudo passwd hadoop
+  308  ls
+  309  cd genphydata/
+  310  ls
+  311  sudo /usr/local/flume/bin/flume-ng agent --conf /usr/local/flume/conf/ --conf-file genphydata/hdfs_phydummy.conf --name a1 -Dflume.root.logger=INFO,ERROR,console
+  312  unset FLUME_HOME
+  313  sudo /usr/local/flume/bin/flume-ng agent --conf /usr/local/flume/conf/ --conf-file genphydata/hdfs_phydummy.conf --name a1 -Dflume.root.logger=DEBUG,console
+  314  vim ~/.bashrc 
+  315  ls
+  316  vim /usr/local/flume/conf/flume-env.sh
+  317  sudo /usr/local/flume/bin/flume-ng agent --conf /usr/local/flume/conf/ --conf-file genphydata/hdfs_phydummy.conf --name a1 -Dflume.root.logger=DEBUG,console
+  318  ls /usr/local/flume/lib/
+  319  vim /usr/local/flume/conf/flume-env.sh
+  320  sudo /usr/local/flume/bin/flume-ng agent --conf /usr/local/flume/conf/ --conf-file genphydata/hdfs_phydummy.conf --name a1 -Dflume.root.logger=DEBUG,console
+  321  cd ..
+  322  wget https://github.com/JeffYFHuang/workspace/blob/master/flume/flume_20161031.tar.gz
+  323  ls
+  324  ls -asl
+  325  tar -zxvf flume_20161031.tar.gz 
+  326  rm flume_20161031.tar.gz 
+  327  git clone https://github.com/JeffYFHuang/workspace
+  328  ls
+  329  cd workspace/
+  330  ls
+  331  cd flume/
+  332  ls
+  333  cp flume_20161031.tar.gz ../..
+  334  cd ../..
+  335  ls
+  336  tar -zxvf flume_20161031.tar.gz 
+  337  ls
+  338  sudo mv /usr/local/flume /usr/local/flume.old
+  339  ls
+  340  sudo mv ./usr/local/flume/ /usr/local/flume
+  341  ls
+  342  rm usr/ -rf
+  343  cd genphydata/
+  344  ls
+  345  sudo /usr/local/flume/bin/flume-ng agent --conf /usr/local/flume/conf/ --conf-file genphydata/hdfs_phydummy.conf --name a1 -Dflume.root.logger=DEBUG,console
+  346  sudo vim /usr/local/flume/bin/flume-ng
+  347  sudo vim /usr/local/flume/conf/flume-env.sh
+  348  sudo vim /usr/local/flume/bin/flume-ng
+  349  sudo vim /usr/local/flume/conf/flume-env.sh
+  350  ls /usr/lib/jvm/java-8-oracle/
+  351  sudo /usr/local/flume/bin/flume-ng agent --conf /usr/local/flume/conf/ --conf-file genphydata/hdfs_phydummy.conf --name a1 -Dflume.root.logger=DEBUG,console
+  352  cd ..
+  353  sudo /usr/local/flume/bin/flume-ng agent --conf /usr/local/flume/conf/ --conf-file genphydata/hdfs_phydummy.conf --name a1 -Dflume.root.logger=DEBUG,console
+  354  ls
+  355  rm workspace/ -rf
+  356  ls
+  357  cd genphydata/
+  358  ls
+  359  cdmore hdfs_phydummy.conf 
+  360  more hdfs_phydummy.conf 
+  361  sudo /usr/local/flume/bin/flume-ng agent --conf /usr/local/flume/conf/ --conf-file genphydata/hdfs_phydummy.conf --name a1 -Dflume.root.logger=DEBUG,console &
+  362  cd ..
+  363  sudo /usr/local/flume/bin/flume-ng agent --conf /usr/local/flume/conf/ --conf-file genphydata/hdfs_phydummy.conf --name a1 -Dflume.root.logger=DEBUG,console &
+  364  exit
+  365  ls
+  366  cd workspace/
+  367  ls
+  368  vim flume.conf
+  369  ps -aux | grep flume
+  370  sudo kill -9 32415
+  371  sudo kill -9 32416
+  372  sudo /usr/local/flume/bin/flume-ng agent --conf /usr/local/flume/conf/ --conf-file flume.conf --name a1 -Dflume.root.logger=DEBUG,console &
+  373  ping hadoop-cluster-master-0
+  374  more /etcc/hosts
+  375  more /etc/hosts
+  376  vim flume.conf
+  377  ls
+  378  ps -aux | grep flume
+  379  kill -9 32514
+  380  sudo kill -9 32514
+  381  sudo kill -9 32515
+  382  ls
+  383  more genphydata/hdfs_phydummy.conf 
+  384  ls
+  385  vim flume.conf 
+  386  sudo /usr/local/flume/bin/flume-ng agent --conf /usr/local/flume/conf/ --conf-file flume.conf --name a1 -Dflume.root.logger=INFO,console &
+  387  exit
+  388  ls
+  389  more /etc/hosts
+  390  ls
+  391  more /var/log/flume.log 
+  392  more /var/log/syslog
+  393  ls
+  394  more workspace/
+  395  ls
+  396  cd workspace/
+  397  ls
+  398  more flume.conf 
+  399  more /etc/hosts
+  400  ls
+  401  more flume.conf 
+  402  ls
+  403  more /usr/local/flume.old/conf/flume.conf 
+  404  ls
+  405  exit
+  406  ls
+  407  cd /home/
+  408  ls
+  409  sudo cp ubuntu/ hadoop/ -rf
+  410  ls
+  411  ls -asl
+  412  sudo chown hadoop:hadoop hadoop/ -R
+  413  cd hadoop/
+  414  ls
+  415  su - hadoop
+  416  history
+  417  su - hadoop
+  418  exit
+  419  ps -aux | grep flume
+  420  su - hadoop
+  421  exit
+  422  ls
+  423  cd workspace/
+  424  ls
+  425  more flume.conf 
+  426  ls
+  427  more /usr/local/flume.old/conf/flume.conf 
+  428  more flume.conf 
+  429  more /usr/local/flume.old/conf/flume.conf 
+  430  ps -aux | grep flume
+  431  kill -9 32592
+  432  sudo kill -9 32592
+  433  sudo kill -9 32593
+  434  sudo /usr/local/flume/bin/flume-ng agent --conf /usr/local/flume/conf/ --conf-file /usr/local/flume.old/flume.conf --name a1 -Dflume.root.logger=INFO,console &
+  435  sudo /usr/local/flume/bin/flume-ng agent --conf /usr/local/flume/conf/ --conf-file /usr/local/flume.old/conf/flume.conf --name a1 -Dflume.root.logger=INFO,console &
+  436  more /usr/local/flume.old/conf/flume.conf 
+  437  ls
+  438  ps -aux | grep 
+  439  ls
+  440  more flume.conf 
+  441  more /usr/local/flume.old/conf/flume.conf 
+  442  more flume.conf 
+  443  sudo vim /usr/local/flume.old/conf/flume.conf 
+  444  ps -aux | grep flume
+  445  kill -9 1079
+  446  sudo kill -9 1079
+  447  sudo kill -9 1080
+  448  sudo /usr/local/flume/bin/flume-ng agent --conf /usr/local/flume/conf/ --conf-file /usr/local/flume.old/conf/flume.conf --name a1 -Dflume.root.logger=INFO,console &
+  449  ls -asl
+  450  ps -aux | grep flume
+  451  kill -9 1309
+  452  sudo kill -9 1309
+  453  sudo kill -9 1310
+  454  more /etc/passwd
+  455  su - hadoop
+  456  sudo passwd hadoop
+  457  su - hadoop
+  458  history | more
+  459  ls
+  460  more /etc/passwd
+  461  useradd hadoop
+  462  ls
+  463  ls /home
+  464  su - hadoop
+  465  sudo cp ~hadoop/workspace/HourInterceptor.java /usr/local/flume/lib/
+  466  cd /usr/local/flume/lib/
+  467  ls
+  468  javac HourInterceptor.java 
+  469  javac HourInterceptor.java | more
+  470  javac HourInterceptor.java > log.txt
+  471  more log.txt 
+  472  javac HourInterceptor.java > log.txt
+  473  ls
+  474  javac --help
+  475  ls
+  476  javac -classpath *.jar HourInterceptor.java 
+  477  javac -classpath flume-ng-core-1.6.0.jar HourInterceptor.java 
+  478  mv HourInterceptor.java ..
+  479  ls
+  480  cd ..
+  481  ls
+  482  cp HourInterceptor.java ../flume.old/lib/
+  483  ls
+  484  cd ../flume.old/lib/
+  485  javac -classpath flume-ng-core-1.6.0.jar HourInterceptor.java 
+  486  javac -classpath flume-ng-core-1.8.0.jar HourInterceptor.java 
+  487  ls
+  488  mv HourInterceptor.java ../
+  489  javac -classpath lib/*.jar HourInterceptor.java 
+  490  cd ..
+  491  javac -classpath lib/*.jar HourInterceptor.java 
+  492  javac -classpath lib/f*.jar HourInterceptor.java 
+  493  javac -classpath lib/f*.*.jar HourInterceptor.java 
+  494  javac -classpath lib/flume-ng*.jar HourInterceptor.java 
+  495  ls
+  496  cd ~
+  497  ls
+  498  cd workspace/
+  499  ls
+  500  cd genphydata/
+  501  ls
+  502  su - hadoop
+  503  sudo apt-get install maven
+  504  sudo rm /var/lib/dpkg/lock
+  505  sudo apt-get install maven
+  506  sudo dpkg --configure -a
+  507  history
+  508  sudo apt-get autoclean ; sudo apt-get autoremove -y -f ; sudo apt-get dist-upgrade -y -f ; sudo apt-get update ; sudo apt-get upgrade -y -f ; sudo apt-get autoclean ; sudo apt-get autoremove -y -f
+  509  sudo rm /var/cache/apt/archives/lock
+  510  sudo apt-get autoclean ; sudo apt-get autoremove -y -f ; sudo apt-get dist-upgrade -y -f ; sudo apt-get update ; sudo apt-get upgrade -y -f ; sudo apt-get autoclean ; sudo apt-get autoremove -y -f
+  511  sudo fuser -v /var/cache/debconf/config.dat
+  512  sudo kill -9 12571
+  513  sudo dpkg --configure -a
+  514  sudo kill -9 12571
+  515  sudo fuser -v /var/cache/debconf/config.dat
+  516  sudo kill -9 3483
+  517  sudo fuser -v /var/cache/debconf/config.dat
+  518  sudo dpkg --configure -a
+  519  sudo apt-get install maven
+  520  sudo rm /var/lib/dpkg/lock
+  521  sudo apt-get install maven
+  522  sudo dpkg --configure -a
+  523  sudo rm /var/cache/debconf/config.dat
+  524  sudo dpkg --configure -a
+  525  sudo rm /var/cache/debconf/*.dat
+  526  sudo dpkg --configure -a
+  527  sudo apt-get install maven
+  528  sudo rm /var/cache/apt/archives/lock
+  529  sudo apt-get install maven
+  530  ls
+  531  cd ..
+  532  ls
+  533  su - hadoop 
+  534  sudo mv hour-interceptor-1.0.jar /usr/local/flume/lib/
+  535  sudo mv ~hadoop/workspace/HourInterceptor/target/hour-interceptor-1.0.jar /usr/local/flume/lib/
+  536  su - hadoop 
+  537  ls
+  538  exit
+  539  ls
+  540  cd workspace/
+  541  ls
+  542  su - hadoop
+  543  ls
+  544  history | more
+  545  history 
+  546  ls
+  547  cd workspace/
+  548  ls
+  549  cd /usr/local/flume/
+  550  ls
+  551  history | more
+  552  history | grep flume-ng
+  553  ls
+  554  more /usr/local/flume.old/conf/flume.conf 
+  555  ls
+  556  cd ~
+  557  ls
+  558  cd workspace/
+  559  ls
+  560  more flume.conf 
+  561  ls
+  562  cd genphydata/
+  563  ls
+  564  cd /usr/local/flume.new/
+  565  ls
+  566  cd ..
+  567  ls
+  568  cd flume
+  569  ls
+  570  cd bin/
+  571  ls
+  572  cd ..
+  573  ls
+  574  ifconfig
+  575  exit
+  576  ifconfig
+  577  more /usr/local/flume.old/conf/flume.conf 
+  578  ls
+  579  cd scripts/
+  580  ls
+  581  exit
+  582  more /usr/local/flume.old/conf/flume.conf 
+  583  ls
+  584  cd  workspace/
+  585  ls
+  586  cd genphydata/
+  587  ls
+  588  cd src/
+  589  ls
+  590  cd ..
+  591  ls
+  592  cd ..
+  593  ls
+  594  cd ..
+  595  ls
+  596  cd data/
+  597  ls
+  598  cd ..
+  599  ls
+  600  cd /usr/local/flume
+  601  ls
+  602  ls -asl
+  603  history
+  604  ls
+  605  more /etc/hosts
+  606  ping 172.18.0.23
+  607  more /etc/hosts
+  608  ping 172.18.0.12
+  609  ping 172.18.0.26
+  610  ping 172.18.0.18
+  611  ping 172.18.0.23
+  612  ping 192.168.0.91
+  613  ssh 192.168.0.91
+  614  exit
+  615  ssh 192.168.0.91
+  616  ping 192.168.0.91
+  617  ssh 192.168.0.91
+  618  ls 192.168.0.91
+  619  ls
+  620  cd ~
+  621  ls
+  622  exit
+  623  ls
+  624  whereis flumeng
+  625  ls
+  626  cd workspace/
+  627  ls
+  628  more flume.conf 
+  629  sudo vim /etc/hosts
+  630  vim flume.conf 
+  631  ls
+  632  cd ..
+  633  ls
+  634  cd data/
+  635  ls
+  636  cd ..
+  637  ls
+  638  history
+  639  history | more
+  640  history | grep flume
+  641  ps -aux | grep flume
+  642  sudo /usr/local/flume/bin/flume-ng agent --conf /usr/local/flume/conf/ --conf-file /usr/local/flume.old/conf/flume.conf --name a1 -Dflume.root.logger=INFO,console &
+  643  ps -aux | grep flume
+  644  sudo kill -9 1685
+  645  ps -aux | grep flume
+  646  sudo kill -9 1686
+  647  vim /usr/local/flume.old/conf/flume.conf
+  648  sudo vim /usr/local/flume.old/conf/flume.conf
+  649  history | grep flume
+  650  ls /usr/local/flume/lib/hour-interceptor-1.0.jar 
+  651  ls
+  652  cd workspace/
+  653  ls
+  654  cd genphydata/
+  655  ls
+  656  more hdfs_phydummy.conf
+  657  ls
+  658  cd ..
+  659  ls
+  660  more flume.conf 
+  661  ls
+  662  cd /usr/local/flume.new/conf/
+  663  ls
+  664  cd ..
+  665  ls
+  666  cd ..
+  667  ls
+  668  cd flume
+  669  ls
+  670  cd conf/
+  671  ls
+  672  cd ..
+  673  ls
+  674  cd ..
+  675  ls
+  676  cd flume.old/
+  677  ls
+  678  cd conf/
+  679  ls
+  680  more flume.conf 
+  681  ls
+  682  cd ..
+  683  ls
+  684  cd ..
+  685  ls
+  686  cd ~
+  687  ls
+  688  cd scripts/
+  689  ls
+  690  cd ..
+  691  ls
+  692  cd workspace/
+  693  ls
+  694  cd genphydata/
+  695  ls
+  696  git pull
+  697  cd ..
+  698  ls
+  699  git pull
+  700  git clone https://github.com/JeffYFHuang/workspace
+  701  sudo vim /etc/resolv.conf 
+  702  git clone https://github.com/JeffYFHuang/workspace
+  703  ls
+  704  cd workspace/
+  705  ls
+  706  cd flume/
+  707  ls
+  708  cd ..
+  709  ls
+  710  tar -zxvf cloud.tar.gz 
+  711  ls
+  712  cd cloud/
+  713  ls
+  714  more hdfs_phydummy1.conf
+  715  ls
+  716  cp hdfs_phydummy1.conf /usr/local/flume/conf/hdfs_send.conf
+  717  vim /usr/local/flume/conf/hdfs_send.conf
+  718  sudo /usr/local/flume/bin/flume-ng agent --conf /usr/local/flume/conf/ --conf-file /usr/local/flume/conf/hdfs_send.conf --name a1 -Dflume.root.logger=INFO,console &
+  719  exit
+  720  ls
+  721  more /var/log/flume.log 
+  722  ls
+  723  ps -aux | grep flume
+  724  kill -9 1889
+  725  sudo kill -9 1889
+  726  ps -aux | grep flume
+  727  sudo kill -9 1890
+  728  ps -aux | grep flume
+  729  sudo /usr/local/flume/bin/flume-ng agent --conf /usr/local/flume/conf/ --conf-file /usr/local/flume/conf/hdfs_send.conf --name a1 -Dflume.root.logger=INFO,console
+  730  ls
+  731  cd scripts/
+  732  ls
+  733  cd ..
+  734  ls
+  735  cd workspace/
+  736  ls
+  737  more flume.conf 
+  738  ls
+  739  cd workspace/
+  740  ls
+  741  cd cloud/
+  742  ls
+  743  cd HourInterceptor
+  744  ls
+  745  vim src/main/java/com/liteon/icgcloud/HourInterceptor.java 
+  746  mvn package
+  747  vim src/main/java/com/liteon/icgcloud/HourInterceptor.java 
+  748  mvn package
+  749  history | grep HourInterceptor
+  750  sudo mv ~hadoop/workspace/HourInterceptor/target/hour-interceptor-1.0.jar /usr/local/flume/lib/
+  751  sudo mv ./target/hour-interceptor-1.0.jar /usr/local/flume/lib/
+  752  ls
+  753  sudo mv ./target/HourInterceptor-1.0.jar /usr/local/flume/lib/
+  754  rm /usr/local/flume/lib/hour-interceptor-1.0.jar 
+  755  sudo /usr/local/flume/bin/flume-ng agent --conf /usr/local/flume/conf/ --conf-file /usr/local/flume/conf/hdfs_send.conf --name a1 -Dflume.root.logger=INFO,console
+  756  sudo /usr/local/flume/bin/flume-ng agent --conf /usr/local/flume/conf/ --conf-file /usr/local/flume/conf/hdfs_send.conf --name a1 -Dflume.root.logger=DEBUG,console
+  757  vim src/main/java/com/liteon/icgcloud/HourInterceptor.java 
+  758  mvn package
+  759  sudo mv ./target/HourInterceptor-1.0.jar /usr/local/flume/lib/
+  760  sudo /usr/local/flume/bin/flume-ng agent --conf /usr/local/flume/conf/ --conf-file /usr/local/flume/conf/hdfs_send.conf --name a1 -Dflume.root.logger=DEBUG,console
+  761  sudo /usr/local/flume/bin/flume-ng agent --conf /usr/local/flume/conf/ --conf-file /usr/local/flume/conf/hdfs_send.conf --name a1 -Dflume.root.logger=DEBUG,console &
+  762  ps -aux | grep flume
+  763  exit
+  764  ls
+  765  ps -aux | grep flume
+  766  kill -9 22268
+  767  sudo kill -9 22268
+  768  sudo kill -9 22269
+  769  ls
+  770  cd workspace/
+  771  ls
+  772  cd workspace/
+  773  ls
+  774  cd cloud/
+  775  ls
+  776  cd HourInterceptor/
+  777  vim src/main/java/com/liteon/icgcloud/HourInterceptor.java 
+  778  mvn package
+  779  sudo mv ./target/HourInterceptor-1.0.jar /usr/local/flume/lib/
+  780  sudo /usr/local/flume/bin/flume-ng agent --conf /usr/local/flume/conf/ --conf-file /usr/local/flume/conf/hdfs_send.conf --name a1 -Dflume.root.logger=INFO,console &
+  781  more /usr/local/flume/conf/hdfs_send.conf
+  782  date
+  783  exit
+  784  ps -aux | grep flume
+  785  sudo kill 22583
+  786  sudo kill 22584
+  787  sudo /usr/local/flume/bin/flume-ng agent --conf /usr/local/flume/conf/ --conf-file /usr/local/flume/conf/hdfs_send.conf --name a1 -Dflume.root.logger=INFO,console
+  788  sudo /usr/local/flume/bin/flume-ng agent --conf /usr/local/flume/conf/ --conf-file /usr/local/flume/conf/hdfs_send.conf --name a1 -Dflume.root.logger=INFO,console &
+  789  ps -aux | grep flume
+  790  sudo kill 23207
+  791  sudo kill 23208
+  792  sudo /usr/local/flume/bin/flume-ng agent --conf /usr/local/flume/conf/ --conf-file /usr/local/flume/conf/hdfs_send.conf --name a1 -Dflume.root.logger=INFO,console &
+  793  exit
+  794  hsitory
+  795  history
+  796  exit
+  797  ls
+  798  cd scripts/
+  799  ls
+  800  more AQI_PushNotification.php 
+  801  ls
+  802  cd ..
+  803  ls
+  804  cd checkpoint/
+  805  ls
+  806  cd ..
+  807  ls
+  808  cd data/
+  809  ls
+  810  cd ..
+  811  ls
+  812  cd workspace/
+  813  ls
+  814  cd workspace/
+  815  ls
+  816  cd cloud/
+  817  ls
+  818  cd ..
+  819  ls
+  820  git log
+  821  ls
+  822  cd cloud/
+  823  ls
+  824  cd ..
+  825  ls
+  826  cd ..
+  827  ls
+  828  ls flume.conf 
+  829  more flume.conf 
+  830  ls
+  831  history
+  832  ls /usr/local/flume/conf/
+  833  history
+  834  ls
+  835  cd workspace/
+  836  ls
+  837  history
+  838  ls
+  839  cd cloud/
+  840  ls
+  841  cd ..
+  842  ls
+  843  history | tee flume.history
