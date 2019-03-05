@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+    http://www.springframework.org/schema/data/jpa
+    http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
+    http://www.springframework.org/schema/tx
+    http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <!-- Configure the data source bean -->
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${jdbc.driverClassName}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+    </bean>
+
+	<!-- Configure Hibernate 4 Session Facotry -->
+      <bean id="sessionFactory"
+            class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+			<property name="dataSource" ref="dataSource"></property>
+			<property name="hibernateProperties">
+			  <props>
+					<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+					<prop key="hibernate.format_sql">true</prop>
+					<prop key="hibernate.show_sql">true</prop>
+					<prop key="hibernate.pool_size">50</prop>
+					<prop key="hibernate.hbm2ddl.auto">create</prop>
+					<prop key="hibernate.hbm2ddl.auto">update</prop>
+					<prop key="current_session_context_class">thread</prop>
+					<prop key="hibernate.jdbc.batch_size">50</prop> 
+			  </props>
+			</property>
+			<property name="packagesToScan" value="com.liteon.icgwearable.*" />
+		</bean>
+    <!-- Configure the entity manager factory bean -->
+    <!-- <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="packagesToScan" value="com.liteon.icgwearble.entity"/>
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
+        </property>
+        <property name="jpaProperties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
+                <prop key="hibernate.show_sql">true</prop>
+            </props>
+        </property>
+    </bean> -->
+
+    <!-- Configure the transaction manager bean -->
+    <!-- <bean id="transactionManager"
+          class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory"/>
+    </bean> -->
+
+	<bean id="transactionManager"
+        class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+        <property name="dataSource" ref="dataSource" />
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    <tx:annotation-driven transaction-manager="transactionManager" />
+    <!-- Enable annotation driven transaction management -->
+    <tx:annotation-driven/>
+
+    <!--
+      Configure Spring Data JPA and set the base package of the
+      repository interfaces
+    -->
+
+    <!-- <jpa:repositories base-package="com.liteon.repository"/> -->
+</beans>

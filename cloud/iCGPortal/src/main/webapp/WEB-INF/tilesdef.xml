@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE tiles-definitions PUBLIC
+  "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" 
+  "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+
+<tiles-definitions>
+	<!-- Defining a Standard Template for application pages. -->
+	<definition name="base.definition" template="/WEB-INF/jsp/includes/template.jsp">
+		<put-attribute name="title" value="" />
+		<put-attribute name="head" value="/WEB-INF/jsp/includes/head.jsp" />
+		<put-attribute name="header" value="" />
+		<put-attribute name="nav" value="" />
+		<put-attribute name="main" value="" />
+		<put-attribute name="footer" value="/WEB-INF/jsp/includes/footer.jsp" />
+	</definition>
+	<!-- /End standard Template Definition. -->
+
+	<!-- Common Application Definition. -->
+	<definition name="prelogin.definition" extends="base.definition">
+		<put-attribute name="header"
+			value="/WEB-INF/jsp/includes/preLoginHeader.jsp" />
+		<put-attribute name="footer"
+			value="/WEB-INF/jsp/includes/preLoginFooter.jsp" />
+	</definition>
+	<!-- Common Application Pages. -->
+	<definition name="home" extends="prelogin.definition">
+		<put-attribute name="title"
+			value="Welcome - iCG Wearable Cloud Services" />
+		<put-attribute name="main" value="/WEB-INF/jsp/index.jsp" />
+	</definition>
+	<!-- Common Application Pages For School. -->
+	<definition name="adminlogin" extends="prelogin.definition">
+		<put-attribute name="title"
+			value="Login - iCG Wearable Cloud Services" />
+		<put-attribute name="main" value="/WEB-INF/jsp/adminlogin.jsp" />
+	</definition>
+	<definition name="adminResetPasswordRequest" extends="prelogin.definition">
+		<put-attribute name="title"
+			value="Request Password - iCG Wearable Cloud Services" />
+		<put-attribute name="main"
+			value="/WEB-INF/jsp/adminResetPasswordRequest.jsp" />
+	</definition>
+	<definition name="adminResetPassword" extends="prelogin.definition">
+		<put-attribute name="title"
+			value="Reset Password - iCG Wearable Cloud Services" />
+		<put-attribute name="main"
+			value="/WEB-INF/jsp/adminResetPassword.jsp" />
+	</definition>
+
+	<!-- Common Application Pages For Parent. -->
+	<definition name="login" extends="prelogin.definition">
+		<put-attribute name="title"
+			value="Login - iCG Wearable Cloud Services" />
+		<put-attribute name="main" value="/WEB-INF/jsp/login.jsp" />
+	</definition>
+	<definition name="resetPassword" extends="prelogin.definition">
+		<put-attribute name="title"
+			value="Request Password - iCG Wearable Cloud Services" />
+		<put-attribute name="main"
+			value="/WEB-INF/jsp/resetPasswordRequest.jsp" />
+	</definition>
+	<definition name="PasswordReset" extends="prelogin.definition">
+		<put-attribute name="title"
+			value="Reset Password - iCG Wearable Cloud Services" />
+		<put-attribute name="main" value="/WEB-INF/jsp/resetPassword.jsp" />
+	</definition>
+	<definition name="signUp" extends="prelogin.definition">
+		<put-attribute name="title"
+			value="Parent Registration - iCG Wearable Cloud Services" />
+		<put-attribute name="main" value="/WEB-INF/jsp/signUp.jsp" />
+	</definition>
+	<definition name="ErrorPage" extends="prelogin.definition">
+		<put-attribute name="title" value="404 Page Not Available" />
+		<put-attribute name="main" value="/WEB-INF/jsp/ErrorPage.jsp" />
+	</definition>
+	<!-- /End of Common Application Pages. -->
+
+	<!-- School Application Definition. -->
+	<definition name="schooladmin.definition" extends="base.definition">
+		<put-attribute name="header"
+			value="/WEB-INF/jsp/includes/schoolHeader.jsp" />
+	</definition>
+	<!-- School Application Pages. -->
+	<definition name="schoolAdmin" extends="schooladmin.definition">
+		<put-attribute name="title"
+			value="School Admin Dashboard - iCG Wearable Cloud Services" />
+		<put-attribute name="main" value="/WEB-INF/jsp/schoolAdmin.jsp" />
+	</definition>
+	<definition name="schoolAdminProfile" extends="schooladmin.definition">
+		<put-attribute name="title"
+			value="Update School Admin Information - iCG Wearable Cloud Services" />
+		<put-attribute name="main" value="/WEB-INF/jsp/editUpdateUser.jsp" />
+	</definition>
+	<definition name="editdeleteannouncement" extends="schooladmin.definition">
+		<put-attribute name="title"
+			value="School Announcements - iCG Wearable Cloud Services" />
+		<put-attribute name="main"
+			value="/WEB-INF/jsp/editDeleteAnnouncement.jsp" />
+	</definition>
+	<definition name="listOfTimetables" extends="schooladmin.definition">
+		<put-attribute name="title"
+			value="Class Schedule - iCG Wearable Cloud Services" />
+		<put-attribute name="main" value="/WEB-INF/jsp/timetableList.jsp" />
+	</definition>
+	<definition name="schoolTeacherProfile" extends="schooladmin.definition">
+		<put-attribute name="title"
+			value="Update School Admin Information - iCG Wearable Cloud Services" />
+		<put-attribute name="main" value="/WEB-INF/jsp/editUpdateUser.jsp" />
+	</definition>
+	<definition name="schoolRewardsList" extends="schooladmin.definition">
+		<put-attribute name="title"
+			value="Manage Rewards - iCG Wearable Cloud Services" />
+		<put-attribute name="main"
+			value="/WEB-INF/jsp/manageRewardsCategory.jsp" />
+	</definition>
+	<definition name="schoolAccountManagement" extends="schooladmin.definition">
+		<put-attribute name="title"
+			value="School Account Management - iCG Wearable Cloud Services" />
+		<put-attribute name="main"
+			value="/WEB-INF/jsp/schoolAccountManagement.jsp" />
+	</definition>
+	<definition name="deviceManagement" extends="schooladmin.definition">
+		<put-attribute name="title"
+			value="Device Management - iCG Wearable Cloud Services" />
+		<put-attribute name="main" value="/WEB-INF/jsp/deviceManagement.jsp" />
+	</definition>
+	<definition name="schoolFitness" extends="schooladmin.definition">
+		<put-attribute name="title"
+			value="Student Fitness - iCG Wearable Cloud Services" />
+		<put-attribute name="main" value="/WEB-INF/jsp/schoolFitness.jsp" />
+	</definition>
+	<definition name="schoolSearchStudent" extends="schooladmin.definition">
+		<put-attribute name="title"
+			value="Search Student - iCG Wearable Cloud Services" />
+		<put-attribute name="main"
+			value="/WEB-INF/jsp/schoolSearchStudent.jsp" />
+	</definition>
+	<definition name="RemindersViewForTeacher" extends="schooladmin.definition">
+		<put-attribute name="title"
+			value="Reminders - iCG Wearable Cloud Services" />
+		<put-attribute name="main" value="/WEB-INF/jsp/RemindersView.jsp" />
+	</definition>
+	<definition name="RemindersViewForAdmin" extends="schooladmin.definition">
+		<put-attribute name="title"
+			value="Reminders - iCG Wearable Cloud Services" />
+		<put-attribute name="main" value="/WEB-INF/jsp/RemindersView.jsp" />
+	</definition>
+	<!-- /End of School Application Pages. -->
+
+	<!-- New Parent Application Definition. -->
+	<definition name="new.parentadmin.definition" extends="base.definition">
+		<put-attribute name="header"
+			value="/WEB-INF/jsp/includes/newParentHeader.jsp" />
+	</definition>
+	<!-- New Parent Application Pages START. -->
+	<definition name="newParentProfile" extends="new.parentadmin.definition">
+		<put-attribute name="title"
+			value="Update Parent Information - iCG Wearable Cloud Services" />
+		<put-attribute name="main" value="/WEB-INF/jsp/profileManagement.jsp" />
+	</definition>
+	<definition name="newParentKids" extends="new.parentadmin.definition">
+		<put-attribute name="title"
+			value="Update Student - iCG Wearable Cloud Services" />
+		<put-attribute name="main" value="/WEB-INF/jsp/editKid.jsp" />
+	</definition>
+	<!-- New Parent Application Pages END. -->
+
+	<!-- Parent Application Definition. -->
+	<definition name="parentadmin.definition" extends="base.definition">
+		<put-attribute name="header"
+			value="/WEB-INF/jsp/includes/parentHeader.jsp" />
+	</definition>
+	<!-- Parent Application Pages. -->
+	<definition name="myProfile" extends="parentadmin.definition">
+		<put-attribute name="title"
+			value="Update User Information - iCG Wearable Cloud Services" />
+		<put-attribute name="main" value="/WEB-INF/jsp/editUpdateUser.jsp" />
+	</definition>
+	<definition name="parentAdmin" extends="parentadmin.definition">
+		<put-attribute name="title"
+			value="Parent Admin Dashboard - iCG Wearable Cloud Services" />
+		<put-attribute name="main" value="/WEB-INF/jsp/parentAdmin.jsp" />
+	</definition>
+	<definition name="parentAdminProfile" extends="parentadmin.definition">
+		<put-attribute name="title"
+			value="Parent Admin Profile Management - iCG Wearable Cloud Services" />
+		<put-attribute name="main" value="/WEB-INF/jsp/profileManagement.jsp" />
+	</definition>
+	<definition name="editKid" extends="parentadmin.definition">
+		<put-attribute name="title"
+			value="Update Student - iCG Wearable Cloud Services" />
+		<put-attribute name="main" value="/WEB-INF/jsp/editKid.jsp" />
+	</definition>
+	<definition name="RemindersViewForParent" extends="parentadmin.definition">
+		<put-attribute name="title"
+			value="Parent Admin Dashboard - iCG Wearable Cloud Services" />
+		<put-attribute name="main" value="/WEB-INF/jsp/RemindersView.jsp" />
+	</definition>
+	<definition name="rewardsStatistics" extends="parentadmin.definition">
+		<put-attribute name="title"
+			value="Reward Statistics - iCG Wearable Cloud Services" />
+		<put-attribute name="main" value="/WEB-INF/jsp/rewardsStatistics.jsp" />
+	</definition>
+	<definition name="kidsSafety" extends="parentadmin.definition">
+		<put-attribute name="title"
+			value="Kids Safety - iCG Wearable Cloud Services" />
+		<put-attribute name="main" value="/WEB-INF/jsp/kidsSafety.jsp" />
+	</definition>
+	<definition name="guardianSubscription" extends="parentadmin.definition">
+		<put-attribute name="title"
+			value="Guardian Subscriptions - iCG Wearable Cloud Services" />
+		<put-attribute name="main"
+			value="/WEB-INF/jsp/guardianSubscription.jsp" />
+	</definition>
+	<definition name="profileManagement" extends="parentadmin.definition">
+		<put-attribute name="title"
+			value="Profile Management - iCG Wearable Cloud Services" />
+		<put-attribute name="main" value="/WEB-INF/jsp/profileManagement.jsp" />
+	</definition>
+	<definition name="schoolAnnouncements" extends="parentadmin.definition">
+		<put-attribute name="title"
+			value="School Announcements - iCG Wearable Cloud Services" />
+		<put-attribute name="main"
+			value="/WEB-INF/jsp/schoolAnnouncements.jsp" />
+	</definition>
+	<definition name="kidsActivityReports" extends="parentadmin.definition">
+		<put-attribute name="title"
+			value="Student Activity - iCG Wearable Cloud Services" />
+		<put-attribute name="main"
+			value="/WEB-INF/jsp/kidsActivityReports.jsp" />
+	</definition>
+	<!-- /End of Parent Application Pages. -->
+
+	<!-- School Application Definition. -->
+	<definition name="supportstaff.definition" extends="base.definition">
+		<put-attribute name="header"
+			value="/WEB-INF/jsp/includes/supportStaffHeader.jsp" />
+	</definition>
+	<!-- Start of Support Staff Application Pages. -->
+	<definition name="supportStaffDashboard" extends="supportstaff.definition">
+		<put-attribute name="title"
+			value="Support Staff Search School - iCG Wearable Cloud Services" />
+		<put-attribute name="main"
+			value="/WEB-INF/jsp/supportStaffDashboard.jsp" />
+	</definition>
+	<definition name="supportStaffProfileManagement" extends="supportstaff.definition">
+		<put-attribute name="title"
+			value="Support Staff Profile Management - iCG Wearable Cloud Services" />
+		<put-attribute name="main"
+			value="/WEB-INF/jsp/adminProfileManagement.jsp" />
+	</definition>
+	<definition name="supportStaffSearchStudent" extends="supportstaff.definition">
+		<put-attribute name="title"
+			value="Support Staff Search Student - iCG Wearable Cloud Services" />
+		<put-attribute name="main"
+			value="/WEB-INF/jsp/schoolSearchStudent.jsp" />
+	</definition>
+	<definition name="supportStaffSchoolSearch" extends="supportstaff.definition">
+		<put-attribute name="title"
+			value="Support Staff School Search - iCG Wearable Cloud Services" />
+		<put-attribute name="main"
+			value="/WEB-INF/jsp/supportStaffSchoolSearch.jsp" />
+	</definition>
+	<definition name="supportStaffDeviceSearch" extends="supportstaff.definition">
+		<put-attribute name="title"
+			value="Support Staff Device Search - iCG Wearable Cloud Services" />
+		<put-attribute name="main"
+			value="/WEB-INF/jsp/supportStaffDeviceSearch.jsp" />
+	</definition>
+	<definition name="supportStaffParentSearch" extends="supportstaff.definition">
+		<put-attribute name="title"
+			value="Support Staff Parent Search - iCG Wearable Cloud Services" />
+		<put-attribute name="main"
+			value="/WEB-INF/jsp/supportStaffParentSearch.jsp" />
+	</definition>
+	<!-- /End of Support Staff Application Pages. -->
+	
+	<!-- School Application Definition. -->
+	<definition name="systemadmin.definition" extends="base.definition">
+		<put-attribute name="header"
+			value="/WEB-INF/jsp/includes/systemAdminHeader.jsp" />
+	</definition>
+	<!-- Start of System Admin Application Pages. -->
+	<definition name="systemAdminDashboard" extends="systemadmin.definition">
+		<put-attribute name="title"
+			value="System Admin Service Function Status - iCG Wearable Cloud Services" />
+		<put-attribute name="main"
+			value="/WEB-INF/jsp/systemAdminDashboard.jsp" />
+	</definition>
+	<definition name="systemAdminProfileManagement" extends="systemadmin.definition">
+		<put-attribute name="title"
+			value="System Admin Profile Management - iCG Wearable Cloud Services" />
+		<put-attribute name="main"
+			value="/WEB-INF/jsp/adminProfileManagement.jsp" />
+	</definition>
+	<definition name="activityLog" extends="systemadmin.definition">
+		<put-attribute name="title"
+			value="System Admin Activity Log - iCG Wearable Cloud Services" />
+		<put-attribute name="main" value="/WEB-INF/jsp/activityLog.jsp" />
+	</definition>
+	<definition name="notificationLog" extends="systemadmin.definition">
+		<put-attribute name="title"
+			value="System Admin Notification Log - iCG Wearable Cloud Services" />
+		<put-attribute name="main" value="/WEB-INF/jsp/notificationLog.jsp" />
+	</definition>
+	<definition name="backupLog" extends="systemadmin.definition">
+		<put-attribute name="title"
+			value="System Admin Backup Log - iCG Wearable Cloud Services" />
+		<put-attribute name="main" value="/WEB-INF/jsp/backupLog.jsp" />
+	</definition>
+	<definition name="externalSystemStatus" extends="systemadmin.definition">
+		<put-attribute name="title"
+			value="System Admin External System Status - iCG Wearable Cloud Services" />
+		<put-attribute name="main"
+			value="/WEB-INF/jsp/externalSystemStatus.jsp" />
+	</definition>
+	<!-- /End of System Admin Application Pages. -->
+	
+	<!-- School Application Definition. -->
+	<definition name="superadmin.definition" extends="base.definition">
+		<put-attribute name="header"
+			value="/WEB-INF/jsp/includes/superAdminHeader.jsp" />
+	</definition>
+	<!-- Super Administrator Application Pages. -->
+	<definition name="adminProfileManagement" extends="superadmin.definition">
+		<put-attribute name="title"
+			value="Super Admin Profile Management - iCG Wearable Cloud Services" />
+		<put-attribute name="main"
+			value="/WEB-INF/jsp/adminProfileManagement.jsp" />
+	</definition>
+	<definition name="adminSystemConfiguration" extends="superadmin.definition">
+		<put-attribute name="title"
+			value="Super Admin System Configuration - iCG Wearable Cloud Services" />
+		<put-attribute name="main"
+			value="/WEB-INF/jsp/adminSystemConfiguration.jsp" />
+	</definition>
+	<definition name="adminUserAccountManagement" extends="superadmin.definition">
+		<put-attribute name="title"
+			value="Super Admin User Account Management - iCG Wearable Cloud Services" />
+		<put-attribute name="main"
+			value="/WEB-INF/jsp/adminUserAccountManagement.jsp" />
+	</definition>
+	<definition name="adminParentAccountManagement" extends="superadmin.definition">
+		<put-attribute name="title"
+			value="Super Admin Account Management - iCG Wearable Cloud Services" />
+		<put-attribute name="main"
+			value="/WEB-INF/jsp/adminParentAccountManagement.jsp" />
+	</definition>
+	<definition name="adminDeviceManagement" extends="superadmin.definition">
+		<put-attribute name="title"
+			value="Super Admin Device Management - iCG Wearable Cloud Services" />
+		<put-attribute name="main"
+			value="/WEB-INF/jsp/adminDeviceManagement.jsp" />
+	</definition>
+	<definition name="superAdminProfile" extends="superadmin.definition">
+		<put-attribute name="title"
+			value="Super Admin Profile Management - iCG Wearable Cloud Services" />
+		<put-attribute name="main" value="/WEB-INF/jsp/editUpdateUser.jsp" />
+	</definition>
+	<definition name="schoolsList" extends="superadmin.definition">
+		<put-attribute name="title"
+			value="Super Admin School Management - iCG Wearable Cloud Services" />
+		<put-attribute name="main" value="/WEB-INF/jsp/schoolsList.jsp" />
+	</definition>
+</tiles-definitions>

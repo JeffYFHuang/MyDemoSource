@@ -1,0 +1,53 @@
+#donutchart,
+#chart {
+  font-family: Arial;
+}
+
+#donutchart {
+    position: relative;
+}
+
+#labelOverlay {
+    width: 90px;
+    height: 45px;
+    position: relative;
+    top: -140px;
+    left: 175px;
+    text-align: center;
+    cursor: default;
+}
+
+#labelOverlay p {
+  line-height: 0.3;
+  padding:0;
+  margin: 8px;
+}
+
+#labelOverlay p.used-size {
+  line-height: 0.5;
+  font-size: 20pt;
+  color: #8e8e8e;
+}
+.box-body .box-body-title {
+  display: inline-block;
+  font-size: 18px;
+  margin: 0;
+  line-height: 1;
+  text-align: center;
+}
+
+#labelFooter {
+    text-align: center;
+    cursor: default;
+}
+
+#gaugechart_stress{
+	float:left;
+	position: relative; 
+	margin: 0 auto;	
+}
+#gaugechart_stress_label{
+	top: -140px;
+    left: 140px;
+    text-align: center;
+} 

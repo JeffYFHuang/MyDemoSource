@@ -1,0 +1,13 @@
+.has-error {
+    color: red
+}
+.error {
+	color: #ff0000;
+	font-style: normal;
+	font-weight: normal;
+}
+
+input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}

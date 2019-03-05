@@ -1,0 +1,4 @@
+﻿srl,grade,class,admission_no,class_roll_no,name,emergency_contact,device_uuid
+1,1,1,1001,1,身体健康指数,912345612,e7b6946e-74a4-4cc0-ad27-f48a7fb165ae
+2,1,2,1002,1,卡路里燃烧,912345613,e2a2774f-2f72-493e-89ea-f1d880ec06a4
+3,1,1,1003,2,Yuan Longping,912345612,e7b63946e-74a4-4cc0-ad27-f48a7fb165ae

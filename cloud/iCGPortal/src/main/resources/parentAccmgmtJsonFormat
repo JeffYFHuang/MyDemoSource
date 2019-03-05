@@ -1,0 +1,419 @@
+For Parent Account Management RestApi Json Format :
+=================================================
+URL  :--> http://localhost:8080/icgwearable/UserUpdate/{session_id}
+		  http://localhost:8080/icgwearable/UserUpdate/E84FB303699EEC71DF1EC4DA5E3695C6
+		 
+
+{
+  "name": "Abhinav",
+  "password":"parent1",
+  "email": "ap@xyz.com",
+  "mobileNumber": "8854712586",
+  "streetAddress": "Bellandur, Marathahalli Behind JP Morghan"
+}
+
+
+For Alert Messages restapi JSON Format :
+====================================== 
+URL : http://localhost:8080/icgwearable/device/createalert/<device_uuid>
+	  http://localhost:8080/icgwearable/DeviceEventCreate/DFA8F0C33DEE6AE6CA7CDCEFE062611F/f81d4fae-7dec-11d0-a765-00a0c91e6bf6
+
+{
+  "eventid" : "1",
+  "eventoccureddate" : "22-05-2017 11:22:00",
+  "uuid" : "f81d4fae-7dec-11d0-a765-00a0c91e6bf6",
+  "gpsdatacode" : "bbsr",
+  "gpslocationdata" : "hanspal bbsr",
+  "sensortypecode" : "1",
+  "sensorerrorcode" : "234",
+  "vitalsigntype" : "minor",
+  "vitalsignvalue" : "2",
+  "abnormalcode" : "12",
+  "batterylevelvalue" : "50"
+ }
+ 
+ For Device Event Eliminator :
+ ===========================
+ URL  : http://localhost:8080/icgwearable/device/removedeviceevent/<device_id>
+ {
+"queueid": "5",
+"sessionid" : "HXOI090979"
+}
+
+
+For parent announcements only:
+============================
+
+URL : http://localhost:8080/icgwearable/AnnouncementsList/{uuid}/{session_id}
+
+http://localhost:8080/icgwearable/AnnouncementsList/f81d4fae-7dec-11d0-a765-00a0c91e6bf6/AE3B716AF0B0944DEBF0C22A23E4006A
+
+
+For Device Pairing : Parent Registration :
+========================================
+URL : http://localhost:8080/icgwearable/papp/createpof
+
+notes : below studentname  -------> nickname
+
+{  							
+		  "uuid" : "f81d4fae-7dec-11d0-a765-00a0c91e6bf6",
+		  "account_name" : "Parent of Abhinav/Abhinav",
+		  "username" : "parent1",
+		  "password" : "parent1",
+		  "role_type" : "parent_member",
+		  "name" : "Abhinav",
+		  "gender" : "male",
+		  "dob" : "27-01-2000",
+		  "height" : "4.5",
+		  "weight": "60.5"
+}
+
+New Device Pairing from LiteOn Authenticated User:
+================================================
+
+URL with token : 
+				 http://localhost:8080/icgwearable/{session_id}/{uuid}/ndp
+
+DEVICE TABLE ALTER COMMAND :
+							ALTER TABLE DEVICES ADD COLUMN max_parents INT(1) default 1 , ADD COLUMN max_guardians INT(1) default 1
+							ALTER TABLE DEVICES DROP COLUMN total_paired_set
+
+
+With token
+{   
+	"nickname" : "Abhinav",
+	"gender" : "male",
+	"dob" : "27-01-2000",
+	"height" : "4.5",
+	"weight": "60.5"
+}
+
+
+
+==========================================================================================================================
+assignRewardsToStudentsByTeacher :-->
+
+
+{
+	"reward_ids": [1200, 1201, 1202],
+	"student_ids": [2,5],
+	"comments": ["Keep it up","performed well"]
+}
+
+
+deleteStudentsRewardsByTeacher :-->
+
+{
+   "students_rewardids":[5,6,7]
+}
+
+=============================================================================================================================
+
+view students rewards :-->
+----------------
+
+http://localhost:8080/icgwearable/StudentRewardsList/{sessionID}/{student_id}
+
+http://localhost:8080/icgwearable/StudentRewardsList/13EEA4463EB12846342FAD89A93E63FB/1
+
+
+Device Unpairing from LiteOn Authenticated User :->
+===============================================
+
+URL with token : 
+				 http://localhost:8080/icgwearable/<token>/<device_uuid>/upd/
+				 
+
+with token 
+{
+	"nickname" : "Abhinav"
+}
+
+
+ALTER TABLE device_events_queue ADD isEliminated ENUM('y','n')
+
+
+
+===========================================================================================================================================================================================================
+	REWARDS USER STORY :
+===========================================================================================================================================================================================================
+
+view school rewards list :-->
+------------------------
+
+http://localhost:8080/icgwearable/SchoolRewardsList/{sessionID}/{school_id}
+http://localhost:8080/icgwearable/SchoolRewardsList/93B4EAE35B1E4864F2787640F005479F/2
+
+http://localhost:8080/icgwearable/StudentRewardsList/{sessionID}/{student_id}
+
+http://localhost:8080/icgwearable/StudentRewardsAssign/{sessionID}
+
+http://localhost:8080/icgwearable/StudentRewardsAssign/F9FA81EAD32E8E9F870060D873F087C2
+
+
+output json for above url :
+-------------------------
+
+    {
+        "Return":
+        {
+            "Type": "teacher.availableRewardsForTeachers",
+            "ResponseSummary":
+            {
+                "StatusCode": "0",
+                "ErrorMessage": ""
+            },
+            "Results":
+            {
+                "Rewards List":
+                [
+                    {
+                        "reward_id": 1200,
+                        "reward_name": "Sports",
+                        "reward_description": "Best Cricketer Reward",
+                        "category_name": "RC1",
+                        "category_icon_url": "http://localhost/icgwearable/rewards/blackcloud.png"
+                    },
+                    {
+                        "reward_id": 1201,
+                        "reward_name": "Choose a prize from Treasure Box",
+                        "reward_description": "Treasure Reward",
+                        "category_name": "RC2",
+                        "category_icon_url": "http://localhost/icgwearable/rewards/price.jpg"
+                    },
+                    {
+                        "reward_id": 1202,
+                        "reward_name": "Extra Computer Time ",
+                        "reward_description": "Computer Reward",
+                        "category_name": "RC3",
+                        "category_icon_url": "http://localhost/icgwearable/rewards/computer.jpg"
+                    }
+                ]
+            }
+        }
+    }
+
+
+
+
+New Table:
+
+rewards_category table
+
+-	rewards_category_id
+-	school_id
+-	category_name
+-	category_icon
+-	date_created
+
+
+DROP TABLE IF EXISTS `rewards_category table`;
+CREATE TABLE `rewards_category table` (
+  `rewards_category_id` int(11) NOT NULL,
+  `school_id` int(11) NOT NULL,
+  `category_name` int(11) NOT NULL,
+  `category_icon` varchar(60) COLLATE utf8_bin DEFAULT NULL,
+  `created_date` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+ALTER TABLE REWARDS DROP COLUMN teacher_id, DROP COLUMN student_id;
+ALTER TABLE REWARDS ADD rewards_category_id int(11) NOT NULL, CONSTRAINT fk_rewards_category_id FOREIGN KEY (rewards_category_id)
+REFERENCES rewards_category(rewards_category_id);
+
+
+update rewards table:
+
+-	rewards_category_id (add)
+-	teacher_id (remove)
+-	student_id (remove)
+
+
+
+configuration properties file
+
+-	add rewards_icons_path which will contain the server path where the rewards icons are uploaded by school admin.
+-	The same param will be used to display icon, response json must contain the path with file name in category_icon db field
+
+API’s required for:
+
+-	List School Rewards, which will get list of rewards for a school.
+o	Input: school_id, token
+o	Output JSON must contain: category_name, category_icon_url, reward_id, reward_name, reward_description
+-	Create Students Rewards, will assign reward(s) to student(s)
+o	Input: reward_id, student_id, comments, token
+o	Output: Regular success or fail response
+-	List Student Rewards, will get list of rewards assigned to a student in last 1 day.
+o	Input: device_uuid, token
+o	Output JSON must contain array of rewards assigned to student: category_name, category_icon_url, reward_id, reward_name, reward_description
+
+
+
+with token addition of rewards to students by teacher
+
+
+http://localhost:8080/icgwearable/StudentRewardsAssign/{sessionID}
+
+http://localhost:8080/icgwearable/StudentRewardsDelete/{sessionID}/{student_rewardIds}
+
+http://localhost:8080/icgwearable/StudentRewardsAssign/F9FA81EAD32E8E9F870060D873F087C2
+
+{
+	"reward_id": [1, 2, 3],
+	"uuid": [10, 22, 43],
+	"Comments": "Superior Performance"
+}
+
+
+
+		criteria = session.createCriteria(Devices.class);
+		criteria.add(Restrictions.eq("uuid", devices.getUuid()));
+		Devices device = (Devices) criteria.uniqueResult();
+
+		if (device == null) {
+			return "Device Id doesn't exist.";
+		}
+		Students students = (Students) device.getStudents();
+		Accounts accounts = students.getAccounts();
+		user.setAccounts(accounts);
+		session.saveOrUpdate(user);
+
+=========================================================================
+
+url : http://localhost:8080/icgwearable/{session_id}/{school_id}
+
+http://localhost:8080/icgwearable/9E85EE52D327F547B436EDF54F66F113/2
+
+1. validate session_id and role_type 
+2. Validate school_id
+3. Join 2 tables : rewards and rewards_category to fetch the required columns
+4. Form the Json and send as output
+
+
+{
+	"Return": {
+		"Type": "teacher.rewards",
+		"ResponseSummary": {
+			"StatusCode": "",
+			"ErrorMessage": ""
+		},
+		"Results": {
+			"Members List": [{
+					 "reward_id": "1",
+					 "reward_name": "Spending night with friends or grandparents",
+					 "reward_description" : "Parental Reward",
+					 "category_name": "RC1",
+					 "category_icon_url" : "C:\icon\icon.gif"
+				},
+				{
+					 "reward_id": "1",
+					 "reward_name": "Choose a prize from Treasure Box",
+					 "reward_description" : "Treasure Reward",
+					 "category_name": "RC2",
+					 "category_icon_url" : "C:\treasure\Ticon.gif"
+				}
+
+			]
+		}
+	}
+}
+
+View rewards by parent assigned to students by teacher  :- 
+------------------------------------------------------
+
+
+1. Input parameters : session_id/school_id
+
+2. Json output :	
+
+{
+	"Return": {
+		"Type": "student.rewards",
+		"ResponseSummary": {
+			"StatusCode": "",
+			"ErrorMessage": ""
+		},
+		"Results": {
+			"Reward List": [{
+					 "reward_id": "1",
+					 "reward_name": "Spending night in pubs",
+					 "reward_description" : "Parental Reward",
+					 "category_name": "RC1",
+					 "category_icon_url" : "C:\icon\icon.gif"
+				},
+				{
+					 "reward_id": "1",
+					 "reward_name": "Choose a prize from Treasure Box",
+					 "reward_description" : "Treasure Reward",
+					 "category_name": "RC2",
+					 "category_icon_url" : "C:\treasure\Ticon.gif"
+				}
+
+			]
+		}
+	}
+}
+
+ 
+ Notes :
+ 
+ Upload testcases url :
+ -------------------
+  \\BGHNT021\Next Gen\iCG_Wearable_Project\Work_Area
+  \\BGHNT021\Next Gen\iCG_Wearable_Project\Work_Area\Cloud_Services\QMS\tasks
+
+
+\\atlas\Softwares\WR
+  
+=================================================================================
+
+
+ext : dev Server : 
+http://172.31.157.57:8080/icgwearable/ 
+
+QA Server
+http://172.31.157.65:8080/icgwearable/  
+http://172.31.157.65:9090/icgwearable/ 
+
+Database:
+
+jdbc.username=root
+jdbc.password=MySQQL@123
+
+
+bugzilla url :-->
+-----------
+
+https://bz.aricent.com/iCG-Wearable/show_bug.cgi?id=52
+
+Tomacat Server3
+----------------
+
+dev server url : http://172.31.157.53:8080/icgwearable/
+dev-server -db username/password : root/MySq&23DF1$%@#^!
+
+Public IP: 172.31.157.53
+Internal IP : 10.10.10.20
+
+Login ID: ubuntu
+Password: Web@Server3
+
+Tomcat Browser: http://172.31.157.53:8080 
+
+ sudo -i - to get root permissions 
+ 
+ to deploy :-->
+  
+ cp /home/ubuntu/icgwearable.war /opt/tomcat/webapps/
+ 
+ cd  /opt/tomcat/webapps/icgwearable/WEB-INF/classes/
+ 
+ 
+ service tomcat stop
+ service tomcat start
+
+
+MySql web url :-->
+-------------
+http://localhost:7070/phpmyadmin/export.php
+  
+  

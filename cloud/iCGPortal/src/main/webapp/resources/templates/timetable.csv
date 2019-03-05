@@ -1,0 +1,21 @@
+﻿sl_no,grade,class,week_day,subject1,subject2,subject3,subject4,subject5,subject6,subject7,subject8
+1,1,1,MON,閱讀,美術,語言,數學,歷史, P.H,偵察,英語
+2,1,1,TUE,體育,英語,數學,語言,物理,地理,說,上課時間
+3,1,1,WED,物理,English,Math,Language,美術,物理,Special,Language
+4,1,1,THU,Science Lab,Math,Music,Language,英語,Living skill,P.E,物理
+5,1,1,FRI,Language,Math,English,物理,Class Time,Civics,World ,Math
+6,1,2,MON,P.E,English,Math,Language,Physical,Geography,Speaking,Class Time
+7,1,2,TUE,物理,English,Math,Language,美術,物理,Special,Language
+8,1,2,WED,Science Lab,Math,Music,Language,English,Living skill,P.E,物理
+9,1,2,THU,Language,Math,English,物理,Class Time,Civics,World ,Math
+10,1,2,FRI, Reading , Fine Art, Language, Math, History, P.H, Scouting, English
+11,2,1,MON, Reading , Fine Art, Language, Math, History, P.H, Scouting, English
+12,2,1,TUE,P.E,English,Math,Language,Physical,Geography,Speaking,Class Time
+13,2,1,WED,物理,English,Math,Language,Fine Art,物理,Special,Language
+14,2,1,THU,Science Lab,Math,Music,Language,English,Living skill,P.E,Physical
+15,2,1,FRI,Language,Math,English,Physical,Class Time,Civics,World ,Math
+16,2,2,MON,P.E,English,Math,Language,Physical,Geography,Speaking,Class Time
+17,2,2,TUE,Physical,English,Math,Language,Fine Art,Physical,Special,Language
+18,2,2,WED,Science Lab,Math,Music,Language,English,Living skill,P.E,物理
+19,2,2,THU,Language,Math,English,Physical,Class Time,Civics,World ,Math
+20,2,2,FRI, Reading , Fine Art, Language, Math, History, P.H, Scouting, English

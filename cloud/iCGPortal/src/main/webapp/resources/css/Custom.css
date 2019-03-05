@@ -1,0 +1,373 @@
+html, body {
+	/* height: auto !important; */
+	height: 100% !important;
+	background-color: #534E4E;
+}
+
+.hand {
+	cursor: pointer !important;
+}
+
+/* #wrap {
+  min-height: 100%;
+}
+
+#main {
+  overflow:auto; 
+  padding-bottom:150px; 
+}
+
+#footer {
+    color: white;
+    top: 324px;
+    width: 100%;
+    height: 100px;
+    bottom: unset;
+    left: unset;
+    margin-left: unset;
+}  */
+.clearXbutton::-ms-clear {
+	display: none;
+}
+
+.main-header {
+	background-color: #534E4E;
+	width: 100%;
+	height: 110px;
+}
+.privacy-content{
+	height:auto !important;
+	padding: 35px 82px!important;
+}
+.privacy-footer{
+	margin: 15px 0px 0px 15px!important;
+}
+
+.loginHeader {
+	font-style: normal;
+	font-size: 28px;
+	color: #4D4D4D;
+	font-family: 'Roboto', 'Sans-Serif', 'Arial';
+	font-weight: 400 !important;
+}
+
+.loginLabel {
+	font-size: 18px;
+	color: inherit;
+	font-family: 'Roboto', 'Sans-Serif', 'Arial';
+	font-weight: 400 !important;
+}
+
+.forgotLogin {
+	float: right !important;
+	color: #337ab7;
+	text-decoration: none;
+	text-align: right;
+}
+
+.inputLogin {
+	height: 48px;
+	margin-top: 16px;
+	border: 1px solid;
+	font-size: 16px !important;
+	font-family: 'Arial', 'Sans-Serif';
+	font-weight: 400 !important;
+}
+
+.signInBtn {
+	color: #ffffff;
+	font-weight: bold;
+	font-family: arial;
+	font-size: 24px;
+	margin: 0px 32px;
+	width: 92%;
+	height: 66px;
+	position: relative;
+	top: 35px;
+	border-radius: 25px;
+	background-color: #45BD6D;
+	border: 1px solid #45BD6D;
+	outline: none !important;
+}
+
+.btn-login {
+	color: #ffffff;
+	font-weight: bold;
+	font-size: 18px;
+	margin: 2px 0px;
+	height: 66px;
+	border-radius: 25px;
+	background-color: #45BD6D;
+	border: 1px solid #45BD6D;
+	outline: none !important;
+	padding: 20px;
+}
+
+.txt-16 {
+	font-size: 16px;
+}
+
+.txt-12 {
+	font-size: 12px;
+}
+
+.txt-28 {
+	font-size: 28px;
+}
+
+.login-footer {
+	margin: auto !important;
+	width: 100% !important;
+	padding-top: 75px;
+}
+
+.signInBtn:hover, .btn-login:hover {
+	background-color: #45BD6D !important;
+	border: 1px solid #45BD6D !important;
+}
+
+.signUpBtn:hover {
+	color: #45BD6D !important;
+}
+
+.signUpBtn {
+	font-size: 22px;
+	width: 100% !important;
+	margin: auto;
+	color: #0071BC;
+	font-style: normal;
+	text-align: center !important;
+	font-family: 'Roboto', 'Sans-Serif', 'Arial';
+	font-weight: 300;
+}
+
+.loginWith {
+	font-size: 22px;
+	font-family: arial;
+	font-style: normal;
+	position: relative;
+	top: 26px;
+	left: 28px;
+}
+/* .hr {
+	border-top: 1px solid #6A6363;
+    width: 35%;
+    float: left;
+    margin-top: 7%;
+} */
+.style17 {
+	border-top: 1px solid #8c8b8b;
+	text-align: center;
+}
+
+.style17:after {
+	content: 'Or';
+	display: inline-block;
+	position: relative;
+	top: -19px;
+	padding: 6px 35px;
+	background: white;
+	font-size: 18px;
+}
+
+input[type="checkbox" i] {
+	background-color: inherit;
+	border: initial;
+}
+
+#about-page {
+	background: url(dist/images/bg_images.jpg);
+	width: 100%;
+	height: 450px !important;
+	background-repeat: no-repeat;
+	background-size: 100% 100%;
+}
+
+.modal-header {
+	border-bottom-color: white;
+}
+
+.modal-content {
+	height: 735px;
+	padding: 26px 82px;
+}
+
+.modal-footer {
+	border-top-color: white;
+}
+
+.alert-danger {
+	display: none;
+	padding-left: 100px;
+	position: absolute;
+	width: 100%;
+	margin: -35px -32px 0px -82px;
+	border: 0px solid #FF6160 !important;
+	background-color: #FF6160 !important;
+	border-top-right-radius: 1px !important;
+	border-top-left-radius: 1px !important;
+	font-family: Arial;
+	font-size: 16px;
+	font-style: normal;
+}
+
+.signUpContainer {
+	height: 885px !important;
+	display: block
+}
+
+.error {
+	padding-top: 5% !important;
+}
+
+.alert-success {
+	display: none;
+	padding-left: 100px;
+	position: absolute;
+	width: 100%;
+	margin: -35px -32px 0px -82px;
+	border: 0px solid #8CC63F !important;
+	background-color: #8CC63F !important;
+	border-top-right-radius: 1px !important;
+	border-top-left-radius: 1px !important;
+	font-family: Arial;
+	font-size: 16px;
+	font-style: normal;
+}
+
+.text-success {
+	color: #8CC63F !important;
+}
+
+.text-danger {
+	color: #FF6160 !important;
+}
+
+.table-font {
+	font-family: Arial;
+	font-size: 16px;
+	font-style: normal;
+}
+
+.selectBox {
+	border: none;
+	color: white;
+	background-color: #534E4E;
+}
+
+/* ----------- media queries ----------- */
+/* ----------- iPhone 4 and 4S ----------- */
+/* Portrait and Landscape */
+@media only screen and (min-device-width: 320px) and (max-device-width:
+	480px) and (-webkit-min-device-pixel-ratio: 2) {
+	.modal-content {
+		height: 735px;
+		padding: 26px 0px;
+	}
+	.forgotLogin {
+		float: left !important;
+	}
+
+	/* .alert-danger {
+		display: none;
+		position: absolute;
+		width: 100%;
+		margin: -26px -32px 0px -82px;
+		border: 0px solid red;
+	}  */
+}
+/* ----------- iPhone 5 and 5S ----------- */
+
+/* Portrait and Landscape */
+@media only screen and (min-device-width: 320px) and (max-device-width:
+	568px) and (-webkit-min-device-pixel-ratio: 2) {
+	.modal-content {
+		height: 735px;
+		padding: 26px 0px;
+	}
+	.forgotLogin {
+		float: left !important;
+	}
+	#footer {
+		margin-left: -60% !important;
+	}
+	.alert-danger, .alert-success {
+		bottom: 6px;
+		margin: 0px !important;
+		position: relative;
+	}
+}
+/* ----------- iPhone 6 ----------- */
+/* Portrait and Landscape */
+@media only screen and (min-device-width: 375px) and (max-device-width:
+	667px) and (-webkit-min-device-pixel-ratio: 2) {
+	.modal-content {
+		height: 735px;
+		padding: 26px 0px;
+	}
+	.forgotLogin {
+		float: left !important;
+	}
+	#footer {
+		margin-left: -55% !important;
+	}
+}
+/* ----------- iPhone 6+ ----------- */
+/* Portrait and Landscape */
+@media only screen and (min-device-width: 414px) and (max-device-width:
+	736px) and (-webkit-min-device-pixel-ratio: 3) {
+	.modal-content {
+		height: 735px;
+		padding: 26px 0px;
+	}
+	.forgotLogin {
+		float: left !important;
+	}
+	#footer {
+		margin-left: -50% !important;
+	}
+}
+/* ----------- Galaxy S5 ----------- */
+
+/* Portrait and Landscape */
+/*Galaxy S7 and S8 */
+@media only screen and (min-device-width : 360px) and (max-device-width
+	: 640px) {
+	#footer {
+		margin-left: -32% !important;
+	}
+	.alert-danger, .alert-success {
+		bottom: 6px;
+		margin: 0px !important;
+		position: relative;
+	}
+}
+
+/* ----------- iPad mini ----------- */
+
+/* Portrait and Landscape */
+@media only screen and (min-device-width: 768px) and (max-device-width:
+	1024px) and (-webkit-min-device-pixel-ratio: 1) {
+	#footer {
+		margin-top: 30% !important;
+		margin-left: -48% !important;
+	}
+}
+/* ----------- iPad 1 and 2 ----------- */
+/* Portrait and Landscape */
+@media only screen and (min-device-width: 768px) and (max-device-width:
+	1024px) and (-webkit-min-device-pixel-ratio: 1) {
+	#footer {
+		margin-top: 30% !important;
+		margin-left: -48% !important;
+	}
+}
+
+@media only screen and (min-device-width: 412px) and (max-device-width:
+	732px) and (-webkit-min-device-pixel-ratio: 2) {
+	.alert-danger, .alert-success {
+		bottom: 6px;
+		margin: 0px !important;
+		position: relative;
+	}
+}

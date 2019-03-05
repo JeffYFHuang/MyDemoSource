@@ -1,0 +1,76 @@
+{
+ "sid": "elm23",
+ "uuid": "392d4fae-ias1-11d0-a765-00a0c91i1010",
+ "year": "2018",
+ "month": "05",
+ "date": "17",
+ "hour_range": "08",
+ "data": [{
+   "context": 1,
+   "timestamp": 1493626269,
+   "duration": 651,
+   "hrm": [{
+    "timestamp": 1493626299,
+    "hrm_report": 84,
+    "hr_peak_rate": 84
+   }]
+  },
+  {
+   "context": 2,
+   "timestamp": 1493629024,
+   "duration": 466,
+   "count": 733,
+   "distance": 513,
+   "cal": 39808,
+   "hrm": [{
+    "timestamp": 1493626299,
+    "hrm_report": 84,
+    "hr_peak_rate": 84
+   }]
+  },
+  {
+   "context": 3,
+   "timestamp": 1493629024,
+   "duration": 466,
+   "count": 733,
+   "distance": 513,
+   "cal": 39808,
+   "hrm": [{
+    "timestamp": 1493626299,
+    "hrm_report": 84,
+    "hr_peak_rate": 84
+   }]
+  },
+  {
+   "context": 4,
+   "timestamp": 1493656275,
+   "duration": 67,
+   "hrm": [{
+    "timestamp": 1493626299,
+    "hrm_report": 84,
+    "hr_peak_rate": 84
+   }]
+  },
+  {
+   "context": 5,
+   "timestamp": 1493672731,
+   "duration": 312,
+   "status": 3,
+   "hrm": [{
+    "timestamp": 1493626299,
+    "hrm_report": 84,
+    "hr_peak_rate": 84
+   }]
+  },
+  {
+   "context": 0,
+   "timestamp": 1493628055,
+   "duration": 213,
+   "hrm": [{
+    "timestamp": 1493626299,
+    "hrm_report": 84,
+    "hr_peak_rate": 84
+   }]
+  }
+ ]
+}

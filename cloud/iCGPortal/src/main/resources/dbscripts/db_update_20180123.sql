@@ -1,0 +1,1 @@
+ALTER TABLE students DROP INDEX registartion_no;

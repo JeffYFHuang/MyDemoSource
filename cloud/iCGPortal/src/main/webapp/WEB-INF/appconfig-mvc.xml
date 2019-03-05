@@ -1,0 +1,79 @@
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns="http://www.springframework.org/schema/beans"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/beans
+ http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<mvc:annotation-driven />
+
+	<mvc:resources mapping="/resources/**" location="/resources/" />
+
+	<bean id="messageSource"
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basenames">
+			<list>
+				<value>classpath:validation</value>
+				<value>classpath:message</value>
+				<value>classpath:configuration</value>
+			</list>
+		</property>
+	</bean>
+
+	<!-- Configure All Validators -->
+	<bean id="studentValidator" class="com.liteon.icgwearable.validator.StudentValidator" />
+	<bean id="teacherValidator" class="com.liteon.icgwearable.validator.TeacherValidator" />
+	<bean id="announcementValidator" class="com.liteon.icgwearable.validator.AnnouncementValidator" />
+	<bean id="usersValidator" class="com.liteon.icgwearable.validator.UserValidator" />
+	<bean id="schoolValidator" class="com.liteon.icgwearable.validator.SchoolValidator" />
+	<bean id="accountValidator" class="com.liteon.icgwearable.validator.AccountValidator" />
+	<bean id="passwordValidator" class="com.liteon.icgwearable.validator.PasswordValidator" />
+	<bean id="kidsValidator" class="com.liteon.icgwearable.validator.KidsValidator" />
+	<!-- Configure to plugin JSON as request and response in method handler -->
+	<bean
+		class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+		<property name="messageConverters">
+			<list>
+				<ref bean="jsonMessageConverter" />
+			</list>
+		</property>
+	</bean>
+
+	<!-- Configure bean to convert JSON to POJO and vice versa -->
+	<bean id="jsonMessageConverter"
+		class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter" />
+		
+	<bean id="processMailUtility" class="com.liteon.icgwearable.util.ProcessMailUtility">
+		 <constructor-arg index="0">
+			<props>
+				<prop key="${mailHostName}">${mailHostValue}</prop>
+				<prop key="${mailAuthName}">${mailAuthValue}</prop>
+				<prop key="${mailPortName}">${mailPortValue}</prop>
+				<prop key="${mailTLSName}">${mailTLSValue}</prop>
+				<!-- <prop key="${mailSocketName}">${mailSocketValue}</prop> -->
+			</props>
+		</constructor-arg>
+		<constructor-arg value="${customer_support_email}" index="1"/>
+		<constructor-arg value="${customer_support_password}" index="2"/>
+	</bean> 
+
+	
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize" value="1000000" />
+	</bean> 
+	
+	<!-- Configure All ModelEntitites -->
+	<bean id="studentModelEntity" class="com.liteon.icgwearable.modelentity.StudentModelEntity" />
+	<bean id="teacherModelEntity" class="com.liteon.icgwearable.modelentity.TeacherModelEntity" />
+	<bean id="timetableModelEntity" class="com.liteon.icgwearable.modelentity.TimeTableModelEntity" />
+	<bean id="announcementModelEntity" class="com.liteon.icgwearable.modelentity.AnnouncementModelEntity" />
+	<bean id="federatedLogin" class="com.liteon.icgwearable.federallogin.FederatedLogin" />
+	
+	<bean id="configProperties"
+      class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+  		<property name="locations">
+    		<list>
+      			<value>classpath:configuration.properties</value>
+    		</list>
+  		</property>
+	</bean>
+</beans>
